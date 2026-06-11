@@ -1,0 +1,488 @@
+mysql> CREATE DATABASE CineStreamDB;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> USE CineStreamDB;
+Database changed
+mysql> CREATE TABLE Movies (
+    ->     movie_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     title VARCHAR(100) NOT NULL,
+    ->     genre VARCHAR(50) NOT NULL,
+    ->     release_year INT,
+    ->     rental_rate DECIMAL(5,2)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> 
+mysql> CREATE TABLE Users (
+    ->     user_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     username VARCHAR(50) UNIQUE NOT NULL,
+    ->     email VARCHAR(100) UNIQUE NOT NULL,
+    ->     join_date DATE,
+    ->     status VARCHAR(10) CHECK (status IN ('Active', 'Inactive'))
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> CREATE TABLE WatchLog (
+    ->     log_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     user_id INT,
+    ->     movie_id INT,
+    ->     watch_date DATETIME,
+    ->     duration_minutes INT,
+    ->     FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    ->     FOREIGN KEY (movie_id) REFERENCES Movies(movie_id)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SHOW TABLES;
++------------------------+
+| Tables_in_cinestreamdb |
++------------------------+
+| Movies                 |
+| Users                  |
+| WatchLog               |
++------------------------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO Movies (title, genre, release_year, rental_rate)
+    -> VALUES ('Interstellar', 'Sci-Fi', 2014, 4.99);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> 
+mysql> SELECT * FROM Movies;
++----------+--------------+--------+--------------+-------------+
+| movie_id | title        | genre  | release_year | rental_rate |
++----------+--------------+--------+--------------+-------------+
+|        1 | Interstellar | Sci-Fi |         2014 |        4.99 |
++----------+--------------+--------+--------------+-------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT *
+    -> FROM Users
+    -> WHERE join_date > '2025-01-01'
+    -> AND status = 'Active';
+Empty set (0.00 sec)
+
+mysql> INSERT INTO Users (username, email, join_date, status)
+    -> VALUES
+    -> ('johndoe123', 'john@example.com', '2025-02-15', 'Inactive'),
+    -> ('alice01', 'alice@example.com', '2025-03-10', 'Active'),
+    -> ('bob22', 'bob@example.com', '2024-12-20', 'Active');
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Users;
++---------+------------+-------------------+------------+----------+
+| user_id | username   | email             | join_date  | status   |
++---------+------------+-------------------+------------+----------+
+|       1 | johndoe123 | john@example.com  | 2025-02-15 | Inactive |
+|       2 | alice01    | alice@example.com | 2025-03-10 | Active   |
+|       3 | bob22      | bob@example.com   | 2024-12-20 | Active   |
++---------+------------+-------------------+------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM Users
+    -> WHERE join_date > '2025-01-01'
+    -> AND status = 'Active';
++---------+----------+-------------------+------------+--------+
+| user_id | username | email             | join_date  | status |
++---------+----------+-------------------+------------+--------+
+|       2 | alice01  | alice@example.com | 2025-03-10 | Active |
++---------+----------+-------------------+------------+--------+
+1 row in set (0.00 sec)
+
+mysql> UPDATE Users
+    -> SET status = 'Active'
+    -> WHERE username = 'johndoe123'
+    -> AND status = 'Inactive';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> 
+mysql> SELECT * FROM Users;
++---------+------------+-------------------+------------+--------+
+| user_id | username   | email             | join_date  | status |
++---------+------------+-------------------+------------+--------+
+|       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+|       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+|       3 | bob22      | bob@example.com   | 2024-12-20 | Active |
++---------+------------+-------------------+------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO Movies (title, genre, release_year, rental_rate)
+    -> VALUES
+    -> ('Inception', 'Sci-Fi', 2010, 3.99),
+    -> ('Titanic', 'Romance', 1997, 2.99);
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO WatchLog (user_id, movie_id, watch_date, duration_minutes)
+    -> VALUES
+    -> (1, 1, NOW(), 120),
+    -> (2, 1, NOW(), 140),
+    -> (2, 2, NOW(), 100),
+    -> (3, 3, NOW(), 150);
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT
+    ->     Movies.genre AS Genre_Name,
+    ->     COUNT(WatchLog.log_id) AS Total_Watch_Count
+    -> FROM WatchLog
+    -> INNER JOIN Movies
+    -> ON WatchLog.movie_id = Movies.movie_id
+    -> GROUP BY Movies.genre
+    -> ORDER BY Total_Watch_Count DESC;
++------------+-------------------+
+| Genre_Name | Total_Watch_Count |
++------------+-------------------+
+| Sci-Fi     |                 3 |
+| Romance    |                 1 |
++------------+-------------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT *
+    -> FROM Users
+    -> WHERE join_date > '2025-01-01'
+    -> AND status = 'Active';
++---------+------------+-------------------+------------+--------+
+| user_id | username   | email             | join_date  | status |
++---------+------------+-------------------+------------+--------+
+|       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+|       2 | alice01    | alice@example.com | 2025-03-10 | Active |
++---------+------------+-------------------+------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> UPDATE Users
+    -> SET status = 'Active'
+    -> WHERE username = 'johndoe123'
+    -> AND status = 'Inactive';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> SELECT * FROM Users;
++---------+------------+-------------------+------------+--------+
+| user_id | username   | email             | join_date  | status |
++---------+------------+-------------------+------------+--------+
+|       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+|       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+|       3 | bob22      | bob@example.com   | 2024-12-20 | Active |
++---------+------------+-------------------+------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> DELETE FROM Users
+    -> WHERE status = 'Inactive'
+    -> AND user_id NOT IN (
+    ->     SELECT user_id
+    ->     FROM WatchLog
+    -> );
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT
+    ->     Movies.genre AS Genre_Name,
+    ->     COUNT(WatchLog.log_id) AS Total_Watch_Count
+    -> FROM WatchLog
+    -> INNER JOIN Movies
+    -> ON WatchLog.movie_id = Movies.movie_id
+    -> GROUP BY Movies.genre
+    -> ORDER BY Total_Watch_Count DESC;
++------------+-------------------+
+| Genre_Name | Total_Watch_Count |
++------------+-------------------+
+| Sci-Fi     |                 3 |
+| Romance    |                 1 |
++------------+-------------------+
+2 rows in set (0.01 sec)
+
+mysql> select * from users;
++---------+------------+-------------------+------------+--------+
+| user_id | username   | email             | join_date  | status |
++---------+------------+-------------------+------------+--------+
+|       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+|       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+|       3 | bob22      | bob@example.com   | 2024-12-20 | Active |
++---------+------------+-------------------+------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> mysql> CREATE DATABASE CineStreamDB;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql> CREATE DATABASE CineStreamDB' at line 1
+mysql> Query OK, 1 row affected (0.03 sec)
+    -> 
+    -> mysql> USE CineStreamDB;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 1 row affected (0.03 sec)
+
+mysql> USE CineStreamDB' at line 1
+mysql> Database changed
+    -> mysql> CREATE TABLE Movies (
+    ->     ->     movie_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     ->     title VARCHAR(100) NOT NULL,
+    ->     ->     genre VARCHAR(50) NOT NULL,
+    ->     ->     release_year INT,
+    ->     ->     rental_rate DECIMAL(5,2)
+    ->     -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Database changed
+mysql> CREATE TABLE Movies (
+    ->     movie_id INT PRIMARY KE' at line 1
+mysql> Query OK, 0 rows affected (0.02 sec)
+    -> 
+    -> mysql> 
+    -> mysql> CREATE TABLE Users (
+    ->     ->     user_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     ->     username VARCHAR(50) UNIQUE NOT NULL,
+    ->     ->     email VARCHAR(100) UNIQUE NOT NULL,
+    ->     ->     join_date DATE,
+    ->     ->     status VARCHAR(10) CHECK (status IN ('Active', 'Inactive'))
+    ->     -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 0 rows affected (0.02 sec)
+
+mysql> 
+mysql> CREATE TABLE Users (
+    ->' at line 1
+mysql> Query OK, 0 rows affected (0.01 sec)
+    -> 
+    -> mysql> 
+    -> mysql> CREATE TABLE WatchLog (
+    ->     ->     log_id INT PRIMARY KEY AUTO_INCREMENT,
+    ->     ->     user_id INT,
+    ->     ->     movie_id INT,
+    ->     ->     watch_date DATETIME,
+    ->     ->     duration_minutes INT,
+    ->     ->     FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    ->     ->     FOREIGN KEY (movie_id) REFERENCES Movies(movie_id)
+    ->     -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> CREATE TABLE WatchLog (
+   ' at line 1
+mysql> Query OK, 0 rows affected (0.01 sec)
+    -> 
+    -> mysql> SHOW TABLES;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 0 rows affected (0.01 sec)
+
+mysql> SHOW TABLES' at line 1
+mysql> +------------------------+
+    -> | Tables_in_cinestreamdb |
+    -> +------------------------+
+    -> | Movies                 |
+    -> | Users                  |
+    -> | WatchLog               |
+    -> +------------------------+
+    -> 3 rows in set (0.00 sec)
+    -> 
+    -> mysql> INSERT INTO Movies (title, genre, release_year, rental_rate)
+    ->     -> VALUES ('Interstellar', 'Sci-Fi', 2014, 4.99);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+------------------------+
+| Tables_in_cinestreamdb |
++------------------------+' at line 1
+mysql> Query OK, 1 row affected (0.01 sec)
+    -> 
+    -> mysql> 
+    -> mysql> SELECT * FROM Movies;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 1 row affected (0.01 sec)
+
+mysql> 
+mysql> SELECT * FROM Movies' at line 1
+mysql> +----------+--------------+--------+--------------+-------------+
+    -> | movie_id | title        | genre  | release_year | rental_rate |
+    -> +----------+--------------+--------+--------------+-------------+
+    -> |        1 | Interstellar | Sci-Fi |         2014 |        4.99 |
+    -> +----------+--------------+--------+--------------+-------------+
+    -> 1 row in set (0.01 sec)
+    -> 
+    -> mysql> SELECT *
+    ->     -> FROM Users
+    ->     -> WHERE join_date > '2025-01-01'
+    ->     -> AND status = 'Active';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+----------+--------------+--------+--------------+-------------+
+| movie_id | t' at line 1
+mysql> Empty set (0.00 sec)
+    -> 
+    -> mysql> INSERT INTO Users (username, email, join_date, status)
+    ->     -> VALUES
+    ->     -> ('johndoe123', 'john@example.com', '2025-02-15', 'Inactive'),
+    ->     -> ('alice01', 'alice@example.com', '2025-03-10', 'Active'),
+    ->     -> ('bob22', 'bob@example.com', '2024-12-20', 'Active');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Empty set (0.00 sec)
+
+mysql> INSERT INTO Users (username, email, join_date, stat' at line 1
+mysql> Query OK, 3 rows affected (0.00 sec)
+    -> Records: 3  Duplicates: 0  Warnings: 0
+    -> 
+    -> mysql> SELECT * FROM Users;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mys' at line 1
+mysql> +---------+------------+-------------------+------------+----------+
+    -> | user_id | username   | email             | join_date  | status   |
+    -> +---------+------------+-------------------+------------+----------+
+    -> |       1 | johndoe123 | john@example.com  | 2025-02-15 | Inactive |
+    -> |       2 | alice01    | alice@example.com | 2025-03-10 | Active   |
+    -> |       3 | bob22      | bob@example.com   | 2024-12-20 | Active   |
+    -> +---------+------------+-------------------+------------+----------+
+    -> 3 rows in set (0.00 sec)
+    -> 
+    -> mysql> SELECT *
+    ->     -> FROM Users
+    ->     -> WHERE join_date > '2025-01-01'
+    ->     -> AND status = 'Active';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+---------+------------+-------------------+------------+----------+
+| user_id |' at line 1
+mysql> +---------+----------+-------------------+------------+--------+
+    -> | user_id | username | email             | join_date  | status |
+    -> +---------+----------+-------------------+------------+--------+
+    -> |       2 | alice01  | alice@example.com | 2025-03-10 | Active |
+    -> +---------+----------+-------------------+------------+--------+
+    -> 1 row in set (0.00 sec)
+    -> 
+    -> mysql> UPDATE Users
+    ->     -> SET status = 'Active'
+    ->     -> WHERE username = 'johndoe123'
+    ->     -> AND status = 'Inactive';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+---------+----------+-------------------+------------+--------+
+| user_id | use' at line 1
+mysql> Query OK, 1 row affected (0.00 sec)
+    -> Rows matched: 1  Changed: 1  Warnings: 0
+    -> 
+    -> mysql> 
+    -> mysql> SELECT * FROM Users;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+my' at line 1
+mysql> +---------+------------+-------------------+------------+--------+
+    -> | user_id | username   | email             | join_date  | status |
+    -> +---------+------------+-------------------+------------+--------+
+    -> |       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+    -> |       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+    -> |       3 | bob22      | bob@example.com   | 2024-12-20 | Active |
+    -> +---------+------------+-------------------+------------+--------+
+    -> 3 rows in set (0.00 sec)
+    -> 
+    -> mysql> INSERT INTO Movies (title, genre, release_year, rental_rate)
+    ->     -> VALUES
+    ->     -> ('Inception', 'Sci-Fi', 2010, 3.99),
+    ->     -> ('Titanic', 'Romance', 1997, 2.99);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+---------+------------+-------------------+------------+--------+
+| user_id | u' at line 1
+mysql> Query OK, 2 rows affected (0.00 sec)
+    -> Records: 2  Duplicates: 0  Warnings: 0
+    -> 
+    -> mysql> INSERT INTO WatchLog (user_id, movie_id, watch_date, duration_minutes)
+    ->     -> VALUES
+    ->     -> (1, 1, NOW(), 120),
+    ->     -> (2, 1, NOW(), 140),
+    ->     -> (2, 2, NOW(), 100),
+    ->     -> (3, 3, NOW(), 150);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mys' at line 1
+mysql> Query OK, 4 rows affected (0.00 sec)
+    -> Records: 4  Duplicates: 0  Warnings: 0
+    -> 
+    -> mysql> SELECT
+    ->     ->     Movies.genre AS Genre_Name,
+    ->     ->     COUNT(WatchLog.log_id) AS Total_Watch_Count
+    ->     -> FROM WatchLog
+    ->     -> INNER JOIN Movies
+    ->     -> ON WatchLog.movie_id = Movies.movie_id
+    ->     -> GROUP BY Movies.genre
+    ->     -> ORDER BY Total_Watch_Count DESC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mys' at line 1
+mysql> +------------+-------------------+
+    -> | Genre_Name | Total_Watch_Count |
+    -> +------------+-------------------+
+    -> | Sci-Fi     |                 3 |
+    -> | Romance    |                 1 |
+    -> +------------+-------------------+
+    -> 2 rows in set (0.01 sec)
+    -> 
+    -> mysql> SELECT *
+    ->     -> FROM Users
+    ->     -> WHERE join_date > '2025-01-01'
+    ->     -> AND status = 'Active';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+------------+-------------------+
+| Genre_Name | Total_Watch_Count |
++---------' at line 1
+mysql> +---------+------------+-------------------+------------+--------+
+    -> | user_id | username   | email             | join_date  | status |
+    -> +---------+------------+-------------------+------------+--------+
+    -> |       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+    -> |       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+    -> +---------+------------+-------------------+------------+--------+
+    -> 2 rows in set (0.00 sec)
+    -> 
+    -> mysql> UPDATE Users
+    ->     -> SET status = 'Active'
+    ->     -> WHERE username = 'johndoe123'
+    ->     -> AND status = 'Inactive';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+---------+------------+-------------------+------------+--------+
+| user_id | u' at line 1
+mysql> Query OK, 0 rows affected (0.00 sec)
+    -> Rows matched: 0  Changed: 0  Warnings: 0
+    -> 
+    -> mysql> SELECT * FROM Users;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+m' at line 1
+mysql> +---------+------------+-------------------+------------+--------+
+    -> | user_id | username   | email             | join_date  | status |
+    -> +---------+------------+-------------------+------------+--------+
+    -> |       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+    -> |       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+    -> |       3 | bob22      | bob@example.com   | 2024-12-20 | Active |
+    -> +---------+------------+-------------------+------------+--------+
+    -> 3 rows in set (0.00 sec)
+    -> 
+    -> mysql> DELETE FROM Users
+    ->     -> WHERE status = 'Inactive'
+    ->     -> AND user_id NOT IN (
+    ->     ->     SELECT user_id
+    ->     ->     FROM WatchLog
+    ->     -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+---------+------------+-------------------+------------+--------+
+| user_id | u' at line 1
+mysql> Query OK, 0 rows affected (0.00 sec)
+    -> 
+    -> mysql> SELECT
+    ->     ->     Movies.genre AS Genre_Name,
+    ->     ->     COUNT(WatchLog.log_id) AS Total_Watch_Count
+    ->     -> FROM WatchLog
+    ->     -> INNER JOIN Movies
+    ->     -> ON WatchLog.movie_id = Movies.movie_id
+    ->     -> GROUP BY Movies.genre
+    ->     -> ORDER BY Total_Watch_Count DESC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT
+    ->     Movies.genre AS G' at line 1
+mysql> +------------+-------------------+
+    -> | Genre_Name | Total_Watch_Count |
+    -> +------------+-------------------+
+    -> | Sci-Fi     |                 3 |
+    -> | Romance    |                 1 |
+    -> +------------+-------------------+
+    -> 2 rows in set (0.01 sec)
+    -> 
+    -> mysql> select * from users;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '+------------+-------------------+
+| Genre_Name | Total_Watch_Count |
++---------' at line 1
+mysql> +---------+------------+-------------------+------------+--------+
+    -> | user_id | username   | email             | join_date  | status |
+    -> +---------+------------+-------------------+------------+--------+
+    -> |       1 | johndoe123 | john@example.com  | 2025-02-15 | Active |
+    -> |       2 | alice01    | alice@example.com | 2025-03-10 | Active |
+    -> |       3 | bob22      | bob@example.com   | 2024-12-20 | Active |
+    -> +---------+------------+-------------------+------------+--------+
+    -> 3 rows in set (0.00 sec)
+    -> 
+    -> mysql> 
+    -> 
