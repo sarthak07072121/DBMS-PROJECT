@@ -252,7 +252,6 @@
     L.push('8. Sunday only: log the week\'s numbers, repeat one thing, kill one thing.');
 
     G.download('instagram-business-plan.md', L.join('\n'), 'text/markdown');
-    G.toast('Full plan exported as Markdown');
   }
 
   /* ---------------- boot ---------------- */

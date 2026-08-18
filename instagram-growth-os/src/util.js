@@ -137,7 +137,10 @@ window.IGOS = window.IGOS || {};
     catch (e) { G.toast('Copy failed — select manually'); }
     document.body.removeChild(ta);
   };
-  G.download = function (name, text, mime) {
+  /* Saving a file works two ways: an ordinary blob download when the app is
+     opened from disk or a server, and the host's mediated save when it runs
+     as a published Artifact (where blob downloads are inert). */
+  function blobSave(name, text, mime) {
     const b = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(b);
@@ -145,6 +148,30 @@ window.IGOS = window.IGOS || {};
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  G.download = function (name, text, mime) {
+    const host = window.claude;
+    if (!host || typeof host.use !== 'function') { blobSave(name, text, mime); G.toast('Downloaded ' + name); return; }
+
+    host.use('downloads').then(function (dl) {
+      if (!dl) { blobSave(name, text, mime); G.toast('Downloaded ' + name); return; }
+      dl.save({ filename: name, data: text })
+        .then(function () { G.toast('Saved ' + name); })
+        .catch(function (err) {
+          const code = err && err.code;
+          if (code === 'declined') { G.toast('Download cancelled'); return; }
+          if (code === 'rate_limited') { G.toast('One save at a time — try again in a moment'); return; }
+          if (code === 'rejected_extension' || code === 'extension_not_enabled') {
+            const alt = name.replace(/\.[^.]+$/, '') + '.txt';
+            dl.save({ filename: alt, data: text })
+              .then(function () { G.toast('Saved as ' + alt); })
+              .catch(function () { G.toast('This viewer cannot save files — use "Copy" instead'); });
+            return;
+          }
+          G.toast('This viewer cannot save files — use "Copy" instead');
+        });
+    }).catch(function () { blobSave(name, text, mime); });
   };
 
   /* ---------- small render helpers ---------- */

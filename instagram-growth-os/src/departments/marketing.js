@@ -151,7 +151,6 @@
           .concat(cal.map((d) => [d.date, G.dayName(d.date), d.format, d.pillar, d.topic, d.hook, d.cta, d.time]));
         const out = rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
         G.download('content-calendar-28day.csv', out, 'text/csv');
-        G.toast('Calendar exported');
       };
     }
   };
