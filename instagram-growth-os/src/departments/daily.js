@@ -28,20 +28,22 @@
     });
 
     if (block) {
-      block.tasks.forEach((t, i) => out.push({ id: 'sp' + i, dept: 'Operations', t: t, s: block.block + ' block · ~' + block.hrs + 'h' }));
+      /* Scripting work belongs to the writing room, everything else to Operations. */
+      const dept = /script|research/i.test(block.block) ? 'Script Writer' : 'Operations';
+      block.tasks.forEach((t, i) => out.push({ id: 'sp' + i, dept: dept, t: t, s: block.block + ' block · ~' + block.hrs + 'h' }));
     }
 
     out.push({ id: 'eng', dept: 'Marketing', t: cap.commentsPerDay + ' comments on bigger accounts in your niche', s: 'Posts under 2 hours old, accounts 3–10× your size. Add something useful, never "🔥".' });
-    out.push({ id: 'dm', dept: 'Sales', t: cap.dmsPerDay + ' DMs — question first, never a pitch', s: 'Target people who commented on those posts. Your only goal is a reply.' });
+    out.push({ id: 'dm', dept: 'Marketing', t: cap.dmsPerDay + ' DMs — question first, never a pitch', s: 'Target people who commented on those posts. Your only goal is a reply.' });
     out.push({ id: 'story', dept: 'Marketing', t: 'Post ' + cap.storiesPerDay + ' stories, at least one with a poll or question sticker', s: 'Story replies are the warmest leads you will get all day.' });
-    out.push({ id: 'idea', dept: 'Content', t: 'Add 3 ideas to the vault from questions people asked you today', s: 'Real questions outperform invented topics every time.' });
+    out.push({ id: 'idea', dept: 'Idea Generator', t: 'Add 3 ideas to the vault from questions people asked you today', s: 'Real questions outperform invented topics every time. Save them before you forget them.' });
 
     if (dayName === 'Sunday') {
-      out.push({ id: 'log', dept: 'Finance', t: 'Log this week\'s followers, reach and revenue in the Board Report', s: 'Unmeasured weeks turn into unmeasured quarters.' });
+      out.push({ id: 'log', dept: 'CEO', t: 'Log this week\'s followers, reach and revenue in the Board Report', s: 'Unmeasured weeks turn into unmeasured quarters.' });
       out.push({ id: 'review', dept: 'CEO', t: 'Pick one thing to repeat and one thing to kill', s: 'Look at the top and bottom post of the week. Decide, do not deliberate.' });
     }
     if (dayName === 'Friday' && primary) {
-      out.push({ id: 'offer', dept: 'Sales', t: 'Pitch ' + primary.name + ' in stories', s: G.money(primary.price) + ' · ' + primary.deliver + '. Sell on Friday and Sunday — that is when intent peaks.' });
+      out.push({ id: 'offer', dept: 'CEO', t: 'Pitch ' + primary.name + ' in stories', s: G.money(primary.price) + ' · ' + primary.deliver + '. Sell on Friday and Sunday — that is when intent peaks.' });
     }
     return out;
   }

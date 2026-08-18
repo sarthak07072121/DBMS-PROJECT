@@ -349,8 +349,8 @@ canvas{max-width:100%;display:block}
       <button class="nav-item active" data-view="ceo"><i>◆</i> CEO — Strategy</button>
       <div class="nav-label">Departments</div>
       <button class="nav-item" data-view="hr"><i>👤</i> HR</button>
-      <button class="nav-item" data-view="sales"><i>💰</i> Sales</button>
-      <button class="nav-item" data-view="finance"><i>📊</i> Finance</button>
+      <button class="nav-item" data-view="scriptwriter"><i>✍️</i> Script Writer</button>
+      <button class="nav-item" data-view="ideagen"><i>💡</i> Idea Generator</button>
       <button class="nav-item" data-view="operations"><i>⚙️</i> Operations</button>
       <button class="nav-item" data-view="marketing"><i>📣</i> Marketing</button>
       <button class="nav-item" data-view="dev"><i>💻</i> Content Studio</button>
@@ -466,9 +466,15 @@ window.IGOS = window.IGOS || {};
     view: 'ceo',
     tasks: {},        // { 'YYYY-MM-DD': { taskId: true } }
     pipeline: [],     // kanban cards
-    ledger: [],       // money in / out
     logs: [],         // weekly metric snapshots
     calendarStart: null,
+    scripts: [],      // script vault
+    scriptTopic: null,
+    scriptFramework: 'pas',
+    ideaVault: [],    // saved ideas
+    ideaSeed: null,
+    ideaCount: 20,
+    angleTopic: null,
     notes: {}
   };
 
@@ -680,7 +686,7 @@ window.IGOS = window.IGOS || {};
       audience: {
         age: '20–38', who: 'students, developers, marketers, freelancers, founders',
         interests: ['AI tools', 'automation', 'productivity software', 'coding', 'gadgets'],
-        pains: ['drowning in repetitive work', 'tool overwhelm — 40 tabs, no system', 'scared AI will replace their job', 'cannot code but need software', 'wasting money on subscriptions'],
+        pains: ['drowning in repetitive work', 'tool overwhelm — 40 tabs, no system', 'scared AI will make the job obsolete', 'cannot code but need software', 'wasting money on subscriptions'],
         desires: ['do 8 hours of work in 1', 'build things without a team', 'be the AI person at work', 'freelance income from tools'],
         objections: ['this needs coding', 'the free version is useless', 'I will forget how to use it']
       },
@@ -1305,35 +1311,6 @@ window.IGOS = window.IGOS || {};
     };
   };
 
-  /* ---------------- finance ---------------- */
-  E.budget = function (p) {
-    const b = Math.max(0, Number(p.budget) || 0);
-    const t = E.tier(Number(p.followers) || 0);
-    let split;
-    if (t.key === 'foundation') split = { tools: 0.55, promotion: 0.15, outsourcing: 0.10, learning: 0.15, buffer: 0.05 };
-    else if (t.key === 'traction') split = { tools: 0.35, promotion: 0.25, outsourcing: 0.25, learning: 0.10, buffer: 0.05 };
-    else if (t.key === 'authority') split = { tools: 0.20, promotion: 0.30, outsourcing: 0.40, learning: 0.05, buffer: 0.05 };
-    else split = { tools: 0.15, promotion: 0.30, outsourcing: 0.45, learning: 0.05, buffer: 0.05 };
-
-    const labels = {
-      tools: 'Tools & software',
-      promotion: 'Paid promotion (boost proven posts only)',
-      outsourcing: 'Outsourcing (editor / designer / VA)',
-      learning: 'Learning & research',
-      buffer: 'Buffer'
-    };
-    return Object.keys(split).map((k) => ({
-      key: k, label: labels[k], pct: split[k], amount: b * split[k]
-    }));
-  };
-
-  E.ledgerSummary = function () {
-    const L = G.store.ledger || [];
-    const rev = L.filter((r) => r.type === 'revenue').reduce((s, r) => s + Number(r.amount || 0), 0);
-    const exp = L.filter((r) => r.type === 'expense').reduce((s, r) => s + Number(r.amount || 0), 0);
-    return { rev, exp, profit: rev - exp, roi: exp > 0 ? rev / exp : 0, margin: rev > 0 ? (rev - exp) / rev : 0 };
-  };
-
   /* ---------------- goal tracking ---------------- */
   E.goalStatus = function (p) {
     const proj = E.project(p, 6, 'base');
@@ -1381,7 +1358,7 @@ window.IGOS = window.IGOS || {};
   /* ---------------- hooks ---------------- */
   C.HOOKS = [
     'Nobody tells beginners this: {t}.',
-    'Here is {t} — in 45 seconds.',
+    '{T} — in 45 seconds. Everything you need.',
     'Save this: {t}.',
     'I wish someone showed me {t} on day one.',
     '{T} — and why most people get it completely wrong.',
@@ -1390,12 +1367,12 @@ window.IGOS = window.IGOS || {};
     'I tested {t}. Here is what actually happened.',
     'If you fix one thing this week, make it {t}.',
     'This is {t}, explained the way it should have been.',
-    'Stop scrolling if {pain}.',
-    'You do not have a talent problem. You have a {t} problem.',
+    'Stop scrolling if this is you: {pain}.',
+    'You do not have a talent problem. You have a method problem: {t}.',
     'Everyone gets {t} wrong. Including me, for two years.',
-    'The 1% who get {desire} do {t}. The rest do not.',
+    'Everyone wants {desire}. Almost nobody does this: {t}.',
     '{T}. Watch this before you try again.',
-    'This is the {t} breakdown I get asked for every single week.'
+    'The breakdown I get asked for every single week: {t}.'
   ];
 
   C.RETENTION = [
@@ -1516,11 +1493,12 @@ window.IGOS = window.IGOS || {};
   };
 
   C.fillHook = function (tpl, topic, n) {
-    const pain = (n.audience.pains[0] || 'you keep starting over').toLowerCase();
-    const desire = (n.audience.desires[0] || 'results').toLowerCase();
-    const T = topic.charAt(0).toUpperCase() + topic.slice(1);
-    return tpl.replace(/\{T\}/g, T).replace(/\{t\}/g, topic)
-      .replace(/\{pain\}/g, pain).replace(/\{desire\}/g, desire);
+    const pain = n.audience.pains[0] || 'you keep starting over';
+    const desire = n.audience.desires[0] || 'results';
+    const up = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+    return tpl.replace(/\{T\}/g, up(topic)).replace(/\{t\}/g, topic)
+      .replace(/\{Pain\}/g, up(pain)).replace(/\{pain\}/g, pain)
+      .replace(/\{Desire\}/g, up(desire)).replace(/\{desire\}/g, desire);
   };
 
   C.pickCta = function (pillar, format, p) {
@@ -1605,11 +1583,11 @@ window.IGOS = window.IGOS || {};
       : '';
     const seo = C.seoLine(p, day);
     return day.hook + '\n\n' +
-      'Most people get stuck here: ' + ctx.pain.toLowerCase() + '. That is not a discipline problem — it is a method problem.\n\n' +
+      'Most people get stuck here: ' + ctx.pain + '. That is not a discipline problem — it is a method problem.\n\n' +
       '1. ' + C.stepLine(day, 1) + '\n' +
       '2. ' + C.stepLine(day, 2) + '\n' +
       '3. ' + C.stepLine(day, 3) + '\n\n' +
-      'Do this for 14 days and the difference shows up where it matters: ' + ctx.desire.toLowerCase() + '.\n\n' +
+      'Do this for 14 days and the difference shows up where it matters: ' + ctx.desire + '.\n\n' +
       ctx.ctaLine + kwLine + '\n\n' + seo;
   };
 
@@ -1686,11 +1664,408 @@ window.IGOS = window.IGOS || {};
       { day: 'Tuesday', block: 'Batch production', hrs: Math.max(1, Math.round(h * 0.25)), tasks: ['Film all ' + cap.perWeek.reel + ' reels back to back, one outfit change max', 'Record voiceovers in one take pass', 'Dump footage into the editing folder'] },
       { day: 'Wednesday', block: 'Edit & design', hrs: Math.max(1, Math.round(h * 0.25)), tasks: ['Edit reels (captions, cuts, covers)', 'Design ' + cap.perWeek.carousel + ' carousels from the template file', 'Write all captions in one pass'] },
       { day: 'Thursday', block: 'Schedule & optimise', hrs: Math.max(1, Math.round(h * 0.1)), tasks: ['Schedule the full week', 'Write alt text + keywords for search', 'Prepare story frames for each post day'] },
-      { day: 'Friday', block: 'Sales & outreach', hrs: Math.max(1, Math.round(h * 0.1)), tasks: [cap.dmsPerDay + ' targeted DMs to warm leads', 'Follow up every unanswered conversation from last week', 'Pitch 2 brands or 2 collab partners'] },
+      { day: 'Friday', block: 'Outreach & conversations', hrs: Math.max(1, Math.round(h * 0.1)), tasks: [cap.dmsPerDay + ' targeted DMs to warm leads', 'Follow up every unanswered conversation from last week', 'Pitch 2 brands or 2 collab partners'] },
       { day: 'Saturday', block: 'Engagement sprint', hrs: Math.max(1, Math.round(h * 0.1)), tasks: [cap.commentsPerDay + ' comments on bigger accounts in your niche', 'Reply to every comment on your own posts', 'Engage with 20 accounts that follow competitors'] },
       { day: 'Sunday', block: 'Board review', hrs: Math.max(1, Math.round(h * 0.05)), tasks: ['Log followers, reach, revenue in the Board Report', 'Identify the top and bottom post of the week', 'Decide one thing to repeat and one to kill'] }
     ];
   };
+})(window.IGOS);
+
+</script>
+<script>
+/* src/engine/scripts.js */
+/* ================= GROWTH OS · scriptwriting engine =================
+   Frameworks, hook laboratory and the script builder. Everything the
+   Script Writer department turns a topic into.
+==================================================================== */
+(function (G) {
+  'use strict';
+  const S = G.scripts = {};
+
+  /* Words per second at a natural talking-head pace (≈145 wpm). */
+  S.WPS = 2.4;
+  S.LENGTHS = { reel: 38, carousel: 0, static: 0, story: 12 };
+
+  /* ---------------- frameworks ---------------- */
+  S.FRAMEWORKS = [
+    {
+      key: 'pas', short: 'PAS', name: 'Problem → Agitate → Solve',
+      best: 'Pain-led topics. Use when the audience already feels the ache and just needs a way out.',
+      beats: [
+        { t: 'Problem', sec: '0–3s', do: 'State the pain in their words, not yours. No preamble, no "hey guys".' },
+        { t: 'Agitate', sec: '3–9s', do: 'Name what it is costing them if nothing changes. One consequence, made concrete.' },
+        { t: 'Solve', sec: '9–32s', do: 'Three steps, numbered on screen. Each one doable today without a follow-up question.' },
+        { t: 'Proof', sec: '32–42s', do: 'A number, a screenshot, or a before/after. Promise without proof does not convert.' },
+        { t: 'CTA', sec: '42–50s', do: 'One action, one sentence.' }
+      ]
+    },
+    {
+      key: 'mythbust', short: 'Myth-bust', name: 'Myth → Truth → Method',
+      best: 'Authority building. The fastest way to be remembered is to correct something they believe today.',
+      beats: [
+        { t: 'The myth', sec: '0–3s', do: 'Say the belief out loud, exactly as they would say it.' },
+        { t: 'Why it spread', sec: '3–8s', do: 'Show why it sounds right. This is what stops the audience feeling stupid.' },
+        { t: 'The truth', sec: '8–18s', do: 'The correction, in one clean sentence. Slow down here.' },
+        { t: 'The method', sec: '18–38s', do: 'What to do instead, step by step.' },
+        { t: 'CTA', sec: '38–45s', do: 'Ask them to share it with whoever taught them the myth.' }
+      ]
+    },
+    {
+      key: 'listicle', short: 'Rapid list', name: 'Rapid list',
+      best: 'High completion rate and easy to batch. Best for broad-reach topics and carousels.',
+      beats: [
+        { t: 'Promise', sec: '0–3s', do: 'Number + payoff. "5 things that…" — the number is the hook.' },
+        { t: 'Item 1', sec: '3–12s', do: 'Strongest item first. Never save the best for last on Instagram.' },
+        { t: 'Item 2', sec: '12–20s', do: 'Change the visual here — this is where drop-off spikes.' },
+        { t: 'Item 3', sec: '20–28s', do: 'Shortest item. Keep the rhythm moving.' },
+        { t: 'Items 4–5', sec: '28–40s', do: 'Fastest cuts of the whole video.' },
+        { t: 'CTA', sec: '40–46s', do: 'Save — a list is useless watched once.' }
+      ]
+    },
+    {
+      key: 'tutorial', short: 'Tutorial', name: 'Result-first tutorial',
+      best: 'How-to topics. Showing the finished thing first buys you the 30 seconds to explain it.',
+      beats: [
+        { t: 'The result', sec: '0–3s', do: 'Show the finished outcome before explaining anything.' },
+        { t: 'The claim', sec: '3–7s', do: 'How long it takes and what it needs. Remove the excuse early.' },
+        { t: 'Steps', sec: '7–35s', do: 'Real-time or sped-up. Every step numbered on screen.' },
+        { t: 'The catch', sec: '35–42s', do: 'The one thing people get wrong. This is why they follow you.' },
+        { t: 'CTA', sec: '42–50s', do: 'Save it for when they actually try it.' }
+      ]
+    },
+    {
+      key: 'story', short: 'Story arc', name: 'Story arc',
+      best: 'Founder content and proof posts. Story is what makes people buy from you rather than from someone better.',
+      beats: [
+        { t: 'The moment', sec: '0–4s', do: 'Drop them into the scene. A date, a number, a place. No setup.' },
+        { t: 'The stakes', sec: '4–12s', do: 'What you stood to lose. Vulnerability here is the whole mechanism.' },
+        { t: 'The turn', sec: '12–25s', do: 'What changed, and what you did differently.' },
+        { t: 'The lesson', sec: '25–38s', do: 'Generalise it into something they can use tomorrow.' },
+        { t: 'CTA', sec: '38–45s', do: 'Invite the reply: ask what their version of this is.' }
+      ]
+    },
+    {
+      key: 'bab', short: 'Before/After', name: 'Before → After → Bridge',
+      best: 'Transformation and results content. The highest-retention structure that exists.',
+      beats: [
+        { t: 'Before', sec: '0–4s', do: 'The starting state, unflattering and specific.' },
+        { t: 'After', sec: '4–10s', do: 'The end state, shown not described. Cut between the two.' },
+        { t: 'Bridge', sec: '10–35s', do: 'Exactly what happened in between. This is the value.' },
+        { t: 'Timeline', sec: '35–43s', do: 'How long it really took. Honesty here beats a bigger claim.' },
+        { t: 'CTA', sec: '43–50s', do: 'Offer the same path.' }
+      ]
+    },
+    {
+      key: 'contrarian', short: 'Contrarian', name: 'Contrarian take',
+      best: 'Comment velocity. Disagreement is distribution — but only defend a position you can actually back.',
+      beats: [
+        { t: 'The stance', sec: '0–3s', do: 'State the unpopular position flatly. No hedging, no "in my opinion".' },
+        { t: 'Steelman', sec: '3–10s', do: 'Give the other side its best argument. Skipping this makes you look cheap.' },
+        { t: 'Your evidence', sec: '10–28s', do: 'Why you still disagree. Specifics, not vibes.' },
+        { t: 'The nuance', sec: '28–38s', do: 'When the other side is right. This is what makes it credible instead of clickbait.' },
+        { t: 'CTA', sec: '38–45s', do: 'Ask for the counter-argument in the comments. Then actually reply.' }
+      ]
+    },
+    {
+      key: 'casestudy', short: 'Case study', name: 'Case study',
+      best: 'Selling without pitching. Numbers do the persuasion so you never have to.',
+      beats: [
+        { t: 'The number', sec: '0–3s', do: 'Lead with the outcome figure. It is the hook.' },
+        { t: 'The starting point', sec: '3–10s', do: 'Where they began — relatable, unimpressive.' },
+        { t: 'What we changed', sec: '10–30s', do: 'Three specific decisions. Name the trade-offs.' },
+        { t: 'What did not work', sec: '30–38s', do: 'Include one failure. It is the most trust-building line in the script.' },
+        { t: 'CTA', sec: '38–48s', do: 'Soft offer: "if you want this run on yours, comment {KW}".' }
+      ]
+    }
+  ];
+
+  S.framework = (key) => S.FRAMEWORKS.find((f) => f.key === key) || S.FRAMEWORKS[0];
+
+  /* Trim to a word boundary — on-screen text cut mid-word looks broken. */
+  S.clip = function (s, n) {
+    if (s.length <= n) return s;
+    const cut = s.slice(0, n);
+    const sp = cut.lastIndexOf(' ');
+    return (sp > n * 0.5 ? cut.slice(0, sp) : cut).replace(/[ ,.;:-]+$/, '') + '…';
+  };
+
+  /* Beat timings are written for humans ("9–32s"), so parse rather than split. */
+  S.range = function (sec) {
+    const m = String(sec).match(/(\d+)\D+?(\d+)/);
+    return m ? { from: Number(m[1]), to: Number(m[2]) } : { from: 0, to: 10 };
+  };
+
+  /* ---------------- hook laboratory ---------------- */
+  S.HOOK_TYPES = [
+    { key: 'callout', name: 'Callout', tpl: '“{Pain}” — if that is you, start here.', why: 'Self-selects your exact viewer in under a second.' },
+    { key: 'negative', name: 'Warning', tpl: '{T}. Watch this before you try it.', why: 'Loss aversion out-performs gain framing almost every time.' },
+    { key: 'number', name: 'Numbered', tpl: '3 things that changed everything for me: {t}.', why: 'A number sets the length expectation, so people commit to watching.' },
+    { key: 'curiosity', name: 'Curiosity gap', tpl: 'Nobody actually explains this: {t}.', why: 'Opens a loop the brain wants closed. Do not over-use it.' },
+    { key: 'result', name: 'Result-first', tpl: '{Desire} — here is the method: {t}.', why: 'Leads with the outcome instead of the process.' },
+    { key: 'contrarian', name: 'Contrarian', tpl: '“{T}” is bad advice. Here is what works instead.', why: 'Drives comments, and comments drive reach.' },
+    { key: 'question', name: 'Question', tpl: '{Pain}. Here is why, and what to do instead: {t}.', why: 'They answer in their head, which counts as engagement.' },
+    { key: 'timebound', name: 'Time-bound', tpl: '60 seconds, then decide for yourself: {t}.', why: 'Names the cost of watching, which lowers the barrier.' },
+    { key: 'story', name: 'Story open', tpl: 'Two years lost to this — {pain}. What fixed it: {t}.', why: 'A person talking beats a tip being delivered.' },
+    { key: 'proof', name: 'Proof-led', tpl: '90 days later, this is the result: {t}.', why: 'Evidence in the first frame earns the next thirty seconds.' }
+  ];
+
+  S.hooksFor = function (topic, p, seed) {
+    const n = G.niche(p);
+    const r = G.rng((seed || 1) * 7919 + topic.length);
+    const pain = n.audience.pains[Math.floor(r() * n.audience.pains.length)] || 'keep starting over';
+    const desire = (n.audience.desires[Math.floor(r() * n.audience.desires.length)] || 'results');
+    const up = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+    return S.HOOK_TYPES.map((h) => ({
+      type: h.name, why: h.why,
+      line: h.tpl.replace(/\{T\}/g, up(topic)).replace(/\{t\}/g, topic)
+        .replace(/\{Desire\}/g, up(desire)).replace(/\{desire\}/g, desire)
+        .replace(/\{Pain\}/g, up(pain)).replace(/\{pain\}/g, pain)
+    }));
+  };
+
+  /* A hook either passes all five or gets rewritten. No partial credit. */
+  S.HOOK_TESTS = [
+    { t: 'Under 12 words', s: 'If it does not fit on one line of on-screen text, it is not a hook yet.' },
+    { t: 'Specific, not categorical', s: '"Cut 300 calories at breakfast" beats "eat healthier".' },
+    { t: 'Names the viewer or their pain', s: 'They should recognise themselves before deciding to scroll.' },
+    { t: 'Promises one thing', s: 'Two promises in a hook means neither one lands.' },
+    { t: 'Readable at thumbnail size', s: 'Say it out loud and show it on screen. Both, always.' }
+  ];
+
+  /* ---------------- script builder ---------------- */
+  S.build = function (topic, frameworkKey, p, seed) {
+    const n = G.niche(p);
+    const f = S.framework(frameworkKey);
+    const r = G.rng((seed || 1) * 104729 + topic.length * 31);
+    const pain = n.audience.pains[Math.floor(r() * n.audience.pains.length)];
+    const desire = n.audience.desires[Math.floor(r() * n.audience.desires.length)];
+    const objection = n.audience.objections[Math.floor(r() * n.audience.objections.length)];
+    const kw = G.content.KEYWORDS[Math.floor(r() * G.content.KEYWORDS.length)];
+    const hooks = S.hooksFor(topic, p, seed);
+    const hook = hooks[Math.floor(r() * hooks.length)];
+
+    const beats = f.beats.map((b, i) => {
+      const range = S.range(b.sec);
+      const secs = Math.max(1, range.to - range.from);
+      return {
+        t: b.t, sec: b.sec, do: b.do.replace('{KW}', kw),
+        words: Math.max(6, Math.round(secs * S.WPS)),
+        line: S.beatLine(b, i, { topic: topic, pain: pain, desire: desire, objection: objection, kw: kw })
+      };
+    });
+
+    const totalSecs = S.range(f.beats[f.beats.length - 1].sec).to;
+
+    return {
+      topic: topic, framework: f, hook: hook.line, hookType: hook.type,
+      hookAlts: G.shuffle(hooks, r).slice(0, 4).filter((h) => h.line !== hook.line).slice(0, 3),
+      beats: beats, keyword: kw,
+      seconds: totalSecs,
+      words: Math.round(totalSecs * S.WPS),
+      cta: S.cta(f.key, kw),
+      onScreen: ['HOOK: ' + S.clip(topic, 28).toUpperCase()].concat(beats.slice(1, -1).map((b, i) => (i + 1) + ' · ' + b.t.toUpperCase())),
+      retention: G.content.RETENTION[Math.floor(r() * G.content.RETENTION.length)],
+      objection: objection, pain: pain, desire: desire
+    };
+  };
+
+  S.beatLine = function (b, i, ctx) {
+    const t = ctx.topic;
+    const map = {
+      'Problem': 'Say it plainly: "' + ctx.pain + '." Then stop talking for half a second.',
+      'The myth': 'Quote the belief exactly as people say it, about ' + t + '.',
+      'Promise': 'Open with the number and the payoff of ' + t + '.',
+      'The result': 'Show the finished result of ' + t + ' before a single word of explanation.',
+      'The moment': 'Start mid-scene. A date, a number, a room — no setup.',
+      'Before': 'Show the starting state honestly, no flattering angle.',
+      'The stance': 'State it flat: most advice about ' + t + ' is wrong.',
+      'The number': 'Lead with the outcome figure. That number is your hook.',
+      'CTA': ctx.kw ? 'One line, one action. If you are collecting leads, ask for "' + ctx.kw + '" in the comments.' : 'One line, one action.'
+    };
+    return map[b.t] || null;
+  };
+
+  S.cta = function (key, kw) {
+    return {
+      pas: 'Save this — you will need it the next time it happens.',
+      mythbust: 'Send this to whoever told you the opposite.',
+      listicle: 'Save it. A list watched once is a list forgotten.',
+      tutorial: 'Save this for when you actually sit down to do it.',
+      story: 'What is your version of this? Tell me below.',
+      bab: 'Comment "' + kw + '" and I will send you the exact path.',
+      contrarian: 'Tell me why I am wrong — I read every comment.',
+      casestudy: 'Comment "' + kw + '" if you want this run on yours.'
+    }[key] || 'Save this.';
+  };
+
+  /* ---------------- voice rules ---------------- */
+  S.VOICE = [
+    { t: 'Cut every word before the first idea', s: '"Hey guys, so today I wanted to talk about…" costs you 40% of viewers. Start at the idea.' },
+    { t: 'One sentence, one idea', s: 'If a sentence needs a comma to survive, split it.' },
+    { t: 'Second person, always', s: '"You" is the most persuasive word in any script. "People" is the weakest.' },
+    { t: 'Concrete nouns and real numbers', s: '"₹250 a day" lands. "Affordable" does not.' },
+    { t: 'Say it, then show it', s: 'Every claim on screen as text within one second of being spoken.' },
+    { t: 'No throat-clearing before the CTA', s: '"So yeah, that is pretty much it" — delete it. Cut straight to the ask.' },
+    { t: 'Read it out loud before filming', s: 'If you stumble reading it, the viewer stumbles hearing it. Rewrite that line.' }
+  ];
+
+  S.CUTS = [
+    ['just, really, actually, basically, literally', 'Filler. Delete on sight — none of them change the meaning.'],
+    ['I think, in my opinion, kind of, sort of', 'Hedging. It reads as low confidence and costs you authority.'],
+    ['very, super, extremely', 'Weak intensifiers. Use a stronger noun or verb instead.'],
+    ['So…, Alright…, Okay so…', 'Verbal throat-clearing. The edit should start after these.'],
+    ['obviously, of course, everyone knows', 'Makes the viewer who did not know feel stupid. They leave.'],
+    ['Long clauses with "which" and "that"', 'Split into two sentences. Spoken scripts have no room for subordinate clauses.']
+  ];
+
+  /* ---------------- DM and outreach scripts ----------------
+     Sales conversations are scripts too, so they live in the writing room. */
+  S.dmScripts = function (p) {
+    const n = G.niche(p);
+    const offer = G.engine.primaryOffer(p);
+    const kw = G.content.KEYWORDS[0];
+    const price = offer ? G.money(offer.price) : '';
+    return [
+      { t: 'Reply to a keyword comment', s: 'Hey! Here is the thing I mentioned 👇\n[link]\n\nQuick one so I do not send you random stuff — what are you working on with ' + n.short.toLowerCase() + ' right now?' },
+      { t: 'Qualify before you offer anything', s: 'Got it. Two quick questions and I will tell you straight whether I can help:\n\n1. How long have you been trying to fix this?\n2. What have you already tried that did not work?' },
+      { t: 'Diagnose, then offer', s: 'Based on that, here is what I would do:\n\n• ' + (n.audience.pains[0] || 'The main blocker') + ' is the real blocker, not effort.\n• The fastest fix is ' + (n.ideas[0] || 'the first step') + '.\n\nI do exactly this inside ' + (offer ? offer.name : 'my program') + (price ? ' — ' + price : '') + '. Want the details?' },
+      { t: 'Reply to a story reply', s: 'Ha, glad that one landed. Out of curiosity — is that something you are dealing with right now, or already sorted?' },
+      { t: 'The graceful no', s: 'No worries at all — timing matters more than motivation.\n\nWhen you are ready, reply "' + kw + '" and I will pick it up. In the meantime this covers step one: [link]' },
+      { t: 'Follow-up at day 14', s: 'Hey — following up once because you asked about ' + n.short.toLowerCase() + ' two weeks ago.\n\nDid you try the first step? If it worked, tell me what changed. If it did not, tell me where it broke and I will fix it for you free.' },
+      { t: 'Collab pitch to a bigger account', s: 'Hey [name] — I make ' + n.label.toLowerCase() + ' content for the same audience as you.\n\nI will write, film and edit a collab reel end to end, you just approve it and we post it as a collab. Zero work on your side. Want me to send a concept first?' }
+    ];
+  };
+})(window.IGOS);
+
+</script>
+<script>
+/* src/engine/ideas.js */
+/* ================= GROWTH OS · idea engine =================
+   Topic × angle × format, scored against a fixed rubric so the list
+   comes out ranked instead of random.
+============================================================ */
+(function (G) {
+  'use strict';
+  const I = G.ideas = {};
+
+  /* Rubric scores are 1–5 per criterion, /25 total.
+     search      — is anyone actually looking for this?
+     emotion     — does it make someone feel something enough to share?
+     specificity — can it be made concrete, or does it stay vague?
+     proof       — can you show evidence rather than assert?
+     offerFit    — does it walk toward something you sell? */
+  I.ANGLES = [
+    { key: 'beginner', name: 'Beginner walkthrough', tpl: '{t} — for complete beginners', fmt: 'carousel',
+      why: 'Most of any niche is beginners, and beginner queries are what people actually type into search.',
+      s: { search: 5, emotion: 2, specificity: 4, proof: 2, offerFit: 4 } },
+    { key: 'mistake', name: 'Mistakes', tpl: '3 mistakes people make: {t}', fmt: 'reel',
+      why: 'Loss aversion moves people harder than gain. Mistake posts get sent to friends.',
+      s: { search: 3, emotion: 5, specificity: 4, proof: 3, offerFit: 4 } },
+    { key: 'myth', name: 'Myth-bust', tpl: 'The biggest myth: {t}', fmt: 'reel',
+      why: 'Correcting a belief they hold today is the cheapest authority you will ever buy.',
+      s: { search: 3, emotion: 4, specificity: 4, proof: 3, offerFit: 5 } },
+    { key: 'compare', name: 'Comparison', tpl: '{t} — what works vs what does not', fmt: 'carousel',
+      why: 'Comparison content gets saved, argued about in comments, and ranks in search.',
+      s: { search: 5, emotion: 3, specificity: 5, proof: 4, offerFit: 3 } },
+    { key: 'story', name: 'Personal story', tpl: 'What this cost me before I got it right: {t}', fmt: 'reel',
+      why: 'Tips make you useful. Story makes you the person they buy from.',
+      s: { search: 1, emotion: 5, specificity: 3, proof: 5, offerFit: 5 } },
+    { key: 'list', name: 'Rapid list', tpl: '5 things nobody tells you: {t}', fmt: 'reel',
+      why: 'Highest completion rate of any format, which is what the algorithm reads first.',
+      s: { search: 3, emotion: 3, specificity: 3, proof: 2, offerFit: 2 } },
+    { key: 'tutorial', name: 'Step-by-step', tpl: '{t} — step by step', fmt: 'reel',
+      why: 'The saves engine. People bookmark what they intend to actually do.',
+      s: { search: 5, emotion: 2, specificity: 5, proof: 4, offerFit: 4 } },
+    { key: 'contrarian', name: 'Contrarian take', tpl: 'Unpopular opinion: {t}', fmt: 'reel',
+      why: 'Disagreement is distribution. Only take a position you can defend in the comments.',
+      s: { search: 2, emotion: 5, specificity: 3, proof: 3, offerFit: 3 } },
+    { key: 'data', name: 'Real numbers', tpl: '{t} — the numbers nobody shows you', fmt: 'carousel',
+      why: 'Specific numbers are the credibility currency. Screenshot-able content gets saved.',
+      s: { search: 4, emotion: 3, specificity: 5, proof: 5, offerFit: 4 } },
+    { key: 'qa', name: 'Answer a real question', tpl: 'The question I get every week: {t}', fmt: 'reel',
+      why: 'Demand is already proven — someone asked. This is the safest bet on the list.',
+      s: { search: 4, emotion: 3, specificity: 4, proof: 3, offerFit: 5 } },
+    { key: 'dayinlife', name: 'Day in the life', tpl: 'Day in the life: {t}', fmt: 'reel',
+      why: 'Broad reach and parasocial trust. Weak on its own, strong between value posts.',
+      s: { search: 2, emotion: 4, specificity: 2, proof: 4, offerFit: 2 } },
+    { key: 'transformation', name: 'Before / after', tpl: '{t} — 30 days, honest results', fmt: 'reel',
+      why: 'The highest-retention structure there is, and the one that sells without pitching.',
+      s: { search: 3, emotion: 5, specificity: 4, proof: 5, offerFit: 5 } }
+  ];
+
+  I.angle = (key) => I.ANGLES.find((a) => a.key === key) || I.ANGLES[0];
+
+  I.score = function (angle, p) {
+    const s = angle.s;
+    const total = s.search + s.emotion + s.specificity + s.proof + s.offerFit;
+    /* A revenue-first goal weights offer-fit; an audience-first goal weights sharing. */
+    const goal = (p && p.goal) || 'both';
+    const tilt = goal === 'money' ? s.offerFit : goal === 'followers' ? s.emotion : (s.offerFit + s.emotion) / 2;
+    return {
+      parts: s, total: total, weighted: total + tilt,
+      label: total >= 20 ? 'Priority' : total >= 16 ? 'Solid' : 'Test it'
+    };
+  };
+
+  I.generate = function (p, count, seed) {
+    const n = G.niche(p);
+    const r = G.rng((seed || G.store.seed || 1) + 613);
+    const topics = G.shuffle(n.ideas, r);
+    const angles = G.shuffle(I.ANGLES, r);
+    const out = [];
+    for (let i = 0; i < (count || 20); i++) {
+      const topic = topics[i % topics.length];
+      const angle = angles[(i + Math.floor(i / topics.length)) % angles.length];
+      const sc = I.score(angle, p);
+      out.push({
+        id: 'i' + i + '-' + angle.key,
+        title: angle.tpl.replace('{t}', topic),
+        topic: topic, angle: angle.name, angleKey: angle.key,
+        format: angle.fmt, why: angle.why, score: sc
+      });
+    }
+    return out.sort((a, b) => b.score.weighted - a.score.weighted);
+  };
+
+  /* Where ideas come from. Invented ideas underperform observed ones, always. */
+  I.SOURCES = [
+    ['Your own comments and DMs', 'Every question someone asks you is a post with proven demand. Screenshot it.', 'Daily'],
+    ['Competitor top posts', 'Sort 5 accounts by most-liked, all time. Rebuild the winners in your own voice.', '5 saves/day'],
+    ['Instagram + YouTube search', 'Type the first three words of a question and read the autocomplete. That is the search demand.', 'Weekly'],
+    ['Reddit and Quora threads', 'Long complaints are pain, written out by the audience for free.', 'Weekly'],
+    ['Your own last 30 days', 'Whatever you learned, fixed or wasted money on this month is content.', 'Weekly'],
+    ['Your best post, again', 'Any post above 2× average gets rebuilt in another format within 10 days.', 'Per winner']
+  ];
+
+  I.seasons = function (p) {
+    const n = G.niche(p);
+    const india = (p.market || 'IN') === 'IN';
+    const t = n.ideas;
+    const pick = (i) => t[i % t.length];
+    return [
+      { m: 'January', moment: 'New year resets', angle: 'Beginner content peaks. Publish your definitive "start here" post — ' + pick(0) + '.' },
+      { m: 'February', moment: 'Motivation collapse', angle: 'Everyone quit by week 3. "Why you fell off and how to restart" outperforms all month.' },
+      { m: 'March', moment: india ? 'Exam season + financial year end' : 'Spring reset', angle: india ? 'Time-pressure content: the fastest version of ' + pick(1) + '.' : 'Refresh and re-plan content.' },
+      { m: 'April', moment: india ? 'New financial year' : 'Tax season ends', angle: 'Fresh-start framing again — quarterly planning, new systems.' },
+      { m: 'May', moment: 'Summer / holidays', angle: 'Short-form, light, high-share content. Reach is up, attention is down.' },
+      { m: 'June', moment: 'Mid-year audit', angle: 'Progress checks and honest half-year reviews. Proof content lands hardest here.' },
+      { m: 'July', moment: 'Back to routine', angle: 'System and habit content: ' + pick(2) + '.' },
+      { m: 'August', moment: 'Peak attention', angle: 'Your best swing of the year. Launch here, not in December.' },
+      { m: 'September', moment: india ? 'Festive build-up' : 'Back to school/work', angle: 'Preparation content and gift/kit guides start now, not in October.' },
+      { m: 'October', moment: india ? 'Diwali season' : 'Q4 push', angle: 'Highest commercial intent of the year. Brand deals pay the most in this window.' },
+      { m: 'November', moment: india ? 'Post-festive reset' : 'Black Friday', angle: 'Your one discount moment of the year, if you use one at all.' },
+      { m: 'December', moment: 'Year in review', angle: 'Retrospectives, lessons, and next-year planning. Warm audience, low competition.' }
+    ];
+  };
+
+  /* A generated idea is only worth making if it survives these. */
+  I.FILTERS = [
+    { t: 'Would someone search for this?', s: 'If nobody would ever type it, it needs a stronger emotional angle to earn reach.' },
+    { t: 'Can you be specific in 30 seconds?', s: 'If the answer needs five minutes of caveats, it is a carousel, not a reel.' },
+    { t: 'Do you have proof?', s: 'A screenshot, a number, a result — yours or a client\'s. Without it, it is an opinion.' },
+    { t: 'Does it walk toward what you sell?', s: 'Not every post sells, but every post should point in the same direction.' },
+    { t: 'Have you already made it?', s: 'If a version exists and it worked, remaking it beats inventing something new.' }
+  ];
 })(window.IGOS);
 
 </script>
@@ -1976,344 +2351,410 @@ window.IGOS = window.IGOS || {};
 
 </script>
 <script>
-/* src/departments/sales.js */
-/* ================= DEPARTMENT · SALES ================= */
+/* src/departments/scriptwriter.js */
+/* ================= DEPARTMENT · SCRIPT WRITER ================= */
 (function (G) {
   'use strict';
   G.views = G.views || {};
-  const E = G.engine;
+  const S = G.scripts;
 
-  function scriptBlock(title, text) {
-    return `<div class="card tight">
-      <div class="split"><b>${G.esc(title)}</b>
-        <button class="btn sm right" data-copy="${G.esc(text)}">Copy</button></div>
-      <div class="script" style="margin-top:9px"><pre>${G.esc(text)}</pre></div>
-    </div>`;
+  function currentTopic(p) {
+    if (G.store.scriptTopic) return G.store.scriptTopic;
+    const cal = G.content.calendar(p, G.store.calendarStart, 7).filter((d) => d.format !== 'rest');
+    return cal.length ? cal[0].topic : G.niche(p).ideas[0];
   }
 
-  G.views.sales = {
-    title: 'Sales',
+  G.views.scriptwriter = {
+    title: 'Script Writer',
     render: function (p) {
       const n = G.niche(p);
-      const f = Number(p.followers) || 0;
-      const now = E.monthlyGain(p, f, 1);
-      const rev = E.revenue(p, now.reach);
-      const fn = rev.funnel;
-      const cap = E.capacity(p);
-      const rc = E.rateCard(p);
-      const re = E.reverseEngineer(p);
-      const offers = E.offers(p);
-      const primary = E.primaryOffer(p);
-      const kw = G.content.KEYWORDS[0];
+      const topic = currentTopic(p);
+      const fwKey = G.store.scriptFramework || 'pas';
+      const seed = (G.store.seed || 1) + topic.length;
+      const sc = S.build(topic, fwKey, p, seed);
+      const hooks = S.hooksFor(topic, p, seed);
+      const vault = G.store.scripts || [];
+      const cal = G.content.calendar(p, G.store.calendarStart, 28).filter((d) => d.format !== 'rest');
 
-      /* ---- offer ladder ---- */
-      const ladderRows = offers.map((o) => [
-        '<b>' + G.esc(o.name) + '</b><div class="muted">' + G.esc(o.promise) + '</div>',
-        '<span class="pill ' + (o.type === 'High ticket' ? 'hot' : o.type === 'Lead magnet' ? 'info' : 'acc') + '">' + G.esc(o.type) + '</span>',
-        o.price ? G.money(o.price) : 'Free',
-        o.unlocked ? '<span class="pill ok">Live now</span>' : '<span class="pill">at ' + G.fmt(o.gate) + '</span>',
-        G.esc(o.deliver)
+      const plain = [
+        'TOPIC: ' + sc.topic,
+        'FRAMEWORK: ' + sc.framework.name + '  ·  ' + sc.seconds + 's  ·  ~' + sc.words + ' words',
+        '',
+        'HOOK (' + sc.hookType + '): ' + sc.hook,
+        '',
+        sc.beats.map((b) => b.sec + '  ' + b.t.toUpperCase() + ' (~' + b.words + ' words)\n   ' + b.do + (b.line ? '\n   ' + b.line : '')).join('\n\n'),
+        '',
+        'CTA: ' + sc.cta,
+        'RETENTION: ' + sc.retention,
+        'ON-SCREEN: ' + sc.onScreen.join(' | ')
+      ].join('\n');
+
+      const beatRows = sc.beats.map((b) => [
+        '<b>' + G.esc(b.sec) + '</b>',
+        '<b>' + G.esc(b.t) + '</b>',
+        b.words,
+        G.esc(b.do) + (b.line ? '<div class="muted" style="margin-top:4px">' + G.esc(b.line) + '</div>' : '')
       ]);
 
-      /* ---- funnel ---- */
-      const steps = [
-        ['Monthly impressions', G.fmt(fn.reach), '100%', 'Content is the top of funnel. Nothing else works if this is small.'],
-        ['Unique people reached', G.fmt(fn.uniqueReach), G.pct(E.uniqueFactor(cap.totalMonth), 0), 'The same people see many of your posts. Only unique humans can become customers.'],
-        ['Profile visits', G.comma(fn.visits), G.pct(E.FUNNEL.profileVisitRate), 'Driven by your hook + your bio. A weak bio wastes every view.'],
-        ['Inbound leads (DM / link)', G.comma(fn.inboundLeads), G.pct(E.FUNNEL.leadRate) + ' of visits', 'Requires a CTA that asks for a keyword or a click.'],
-        ['Outbound conversations', G.comma(fn.outboundConvos), cap.dmsPerDay + ' DMs/day', 'The part nobody does. It is why small accounts still make money.'],
-        ['Total qualified conversations', '<b>' + G.comma(fn.totalLeads) + '</b>', '—', 'This is your real pipeline number. Track it weekly.'],
-        ['Sales', '<b>' + G.comma(rev.lines.reduce((s, l) => s + (l.kind === 'Sponsorship' ? 0 : l.units), 0)) + '</b>',
-          G.pct(E.closeRate(primary ? primary.price : 999)), 'Close rate falls as price rises — that is normal, not a failure.']
-      ].map((r) => [r[0], r[1], r[2], r[3]]);
+      const fwOptions = S.FRAMEWORKS.map((f) =>
+        `<option value="${f.key}" ${f.key === fwKey ? 'selected' : ''}>${G.esc(f.name)}</option>`).join('');
 
-      /* ---- revenue lines ---- */
-      const revRows = rev.lines.map((l) => [
-        '<b>' + G.esc(l.name) + '</b>' + (l.capped ? ' <span class="pill warn">delivery capped</span>' : ''),
-        G.esc(l.kind), G.money(l.price),
-        l.units < 1 ? l.units.toFixed(1) : G.comma(l.units), '<b>' + G.money(l.revenue) + '</b>'
+      const calOptions = ['<option value="">— pick a scheduled topic —</option>']
+        .concat(cal.slice(0, 24).map((d) =>
+          `<option value="${G.esc(d.topic)}">${G.prettyDate(d.date)} · ${G.esc(d.topic.slice(0, 46))}</option>`)).join('');
+
+      const hookRows = hooks.map((h) => [
+        '<span class="pill acc">' + G.esc(h.type) + '</span>',
+        '<b>' + G.esc(h.line) + '</b><div class="muted" style="margin-top:3px">' + G.esc(h.why) + '</div>',
+        '<button class="btn sm" data-copy="' + G.esc(h.line) + '">Copy</button>'
       ]);
-      revRows.push(['<b>Total</b>', '', '', '', '<b>' + G.money(rev.total) + '</b>']);
 
-      /* ---- reverse engineering ---- */
-      const reBox = G.card('Reverse-engineering ' + G.money(re.target) + '/month', `
-        <p class="muted" style="margin-bottom:12px">Working backwards from the target instead of forwards from wishful thinking.</p>
-        ${G.table(['What has to be true', '#Number', 'Note'], [
-        ['Primary offer', G.esc(re.offer.name), 'at ' + G.money(re.offer.price)],
-        ['Sales needed per month', '<b>' + Math.ceil(re.salesNeeded) + '</b>', 'not per quarter — per month'],
-        ['Close rate at this price', G.pct(re.close), 'assumes a real conversation, not a broadcast'],
-        ['Qualified conversations needed', '<b>' + Math.ceil(re.leadsNeeded) + '</b>', 'the single number to manage'],
-        ['…of which outbound DMs give you', Math.round(re.outbound), cap.dmsPerDay + ' DMs/day at ' + G.pct(E.FUNNEL.dmReplyRate, 0) + ' reply rate'],
-        ['…so inbound must produce', Math.ceil(re.inboundNeeded), 'from content'],
-        ['Profile visits needed', G.comma(re.visitsNeeded), ''],
-        ['Monthly reach needed', '<b>' + G.fmt(re.reachNeeded) + '</b>', 'you currently generate ' + G.fmt(re.currentReach)],
-        ['Posts needed per month', '<b>' + Math.ceil(re.postsNeeded) + '</b>', 'you currently ship ' + re.postsNow]
-      ])}
-        <div class="callout ${re.tone === 'ok' ? 'ok' : re.tone === 'hot' ? 'warn' : ''}"><b>Sales verdict:</b> ${G.esc(re.verdict)}
-        ${re.tone !== 'ok' ? ' At your current reach, the price that would clear the target is <b>' + G.money(re.priceForCurrentReach) + '</b> per sale.' : ''}</div>`);
+      const fwCards = S.FRAMEWORKS.map((f) => `
+        <div class="card tight">
+          <div class="split"><b>${G.esc(f.name)}</b>
+            <button class="right btn sm ${f.key === fwKey ? 'primary' : ''}" data-fw="${f.key}">${f.key === fwKey ? 'In use' : 'Use'}</button></div>
+          <div class="muted" style="margin:5px 0 9px">${G.esc(f.best)}</div>
+          ${G.bullets(f.beats.map((b) => '<b>' + G.esc(b.t) + '</b> <span class="muted">' + G.esc(b.sec) + '</span> — ' + G.esc(b.do)))}
+        </div>`).join('');
 
-      /* ---- DM scripts ---- */
-      const you = p.handle || 'me';
-      const s1 = 'Hey! Here\'s the ' + (primary ? primary.name : 'guide') + ' I mentioned 👇\n[link]\n\nQuick one so I don\'t send you random stuff — what are you working on with ' +
-        n.short.toLowerCase() + ' right now?';
-      const s2 = 'Got it. Two quick questions and I\'ll tell you straight whether I can help:\n\n1. How long have you been trying to fix this?\n2. What have you already tried that didn\'t work?';
-      const s3 = 'Based on that, here\'s what I\'d do:\n\n• ' + (n.audience.pains[0] || 'The main blocker') + ' is the real blocker, not effort.\n• The fastest fix is ' + (n.ideas[0] || 'the first step in the plan') + '.\n\nI do exactly this inside ' +
-        (primary ? primary.name : 'my program') + ' — ' + G.money(primary ? primary.price : 999) + ', ' + (primary ? primary.deliver : '') +
-        '. Want me to send the details?';
-      const s4 = 'No worries at all — timing matters more than motivation.\n\nI\'ll leave it here: when you\'re ready, reply "' + kw + '" and I\'ll pick it back up. In the meantime this post covers the first step: [link]';
-      const s5 = 'Hey — following up once because you asked about ' + n.short.toLowerCase() + ' two weeks ago.\n\nDid you get a chance to try the first step? If it worked, tell me what changed. If it didn\'t, tell me where it broke and I\'ll fix it for you free.';
+      const dm = S.dmScripts(p).map((d) => `
+        <div class="card tight">
+          <div class="split"><b>${G.esc(d.t)}</b>
+            <button class="btn sm right" data-copy="${G.esc(d.s)}">Copy</button></div>
+          <div class="script" style="margin-top:9px"><pre>${G.esc(d.s)}</pre></div>
+        </div>`).join('');
 
-      const brandPitch = 'Subject: ' + (p.handle || 'Creator') + ' × [Brand] — ' + n.short + ' collaboration\n\n' +
-        'Hi [Name],\n\n' +
-        'I run ' + (p.handle || '[handle]') + ', a ' + n.label.toLowerCase() + ' page with ' + G.comma(f) + ' followers — ' +
-        n.audience.age + ', mostly ' + n.audience.who + '.\n\n' +
-        'Recent performance:\n' +
-        '• Average reel reach: ' + G.fmt(E.reachPerPost(p, f, 1).reel) + '\n' +
-        '• Engagement rate: ' + G.pct(E.tier(f).er, 1) + ' (category benchmark ~' + G.pct(E.tier(f).er * 0.7, 1) + ')\n' +
-        '• Audience: ' + (p.market === 'IN' ? 'India-first' : p.market === 'US' ? 'US/Western' : 'Global') + '\n\n' +
-        'I\'d like to propose one integrated reel + 3 stories with a tracked link — ' + G.money(rc.bundle) + ', including 30-day usage rights. ' +
-        'I only take products I would recommend without payment, so if there\'s a fit I\'ll send a concept first.\n\n' +
-        'Deck and rate card attached. Happy to run a paid test before any longer commitment.\n\n' +
-        'Thanks,\n[Your name]';
-
-      /* ---- rate card ---- */
-      const rcRows = [
-        ['Story frame (1)', G.money(rc.story)],
-        ['Static post / carousel', G.money(rc.staticPost)],
-        ['Reel (integrated)', G.money(rc.reel)],
-        ['Bundle: 1 reel + 3 stories + usage', '<b>' + G.money(rc.bundle) + '</b>'],
-        ['Monthly ambassador retainer', G.money(rc.monthlyRetainer)]
-      ].map((r) => [r[0], r[1]]);
-
-      const tactics = [
-        '<b>Never pitch in the first message.</b> Ask a question. A reply rate above 40% only happens when the first DM costs nothing to answer.',
-        '<b>Sell in stories, not in the feed.</b> Feed posts buy reach; stories convert the people reach already delivered.',
-        '<b>Use one keyword per launch.</b> "Comment ' + kw + '" concentrates comment volume and creates a clean DM list.',
-        '<b>Price on outcome, not hours.</b> ' + G.esc(n.audience.desires[0] || 'The result') + ' is what they are buying; the deliverable is just the packaging.',
-        '<b>Follow up three times.</b> Most sales happen on message 2 and 3. One follow-up is not persistence, it is politeness.',
-        '<b>Take payment in the DM.</b> Every extra click costs conversions — a payment link beats a landing page at your size.',
-        '<b>Raise the price after every 10 sales.</b> If nobody flinches, you are underpriced and subsidising your own business.'
-      ];
+      const vaultHtml = vault.length ? G.table(['Saved', 'Topic', 'Framework', ''],
+        vault.slice().reverse().map((v) => [
+          G.esc(v.date), '<b>' + G.esc(v.topic) + '</b>', G.esc(v.framework),
+          '<button class="btn sm" data-load-script="' + G.esc(v.id) + '">Open</button> ' +
+          '<button class="btn sm" data-del-script="' + G.esc(v.id) + '">Remove</button>'
+        ])) : '<p class="muted">Nothing saved yet. Write one above and hit Save — a script you keep is a script you can rewrite next month instead of starting cold.</p>';
 
       return `
         <div class="page-head">
-          <div class="eyebrow">Department 02 · Sales</div>
-          <h1>Monetisation & funnel</h1>
-          <p class="lead">Followers are not revenue. Revenue is conversations × close rate × price. This department manages those three numbers.</p>
+          <div class="eyebrow">Department 02 · Script Writer</div>
+          <h1>The writing room</h1>
+          <p class="lead">A topic is not a video. This department turns one line into a filmable script with a
+          structure, a timing map and a hook that earns the first three seconds.</p>
         </div>
         <div class="kpis">
-          ${G.kpi('Pipeline / month', G.comma(fn.totalLeads), 'qualified conversations')}
-          ${G.kpi('Revenue run-rate', G.money(rev.total), 'at current reach', rev.total >= (p.revTarget || 0) ? 'ok' : 'warn')}
-          ${G.kpi('Primary offer', primary ? G.money(primary.price) : '—', primary ? primary.name : 'nothing unlocked yet')}
-          ${G.kpi('Brand deal value', rc.dealsPerMonth ? G.money(rc.bundle) : 'Locked', rc.dealsPerMonth ? rc.dealsPerMonth + ' deal(s)/month realistic' : 'unlocks at ' + G.fmt(8000) + ' followers')}
+          ${G.kpi('Target length', sc.seconds + 's', '~' + sc.words + ' spoken words')}
+          ${G.kpi('Framework', G.esc(sc.framework.short), sc.framework.name + ' · ' + S.FRAMEWORKS.length + ' available')}
+          ${G.kpi('Hooks generated', hooks.length, 'for this topic, ' + S.HOOK_TYPES.length + ' types')}
+          ${G.kpi('Script vault', vault.length, vault.length ? 'saved and reusable' : 'save your winners', vault.length ? 'ok' : '')}
         </div>
 
-        <div class="section"><h2>Offer ladder</h2>
-          <p class="muted">Sell the cheapest thing that solves a real problem first. Ascend people; do not open with the expensive offer.</p>
-          ${G.card('Products & services', G.table(['Offer', 'Type', '#Price', 'Status', 'What they get'], ladderRows))}
+        <div class="card">
+          <div class="card-head"><h3>Workbench</h3>
+            <div class="split">
+              <button id="scRandom" class="btn sm">Surprise me</button>
+              <button id="scSave" class="btn sm">Save to vault</button>
+              <button class="btn sm primary" data-copy="${G.esc(plain)}">Copy script</button>
+            </div>
+          </div>
+          <div class="grid" style="grid-template-columns:2fr 1fr;gap:12px">
+            <label class="field" style="margin:0"><span>Topic</span>
+              <input id="scTopic" type="text" value="${G.esc(topic)}" placeholder="what is this video about?"></label>
+            <label class="field" style="margin:0"><span>Framework</span>
+              <select id="scFw">${fwOptions}</select></label>
+          </div>
+          <label class="field" style="margin:12px 0 0"><span>Or pull a topic straight from the calendar</span>
+            <select id="scCal">${calOptions}</select></label>
         </div>
 
-        <div class="section"><h2>The funnel, with your numbers</h2>
-          ${G.card('Instagram → DM → offer', G.table(['Stage', '#Monthly', '#Rate', 'What controls it'], steps))}
-          ${G.card('Revenue by line', G.table(['Line', 'Kind', '#Price', '#Units/mo', '#Revenue/mo'], revRows) +
-        (rev.presale ? '<div class="callout warn"><b>Nothing is unlocked yet at your size — so this is modelled as a pre-sale.</b> ' +
-          'You do not need an audience to make the first sale; you need ' + Math.ceil(rev.lines[0].units) +
-          ' people who trust you. Sell it in DMs before you build it, then build it for the people who paid.</div>' : '') +
-        (rev.lines.some((l) => l.capped) ? '<div class="callout"><b>Delivery capped:</b> the funnel would produce more buyers than one person can serve ' +
-          '(' + E.DELIVERY_CAP.high + ' high-ticket and ' + E.DELIVERY_CAP.mid + ' mid-ticket clients a month). ' +
-          'That is the signal to raise the price or productise the delivery — not to chase more reach.</div>' : ''))}
-        </div>
-
-        <div class="section"><h2>Target maths</h2>${reBox}</div>
-
-        <div class="section"><h2>DM sales sequence</h2>
-          <p class="muted">Copy these. Change the wording to sound like you — keep the structure.</p>
-          <div class="grid g2">
-            ${scriptBlock('1 · Deliver + open the loop', s1)}
-            ${scriptBlock('2 · Qualify (never skip)', s2)}
-            ${scriptBlock('3 · Diagnose then offer', s3)}
-            ${scriptBlock('4 · The graceful no', s4)}
-            ${scriptBlock('5 · Follow-up at day 14', s5)}
-            ${scriptBlock('6 · Brand partnership pitch', brandPitch)}
+        <div class="grid g2">
+          <div class="card">
+            <div class="card-head"><h3>Script</h3><span class="pill info">${G.esc(sc.framework.name)}</span></div>
+            <div class="script">
+              <div class="sl">Hook · ${G.esc(sc.hookType)}</div>
+              <div class="hookline">${G.esc(sc.hook)}</div>
+              <div class="sl">Call to action</div><div>${G.esc(sc.cta)}</div>
+              <div class="sl">Retention</div><div>${G.esc(sc.retention)}</div>
+              <div class="sl">Objection to kill on camera</div><div>&ldquo;${G.esc(sc.objection)}&rdquo;</div>
+            </div>
+            <h4 style="margin-top:14px">On-screen text</h4>${G.bullets(sc.onScreen.map(G.esc))}
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Beat sheet</h3><span class="pill">${sc.seconds}s total</span></div>
+            ${G.table(['Timing', 'Beat', '#Words', 'What to say'], beatRows)}
+            <div class="callout"><b>Word budget:</b> ~${sc.words} words at a natural pace (${S.WPS} words/second).
+            Write to that number. Every word over it is a word you will cut in the edit anyway.</div>
           </div>
         </div>
 
-        <div class="section"><h2>Brand deal rate card</h2>
-          ${G.card('Your rates at ' + G.comma(f) + ' followers',
-        G.table(['Deliverable', '#Rate'], rcRows) +
-        `<div class="callout"><b>How this is calculated:</b> ${G.money(rc.perK)} per 1,000 followers per reel —
-          the ${G.esc(n.short)} category multiplier (${n.cpm}×) applied to a
-          ${p.market === 'IN' ? 'India' : p.market === 'US' ? 'US' : 'global'} baseline. Quote the bundle, never the single story.
-          Always charge separately for usage rights and exclusivity; that is where brands quietly take the most value.</div>
-          ${rc.dealsPerMonth === 0 ? '<div class="callout warn"><b>Not yet.</b> Below 8K followers, pitch product seeding and affiliate commission instead of a flat fee — then use those case studies to charge cash later.</div>' : ''}`)}
+        <div class="section"><h2>Hook laboratory</h2>
+          <p class="muted">Same topic, ten doors in. Film the top two and let the numbers pick the winner.</p>
+          ${G.card('Ten hooks for &ldquo;' + G.esc(topic) + '&rdquo;', G.table(['Type', 'Hook', ''], hookRows),
+        '<button class="btn sm" data-copy="' + G.esc(hooks.map((h) => h.line).join('\n')) + '">Copy all</button>')}
+          ${G.card('A hook ships only if all five are true',
+          G.bullets(S.HOOK_TESTS.map((t) => '<b>' + G.esc(t.t) + '</b> — ' + G.esc(t.s))))}
         </div>
 
-        <div class="section"><h2>Conversion tactics</h2>${G.card('What actually moves the number', G.ol(tactics))}</div>`;
+        <div class="section"><h2>Frameworks</h2>
+          <p class="muted">Pick the structure before you write a word. Improvised scripts is why most reels sag at second 12.</p>
+          <div class="grid g2">${fwCards}</div>
+        </div>
+
+        <div class="section"><h2>Voice & editing pass</h2>
+          <div class="grid g2">
+            ${G.card('How this account sounds', G.bullets(S.VOICE.map((v) => '<b>' + G.esc(v.t) + '</b> — ' + G.esc(v.s))))}
+            ${G.card('Delete on sight', G.table(['Cut this', 'Why'], S.CUTS.map((c) => ['<b>' + G.esc(c[0]) + '</b>', G.esc(c[1])])) +
+        '<div class="callout warn"><b>The 30% rule:</b> write the script, then cut a third of the words without losing a single idea. ' +
+        'The cut version always outperforms the original.</div>')}
+          </div>
+        </div>
+
+        <div class="section"><h2>DM & outreach scripts</h2>
+          <p class="muted">Conversations are scripts too. These are the ones that turn reach into replies.</p>
+          <div class="grid g2">${dm}</div>
+        </div>
+
+        <div class="section"><h2>Script vault</h2>${G.card('Saved scripts', vaultHtml)}</div>`;
+    },
+
+    mount: function () {
+      const p = G.store.profile;
+      const apply = function () {
+        G.store.scriptTopic = (G.$('#scTopic').value || '').trim() || null;
+        G.store.scriptFramework = G.$('#scFw').value;
+        G.save(); G.render();
+      };
+      const t = G.$('#scTopic'); if (t) t.onchange = apply;
+      const fw = G.$('#scFw'); if (fw) fw.onchange = apply;
+      const cal = G.$('#scCal');
+      if (cal) cal.onchange = function () {
+        if (!cal.value) return;
+        G.store.scriptTopic = cal.value;
+        G.save(); G.render();
+      };
+      G.$$('[data-fw]').forEach((b) => {
+        b.onclick = function () {
+          G.store.scriptFramework = b.getAttribute('data-fw');
+          G.save(); G.render(); window.scrollTo(0, 0);
+        };
+      });
+      const rnd = G.$('#scRandom');
+      if (rnd) rnd.onclick = function () {
+        const ideas = G.niche(p).ideas;
+        G.store.scriptTopic = ideas[Math.floor(Math.random() * ideas.length)];
+        G.store.seed = Math.floor(Math.random() * 1e8);
+        G.save(); G.render();
+      };
+      const save = G.$('#scSave');
+      if (save) save.onclick = function () {
+        const topic = (G.$('#scTopic').value || '').trim();
+        if (!topic) { G.toast('Write a topic first'); return; }
+        const fwKey = G.$('#scFw').value;
+        G.store.scripts.push({
+          id: 's' + Date.now(), date: G.today(), topic: topic,
+          frameworkKey: fwKey, framework: G.scripts.framework(fwKey).name
+        });
+        G.save(); G.render(); G.toast('Saved to the vault');
+      };
+      G.$$('[data-load-script]').forEach((b) => {
+        b.onclick = function () {
+          const s = (G.store.scripts || []).find((x) => x.id === b.getAttribute('data-load-script'));
+          if (!s) return;
+          G.store.scriptTopic = s.topic;
+          G.store.scriptFramework = s.frameworkKey;
+          G.save(); G.render(); window.scrollTo(0, 0);
+        };
+      });
+      G.$$('[data-del-script]').forEach((b) => {
+        b.onclick = function () {
+          G.store.scripts = (G.store.scripts || []).filter((x) => x.id !== b.getAttribute('data-del-script'));
+          G.save(); G.render();
+        };
+      });
     }
   };
 })(window.IGOS);
 
 </script>
 <script>
-/* src/departments/finance.js */
-/* ================= DEPARTMENT · FINANCE ================= */
+/* src/departments/ideagen.js */
+/* ================= DEPARTMENT · IDEA GENERATOR ================= */
 (function (G) {
   'use strict';
   G.views = G.views || {};
-  const E = G.engine;
+  const I = G.ideas;
 
-  const TOOLS = [
-    { name: 'Canva Pro', use: 'Carousels, covers, templates', cost: 500, need: 'essential' },
-    { name: 'CapCut / VN', use: 'Reel editing + auto captions', cost: 0, need: 'essential' },
-    { name: 'Metricool / Later (free tier)', use: 'Scheduling + analytics', cost: 0, need: 'essential' },
-    { name: 'Notion / Google Sheets', use: 'Content database & pipeline', cost: 0, need: 'essential' },
-    { name: 'ManyChat', use: 'Comment-to-DM automation', cost: 1300, need: 'at 2K followers' },
-    { name: 'Email tool (MailerLite free)', use: 'Own your audience off-platform', cost: 0, need: 'at 1K followers' },
-    { name: 'Payment link (Razorpay / Stripe)', use: 'Take money inside the DM', cost: 0, need: 'before first sale' },
-    { name: 'Freelance editor', use: 'Buys back ~40% of production time', cost: 12000, need: 'at 3K followers' },
-    { name: 'Stock/B-roll subscription', use: 'Fills gaps you cannot film', cost: 800, need: 'optional' },
-    { name: 'Paid boosting budget', use: 'Amplify already-proven posts only', cost: 3000, need: 'when a post beats 3× average' }
-  ];
-
-  G.views.finance = {
-    title: 'Finance',
+  G.views.ideagen = {
+    title: 'Idea Generator',
     render: function (p) {
-      const f = Number(p.followers) || 0;
-      const now = E.monthlyGain(p, f, 1);
-      const rev = E.revenue(p, now.reach);
-      const alloc = E.budget(p);
-      const led = E.ledgerSummary();
-      const budget = Number(p.budget) || 0;
-      const t = E.tier(f);
+      const n = G.niche(p);
+      const count = G.store.ideaCount || 20;
+      const seed = G.store.ideaSeed || G.store.seed || 1;
+      const list = I.generate(p, count, seed);
+      const vault = G.store.ideaVault || [];
+      const cap = G.engine.capacity(p);
+      const avg = list.reduce((s, i) => s + i.score.total, 0) / Math.max(1, list.length);
+      const weeksCovered = (vault.length / Math.max(1, cap.totalWeek)).toFixed(1);
 
-      const allocRows = alloc.map((a) => [
-        '<b>' + G.esc(a.label) + '</b>', G.pct(a.pct, 0), G.money(a.amount),
-        {
-          tools: 'Never more than one paid tool per job. Free tiers first, always.',
-          promotion: budget > 0 ? 'Only boost posts already above 2× your average reach. Boosting a weak post buys a bigger audience for a bad idea.' : 'Zero until organic works.',
-          outsourcing: 'Editing first, design second, writing last.',
-          learning: 'Study accounts that are 10× your size in your niche — not generic creator advice.',
-          buffer: 'Do not spend it. It exists so a bad month does not stop production.'
-        }[a.key]
+      const cards = list.map((i) => {
+        const saved = vault.some((v) => v.title === i.title);
+        const pct = (i.score.total / 25) * 100;
+        return `<div class="card tight">
+          <div class="split" style="margin-bottom:6px">
+            <span class="pill ${i.score.total >= 20 ? 'ok' : i.score.total >= 16 ? 'acc' : ''}">${G.esc(i.score.label)}</span>
+            <span class="pill">${G.esc(i.format)}</span>
+            <span class="right muted" style="font-size:11px">${i.score.total}/25</span>
+          </div>
+          <div style="font-weight:600;line-height:1.35;margin-bottom:5px">${G.esc(i.title)}</div>
+          <div class="bar"><i style="width:${pct}%"></i></div>
+          <div class="muted" style="margin:8px 0 10px;font-size:12px">${G.esc(i.angle)} · ${G.esc(i.why)}</div>
+          <div class="split" style="gap:6px">
+            <button class="btn sm ${saved ? '' : 'primary'}" data-save-idea="${G.esc(i.id)}" ${saved ? 'disabled' : ''}>${saved ? 'In vault' : 'Save'}</button>
+            <button class="btn sm" data-script-idea="${G.esc(i.topic)}">Write script</button>
+            <button class="btn sm" data-pipe-idea="${G.esc(i.title)}" data-pipe-format="${G.esc(i.format)}">→ Pipeline</button>
+          </div>
+        </div>`;
+      }).join('');
+
+      /* angle multiplier for one topic */
+      const focus = G.store.angleTopic || n.ideas[0];
+      const angleRows = I.ANGLES.map((a) => {
+        const sc = I.score(a, p);
+        return [
+          '<b>' + G.esc(a.name) + '</b>',
+          G.esc(a.tpl.replace('{t}', focus)),
+          '<span class="pill ' + (sc.total >= 20 ? 'ok' : sc.total >= 16 ? 'acc' : '') + '">' + sc.total + '/25</span>',
+          G.esc(a.fmt),
+          '<button class="btn sm" data-script-idea="' + G.esc(focus) + '">Script</button>'
+        ];
+      });
+
+      const topicOptions = n.ideas.map((t) =>
+        `<option value="${G.esc(t)}" ${t === focus ? 'selected' : ''}>${G.esc(t)}</option>`).join('');
+
+      const vaultHtml = vault.length ? G.table(['Idea', 'Angle', '#Score', 'Format', ''],
+        vault.slice().reverse().map((v) => [
+          '<b>' + G.esc(v.title) + '</b>', G.esc(v.angle), v.score + '/25', G.esc(v.format),
+          '<button class="btn sm" data-script-idea="' + G.esc(v.topic) + '">Script</button> ' +
+          '<button class="btn sm" data-pipe-idea="' + G.esc(v.title) + '" data-pipe-format="' + G.esc(v.format) + '">→ Pipeline</button> ' +
+          '<button class="btn sm" data-del-idea="' + G.esc(v.id) + '">Remove</button>'
+        ])) : '<p class="muted">Empty. Save the ideas you would actually make — the vault is what stops you opening the app with nothing to say.</p>';
+
+      const seasons = I.seasons(p).map((s) => [
+        '<b>' + G.esc(s.m) + '</b>', G.esc(s.moment), G.esc(s.angle)
       ]);
-
-      const toolRows = TOOLS.map((tl) => [
-        '<b>' + G.esc(tl.name) + '</b>', G.esc(tl.use),
-        tl.cost ? G.money(tl.cost) + '/mo' : '<span class="pill ok">Free</span>',
-        tl.need === 'essential' ? '<span class="pill acc">Get today</span>' : '<span class="pill">' + G.esc(tl.need) + '</span>'
-      ]);
-      const essentialCost = TOOLS.filter((tl) => tl.need === 'essential').reduce((s, tl) => s + tl.cost, 0);
-
-      /* unit economics */
-      const primary = E.primaryOffer(p) || { name: 'core offer', price: 999 };
-      const leads = rev.funnel.totalLeads;
-      const cac = leads > 0 ? budget / Math.max(1, leads * E.closeRate(primary.price)) : 0;
-      const ltv = primary.price * 1.6;  // 60% of buyers take a second thing over 12 months
-      const econRows = [
-        ['Monthly cash cost', G.money(budget), 'Tools + outsourcing + promotion'],
-        ['Cost per qualified conversation', G.money(leads > 0 ? budget / leads : 0), 'Content is the cheapest lead source you will ever have'],
-        ['Customer acquisition cost (CAC)', G.money(cac), 'What one buyer costs you in cash'],
-        ['Average order value', G.money(primary.price), primary.name],
-        ['Estimated 12-month LTV', G.money(ltv), 'Assumes 60% of buyers purchase once more'],
-        ['LTV : CAC', cac > 0 ? (ltv / cac).toFixed(1) + ' : 1' : '∞', 'Below 3:1 means you are buying revenue, not building a business'],
-        ['Gross margin on digital', '~92%', 'Digital products have no COGS — this is why they come before physical']
-      ].map((r) => [r[0], '<b>' + r[1] + '</b>', r[2]]);
-
-      const breakeven = budget > 0 ? Math.ceil(budget / Math.max(1, primary.price)) : 0;
-
-      /* ledger UI */
-      const ledRows = (G.store.ledger || []).slice().reverse().map((r) => [
-        G.esc(r.date),
-        r.type === 'revenue' ? '<span class="pill ok">In</span>' : '<span class="pill hot">Out</span>',
-        G.esc(r.label),
-        (r.type === 'revenue' ? '+' : '−') + G.money(Number(r.amount), { raw: true }),
-        '<button class="btn sm" data-del-ledger="' + G.esc(r.id) + '">Remove</button>'
-      ]);
-
-      const ledgerCard = G.card('ROI ledger — log every rupee', `
-        <div class="form-row">
-          <label class="field" style="margin:0"><span>Date</span><input id="lgDate" type="date" value="${G.today()}"></label>
-          <label class="field" style="margin:0"><span>Type</span><select id="lgType"><option value="expense">Expense</option><option value="revenue">Revenue</option></select></label>
-          <label class="field" style="margin:0"><span>What for</span><input id="lgLabel" type="text" placeholder="e.g. editor · ebook sale"></label>
-          <label class="field" style="margin:0"><span>Amount (${G.curSym()})</span><input id="lgAmt" type="number" min="0" value="0"></label>
-          <button id="lgAdd" class="btn primary" style="margin-bottom:14px">Add entry</button>
-        </div>
-        ${ledRows.length ? G.table(['Date', 'Type', 'Detail', '#Amount', ''], ledRows)
-          : '<p class="muted">Nothing logged yet. Log the first tool subscription and the first sale — a business that is not measured is a hobby with expenses.</p>'}`);
-
-      const rules = [
-        '<b>Revenue before tools.</b> Every subscription must be paid for by money the account already made. The free tier is enough until it demonstrably is not.',
-        '<b>Never boost an unproven post.</b> Paid promotion multiplies whatever is already there, including failure.',
-        '<b>Reinvest 40% of profit until Stage 3.</b> Editor first — it is the only purchase that increases output capacity.',
-        '<b>Keep a 2-month runway of fixed costs.</b> Cancelling an editor mid-quarter costs more than the savings.',
-        '<b>Price increases beat cost cuts.</b> A 20% price rise moves profit far more than any tool you can cancel.',
-        '<b>Track revenue per post.</b> ' + G.money(rev.total / Math.max(1, E.capacity(p).totalMonth)) + ' per post right now — that is the number to grow, not follower count.'
-      ];
 
       return `
         <div class="page-head">
-          <div class="eyebrow">Department 03 · Finance</div>
-          <h1>Capital allocation & unit economics</h1>
-          <p class="lead">${budget > 0
-          ? 'You have ' + G.money(budget) + '/month of capital. Finance decides where it goes and proves whether it came back.'
-          : 'You have no cash budget, so your capital is time. That is workable — but every hour still has to earn its return.'}</p>
+          <div class="eyebrow">Department 03 · Idea Generator</div>
+          <h1>The idea machine</h1>
+          <p class="lead">Running out of ideas is a systems failure, not a creativity failure. This department combines
+          your niche's proven topics with twelve angles, scores each combination, and ranks them so you make the good ones first.</p>
         </div>
         <div class="kpis">
-          ${G.kpi('Monthly budget', G.money(budget), t.label)}
-          ${G.kpi('Projected revenue', G.money(rev.total), 'from the funnel model', rev.total > budget ? 'ok' : 'warn')}
-          ${G.kpi('Projected profit', G.money(rev.total - budget), rev.total > budget ? 'positive' : 'investment phase', rev.total - budget >= 0 ? 'ok' : 'hot')}
-          ${G.kpi('Logged ROI', led.exp > 0 ? led.roi.toFixed(1) + '×' : '—', 'actual, from your ledger', led.roi >= 2 ? 'ok' : led.exp > 0 ? 'warn' : '')}
-          ${G.kpi('Break-even', breakeven ? breakeven + ' sales' : 'Already', 'to cover monthly spend')}
+          ${G.kpi('Ideas on screen', list.length, 'ranked by score')}
+          ${G.kpi('Average score', avg.toFixed(1) + '/25', 'across this batch')}
+          ${G.kpi('In the vault', vault.length, vault.length ? weeksCovered + ' weeks of output' : 'save the ones you will make', vault.length >= cap.totalWeek * 2 ? 'ok' : 'warn')}
+          ${G.kpi('Combinations available', (n.ideas.length * I.ANGLES.length), n.ideas.length + ' topics × ' + I.ANGLES.length + ' angles')}
         </div>
 
-        <div class="section"><h2>Budget allocation</h2>
-          <p class="muted">Allocation changes with stage. At ${t.label.toLowerCase()} the money belongs where it is below.</p>
-          ${G.card('This month', G.table(['Line', '#Share', '#Amount', 'Rule'], allocRows) +
-        (budget < essentialCost ? `<div class="callout warn"><b>Under-capitalised:</b> the essential stack costs about ${G.money(essentialCost)}/month.
-          Below that, use only free tiers — do not cut posting frequency to pay for software.</div>` : ''))}
+        <div class="card">
+          <div class="card-head"><h3>Generate</h3>
+            <div class="split">
+              <select id="igCount" style="width:auto">
+                ${[12, 20, 40].map((c) => `<option value="${c}" ${c === count ? 'selected' : ''}>${c} ideas</option>`).join('')}
+              </select>
+              <button id="igGen" class="btn primary sm">New batch</button>
+            </div>
+          </div>
+          <p class="muted">Every idea is scored out of 25 on search demand, emotion, specificity, provability and how well it
+          walks toward what you sell — weighted for your <b>${G.esc(p.goal)}</b> goal.</p>
         </div>
 
-        <div class="section"><h2>Tool stack</h2>
-          ${G.card('Buy in this order', G.table(['Tool', 'Job', '#Cost', 'When'], toolRows) +
-          `<div class="callout"><b>Essential stack: ${G.money(essentialCost)}/month.</b> Everything else is optional until
-          revenue justifies it. Tool collecting is the most common way creators feel productive while going backwards.</div>`)}
+        <div class="grid g3" style="margin-bottom:20px">${cards}</div>
+
+        <div class="section"><h2>Angle multiplier</h2>
+          <p class="muted">One topic is twelve posts. This is how a small idea bank lasts a year.</p>
+          ${G.card('Every angle on one topic', `
+            <label class="field"><span>Topic</span><select id="igTopic">${topicOptions}</select></label>
+            ${G.table(['Angle', 'The post', '#Score', 'Format', ''], angleRows)}`)}
         </div>
 
-        <div class="section"><h2>Unit economics</h2>
-          ${G.card('What one customer is worth', G.table(['Metric', '#Value', 'Why it matters'], econRows))}
+        <div class="section"><h2>Idea vault</h2>
+          ${G.card('Saved ideas', vaultHtml, vault.length ? '<button id="igClear" class="btn sm">Clear vault</button>' : '')}
         </div>
 
-        <div class="section"><h2>Actual money (not projections)</h2>${ledgerCard}
-          ${led.exp || led.rev ? `<div class="kpis" style="margin-top:14px">
-            ${G.kpi('Logged revenue', G.money(led.rev, { raw: true }), 'all time', 'ok')}
-            ${G.kpi('Logged expenses', G.money(led.exp, { raw: true }), 'all time')}
-            ${G.kpi('Profit', G.money(led.profit, { raw: true }), G.pct(led.margin, 0) + ' margin', led.profit >= 0 ? 'ok' : 'hot')}
-            ${G.kpi('ROI', led.exp > 0 ? led.roi.toFixed(2) + '×' : '—', 'revenue ÷ spend', led.roi >= 2 ? 'ok' : 'warn')}
-          </div>` : ''}
+        <div class="section"><h2>Where ideas come from</h2>
+          <p class="muted">Observed ideas beat invented ones every time. These are the six inputs — work them on a quota.</p>
+          ${G.card('Input sources', G.table(['Source', 'How to work it', 'Quota'],
+        I.SOURCES.map((s) => ['<b>' + G.esc(s[0]) + '</b>', G.esc(s[1]), '<span class="pill acc">' + G.esc(s[2]) + '</span>'])))}
         </div>
 
-        <div class="section"><h2>Financial policy</h2>${G.card('Standing rules', G.ol(rules))}</div>`;
+        <div class="section"><h2>Before you make it</h2>
+          ${G.card('Five filters', G.bullets(I.FILTERS.map((f) => '<b>' + G.esc(f.t) + '</b> — ' + G.esc(f.s))))}
+        </div>
+
+        <div class="section"><h2>Seasonal demand</h2>
+          <p class="muted">Plan against the calendar the audience already lives in.</p>
+          ${G.card('Twelve months of ' + G.esc(n.short), G.table(['Month', 'Moment', 'What to make'], seasons))}
+        </div>`;
     },
 
     mount: function () {
-      const add = G.$('#lgAdd');
-      if (add) {
-        add.onclick = function () {
-          const amt = Math.round(G.toBase(Number(G.$('#lgAmt').value) || 0));
-          const label = G.$('#lgLabel').value.trim();
-          if (!amt || !label) { G.toast('Add a label and an amount'); return; }
-          G.store.ledger.push({
-            id: 'l' + Date.now(), date: G.$('#lgDate').value || G.today(),
-            type: G.$('#lgType').value, label: label, amount: amt
-          });
-          G.save(); G.render(); G.toast('Logged');
-        };
-      }
-      G.$$('[data-del-ledger]').forEach((b) => {
+      const p = G.store.profile;
+      const gen = G.$('#igGen');
+      if (gen) gen.onclick = function () {
+        G.store.ideaSeed = Math.floor(Math.random() * 1e8);
+        G.store.ideaCount = Number(G.$('#igCount').value) || 20;
+        G.save(); G.render(); G.toast('New batch generated');
+      };
+      const cnt = G.$('#igCount');
+      if (cnt) cnt.onchange = function () {
+        G.store.ideaCount = Number(cnt.value) || 20;
+        G.save(); G.render();
+      };
+      const tp = G.$('#igTopic');
+      if (tp) tp.onchange = function () {
+        G.store.angleTopic = tp.value;
+        G.save(); G.render();
+      };
+
+      G.$$('[data-save-idea]').forEach((b) => {
         b.onclick = function () {
-          const id = b.getAttribute('data-del-ledger');
-          G.store.ledger = G.store.ledger.filter((r) => r.id !== id);
+          const list = I.generate(p, G.store.ideaCount || 20, G.store.ideaSeed || G.store.seed || 1);
+          const idea = list.find((x) => x.id === b.getAttribute('data-save-idea'));
+          if (!idea) return;
+          G.store.ideaVault.push({
+            id: 'v' + Date.now() + Math.random().toString(36).slice(2, 5),
+            title: idea.title, topic: idea.topic, angle: idea.angle,
+            format: idea.format, score: idea.score.total, date: G.today()
+          });
+          G.save(); G.render(); G.toast('Saved to the vault');
+        };
+      });
+      G.$$('[data-del-idea]').forEach((b) => {
+        b.onclick = function () {
+          G.store.ideaVault = (G.store.ideaVault || []).filter((v) => v.id !== b.getAttribute('data-del-idea'));
           G.save(); G.render();
+        };
+      });
+      const clr = G.$('#igClear');
+      if (clr) clr.onclick = function () {
+        if (!confirm('Clear every saved idea?')) return;
+        G.store.ideaVault = []; G.save(); G.render();
+      };
+      G.$$('[data-script-idea]').forEach((b) => {
+        b.onclick = function () {
+          G.store.scriptTopic = b.getAttribute('data-script-idea');
+          G.save(); G.go('scriptwriter');
+        };
+      });
+      G.$$('[data-pipe-idea]').forEach((b) => {
+        b.onclick = function () {
+          const title = b.getAttribute('data-pipe-idea');
+          if ((G.store.pipeline || []).some((c) => c.title === title)) { G.toast('Already in the pipeline'); return; }
+          G.store.pipeline.push({
+            id: 'c' + Date.now() + Math.random().toString(36).slice(2, 5),
+            title: title, stage: 'Idea', format: b.getAttribute('data-pipe-format')
+          });
+          G.save(); G.toast('Added to the Operations pipeline');
+          G.render();
         };
       });
     }
@@ -2853,20 +3294,22 @@ window.IGOS = window.IGOS || {};
     });
 
     if (block) {
-      block.tasks.forEach((t, i) => out.push({ id: 'sp' + i, dept: 'Operations', t: t, s: block.block + ' block · ~' + block.hrs + 'h' }));
+      /* Scripting work belongs to the writing room, everything else to Operations. */
+      const dept = /script|research/i.test(block.block) ? 'Script Writer' : 'Operations';
+      block.tasks.forEach((t, i) => out.push({ id: 'sp' + i, dept: dept, t: t, s: block.block + ' block · ~' + block.hrs + 'h' }));
     }
 
     out.push({ id: 'eng', dept: 'Marketing', t: cap.commentsPerDay + ' comments on bigger accounts in your niche', s: 'Posts under 2 hours old, accounts 3–10× your size. Add something useful, never "🔥".' });
-    out.push({ id: 'dm', dept: 'Sales', t: cap.dmsPerDay + ' DMs — question first, never a pitch', s: 'Target people who commented on those posts. Your only goal is a reply.' });
+    out.push({ id: 'dm', dept: 'Marketing', t: cap.dmsPerDay + ' DMs — question first, never a pitch', s: 'Target people who commented on those posts. Your only goal is a reply.' });
     out.push({ id: 'story', dept: 'Marketing', t: 'Post ' + cap.storiesPerDay + ' stories, at least one with a poll or question sticker', s: 'Story replies are the warmest leads you will get all day.' });
-    out.push({ id: 'idea', dept: 'Content', t: 'Add 3 ideas to the vault from questions people asked you today', s: 'Real questions outperform invented topics every time.' });
+    out.push({ id: 'idea', dept: 'Idea Generator', t: 'Add 3 ideas to the vault from questions people asked you today', s: 'Real questions outperform invented topics every time. Save them before you forget them.' });
 
     if (dayName === 'Sunday') {
-      out.push({ id: 'log', dept: 'Finance', t: 'Log this week\'s followers, reach and revenue in the Board Report', s: 'Unmeasured weeks turn into unmeasured quarters.' });
+      out.push({ id: 'log', dept: 'CEO', t: 'Log this week\'s followers, reach and revenue in the Board Report', s: 'Unmeasured weeks turn into unmeasured quarters.' });
       out.push({ id: 'review', dept: 'CEO', t: 'Pick one thing to repeat and one thing to kill', s: 'Look at the top and bottom post of the week. Decide, do not deliberate.' });
     }
     if (dayName === 'Friday' && primary) {
-      out.push({ id: 'offer', dept: 'Sales', t: 'Pitch ' + primary.name + ' in stories', s: G.money(primary.price) + ' · ' + primary.deliver + '. Sell on Friday and Sunday — that is when intent peaks.' });
+      out.push({ id: 'offer', dept: 'CEO', t: 'Pitch ' + primary.name + ' in stories', s: G.money(primary.price) + ' · ' + primary.deliver + '. Sell on Friday and Sunday — that is when intent peaks.' });
     }
     return out;
   }
@@ -3293,7 +3736,6 @@ window.IGOS = window.IGOS || {};
     const re = E.reverseEngineer(p);
     const proj = E.project(p, 6, 'base');
     const cal = G.content.calendar(p, G.store.calendarStart, 28);
-    const rc = E.rateCard(p);
     const L = [];
 
     L.push('# Instagram Business Plan — ' + G.nicheName(p));
@@ -3326,24 +3768,32 @@ window.IGOS = window.IGOS || {};
     L.push('\n**Weekly sprint**\n');
     G.content.sprint(p).forEach((s) => L.push('- **' + s.day + ' (' + s.hrs + 'h · ' + s.block + ')**: ' + s.tasks.join('; ')));
 
-    L.push('\n## 3. Sales Department\n');
-    L.push('| Offer | Type | Price | Status |');
-    L.push('|---|---|---|---|');
-    E.offers(p).forEach((o) => L.push('| ' + o.name + ' | ' + o.type + ' | ' + (o.price ? G.money(o.price) : 'Free') + ' | ' +
-      (o.unlocked ? 'live' : 'unlocks at ' + G.fmt(o.gate)) + ' |'));
-    L.push('\n**Funnel (monthly):** ' + G.fmt(rev.funnel.reach) + ' reach → ' + G.comma(rev.funnel.visits) +
-      ' profile visits → ' + G.comma(rev.funnel.totalLeads) + ' conversations → ' + G.money(rev.total) + ' revenue.');
-    L.push('\n**To hit ' + G.money(re.target) + '/month:** ' + Math.ceil(re.salesNeeded) + ' sales of ' + re.offer.name +
-      ' → ' + Math.ceil(re.leadsNeeded) + ' qualified conversations → ' + G.fmt(re.reachNeeded) + ' monthly reach.');
-    L.push('\n**Brand deal rate card:** story ' + G.money(rc.story) + ' · reel ' + G.money(rc.reel) +
-      ' · bundle ' + G.money(rc.bundle) + ' · retainer ' + G.money(rc.monthlyRetainer) + '/mo.');
+    L.push('\n## 3. Script Writer Department\n');
+    L.push('| Framework | Use it for |');
+    L.push('|---|---|');
+    G.scripts.FRAMEWORKS.forEach((f) => L.push('| ' + f.name + ' | ' + f.best + ' |'));
+    const demo = G.scripts.build(cal.filter((d) => d.format !== 'rest')[0].topic, 'pas', p, G.store.seed);
+    L.push('\n**Worked example — ' + demo.topic + '** (' + demo.seconds + 's, ~' + demo.words + ' words)\n');
+    L.push('- **Hook (' + demo.hookType + '):** ' + demo.hook);
+    demo.beats.forEach((b) => L.push('- **' + b.sec + ' · ' + b.t + '** (~' + b.words + ' words) — ' + b.do));
+    L.push('- **CTA:** ' + demo.cta);
+    L.push('\n**Voice rules**\n');
+    G.scripts.VOICE.forEach((v) => L.push('- **' + v.t + '** — ' + v.s));
+    L.push('\n**DM scripts**\n');
+    G.scripts.dmScripts(p).forEach((d) => L.push('\n*' + d.t + '*\n\n> ' + d.s.replace(/\n/g, '\n> ')));
 
-    L.push('\n## 4. Finance Department\n');
-    L.push('| Line | Share | Amount |');
+    L.push('\n## 4. Idea Generator Department\n');
+    L.push('Scored out of 25 on search demand, emotion, specificity, provability and offer fit.\n');
+    L.push('| Idea | Angle | Format | Score |');
+    L.push('|---|---|---|---|');
+    G.ideas.generate(p, 15, G.store.ideaSeed || G.store.seed).forEach((i) =>
+      L.push('| ' + i.title + ' | ' + i.angle + ' | ' + i.format + ' | ' + i.score.total + '/25 |'));
+    L.push('\n**Idea sources and quotas**\n');
+    G.ideas.SOURCES.forEach((s) => L.push('- **' + s[0] + '** (' + s[2] + ') — ' + s[1]));
+    L.push('\n**Seasonal demand**\n');
+    L.push('| Month | Moment | What to make |');
     L.push('|---|---|---|');
-    E.budget(p).forEach((b) => L.push('| ' + b.label + ' | ' + G.pct(b.pct, 0) + ' | ' + G.money(b.amount) + ' |'));
-    L.push('\n- Projected revenue: ' + G.money(rev.total) + '/mo · Budget: ' + G.money(p.budget) + '/mo · Projected profit: ' + G.money(rev.total - p.budget));
-    L.push('- Revenue per post: ' + G.money(rev.total / Math.max(1, cap.totalMonth)));
+    G.ideas.seasons(p).forEach((s) => L.push('| ' + s.m + ' | ' + s.moment + ' | ' + s.angle + ' |'));
 
     L.push('\n## 5. Operations Department\n');
     L.push('Pipeline: Idea → Script → Shoot/Design → Edit → Caption & SEO → Scheduled → Published.');
@@ -3390,7 +3840,7 @@ window.IGOS = window.IGOS || {};
     G.$$('.nav-item').forEach((b) => { b.onclick = function () { G.go(b.dataset.view); }; });
     G.$('#btnExport').onclick = exportPlan;
     G.$('#btnReset').onclick = function () {
-      if (!confirm('Reset the company? Your profile, pipeline, ledger and logs will be deleted.')) return;
+      if (!confirm('Reset the company? Your profile, pipeline, scripts, ideas and logs will be deleted.')) return;
       G.wipe();
       location.reload();
     };

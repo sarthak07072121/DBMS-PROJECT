@@ -163,7 +163,6 @@
     const re = E.reverseEngineer(p);
     const proj = E.project(p, 6, 'base');
     const cal = G.content.calendar(p, G.store.calendarStart, 28);
-    const rc = E.rateCard(p);
     const L = [];
 
     L.push('# Instagram Business Plan — ' + G.nicheName(p));
@@ -196,24 +195,32 @@
     L.push('\n**Weekly sprint**\n');
     G.content.sprint(p).forEach((s) => L.push('- **' + s.day + ' (' + s.hrs + 'h · ' + s.block + ')**: ' + s.tasks.join('; ')));
 
-    L.push('\n## 3. Sales Department\n');
-    L.push('| Offer | Type | Price | Status |');
-    L.push('|---|---|---|---|');
-    E.offers(p).forEach((o) => L.push('| ' + o.name + ' | ' + o.type + ' | ' + (o.price ? G.money(o.price) : 'Free') + ' | ' +
-      (o.unlocked ? 'live' : 'unlocks at ' + G.fmt(o.gate)) + ' |'));
-    L.push('\n**Funnel (monthly):** ' + G.fmt(rev.funnel.reach) + ' reach → ' + G.comma(rev.funnel.visits) +
-      ' profile visits → ' + G.comma(rev.funnel.totalLeads) + ' conversations → ' + G.money(rev.total) + ' revenue.');
-    L.push('\n**To hit ' + G.money(re.target) + '/month:** ' + Math.ceil(re.salesNeeded) + ' sales of ' + re.offer.name +
-      ' → ' + Math.ceil(re.leadsNeeded) + ' qualified conversations → ' + G.fmt(re.reachNeeded) + ' monthly reach.');
-    L.push('\n**Brand deal rate card:** story ' + G.money(rc.story) + ' · reel ' + G.money(rc.reel) +
-      ' · bundle ' + G.money(rc.bundle) + ' · retainer ' + G.money(rc.monthlyRetainer) + '/mo.');
+    L.push('\n## 3. Script Writer Department\n');
+    L.push('| Framework | Use it for |');
+    L.push('|---|---|');
+    G.scripts.FRAMEWORKS.forEach((f) => L.push('| ' + f.name + ' | ' + f.best + ' |'));
+    const demo = G.scripts.build(cal.filter((d) => d.format !== 'rest')[0].topic, 'pas', p, G.store.seed);
+    L.push('\n**Worked example — ' + demo.topic + '** (' + demo.seconds + 's, ~' + demo.words + ' words)\n');
+    L.push('- **Hook (' + demo.hookType + '):** ' + demo.hook);
+    demo.beats.forEach((b) => L.push('- **' + b.sec + ' · ' + b.t + '** (~' + b.words + ' words) — ' + b.do));
+    L.push('- **CTA:** ' + demo.cta);
+    L.push('\n**Voice rules**\n');
+    G.scripts.VOICE.forEach((v) => L.push('- **' + v.t + '** — ' + v.s));
+    L.push('\n**DM scripts**\n');
+    G.scripts.dmScripts(p).forEach((d) => L.push('\n*' + d.t + '*\n\n> ' + d.s.replace(/\n/g, '\n> ')));
 
-    L.push('\n## 4. Finance Department\n');
-    L.push('| Line | Share | Amount |');
+    L.push('\n## 4. Idea Generator Department\n');
+    L.push('Scored out of 25 on search demand, emotion, specificity, provability and offer fit.\n');
+    L.push('| Idea | Angle | Format | Score |');
+    L.push('|---|---|---|---|');
+    G.ideas.generate(p, 15, G.store.ideaSeed || G.store.seed).forEach((i) =>
+      L.push('| ' + i.title + ' | ' + i.angle + ' | ' + i.format + ' | ' + i.score.total + '/25 |'));
+    L.push('\n**Idea sources and quotas**\n');
+    G.ideas.SOURCES.forEach((s) => L.push('- **' + s[0] + '** (' + s[2] + ') — ' + s[1]));
+    L.push('\n**Seasonal demand**\n');
+    L.push('| Month | Moment | What to make |');
     L.push('|---|---|---|');
-    E.budget(p).forEach((b) => L.push('| ' + b.label + ' | ' + G.pct(b.pct, 0) + ' | ' + G.money(b.amount) + ' |'));
-    L.push('\n- Projected revenue: ' + G.money(rev.total) + '/mo · Budget: ' + G.money(p.budget) + '/mo · Projected profit: ' + G.money(rev.total - p.budget));
-    L.push('- Revenue per post: ' + G.money(rev.total / Math.max(1, cap.totalMonth)));
+    G.ideas.seasons(p).forEach((s) => L.push('| ' + s.m + ' | ' + s.moment + ' | ' + s.angle + ' |'));
 
     L.push('\n## 5. Operations Department\n');
     L.push('Pipeline: Idea → Script → Shoot/Design → Edit → Caption & SEO → Scheduled → Published.');
@@ -260,7 +267,7 @@
     G.$$('.nav-item').forEach((b) => { b.onclick = function () { G.go(b.dataset.view); }; });
     G.$('#btnExport').onclick = exportPlan;
     G.$('#btnReset').onclick = function () {
-      if (!confirm('Reset the company? Your profile, pipeline, ledger and logs will be deleted.')) return;
+      if (!confirm('Reset the company? Your profile, pipeline, scripts, ideas and logs will be deleted.')) return;
       G.wipe();
       location.reload();
     };

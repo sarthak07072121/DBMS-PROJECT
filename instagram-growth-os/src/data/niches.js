@@ -111,7 +111,7 @@
       audience: {
         age: '20–38', who: 'students, developers, marketers, freelancers, founders',
         interests: ['AI tools', 'automation', 'productivity software', 'coding', 'gadgets'],
-        pains: ['drowning in repetitive work', 'tool overwhelm — 40 tabs, no system', 'scared AI will replace their job', 'cannot code but need software', 'wasting money on subscriptions'],
+        pains: ['drowning in repetitive work', 'tool overwhelm — 40 tabs, no system', 'scared AI will make the job obsolete', 'cannot code but need software', 'wasting money on subscriptions'],
         desires: ['do 8 hours of work in 1', 'build things without a team', 'be the AI person at work', 'freelance income from tools'],
         objections: ['this needs coding', 'the free version is useless', 'I will forget how to use it']
       },

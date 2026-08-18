@@ -10,7 +10,7 @@
   /* ---------------- hooks ---------------- */
   C.HOOKS = [
     'Nobody tells beginners this: {t}.',
-    'Here is {t} — in 45 seconds.',
+    '{T} — in 45 seconds. Everything you need.',
     'Save this: {t}.',
     'I wish someone showed me {t} on day one.',
     '{T} — and why most people get it completely wrong.',
@@ -19,12 +19,12 @@
     'I tested {t}. Here is what actually happened.',
     'If you fix one thing this week, make it {t}.',
     'This is {t}, explained the way it should have been.',
-    'Stop scrolling if {pain}.',
-    'You do not have a talent problem. You have a {t} problem.',
+    'Stop scrolling if this is you: {pain}.',
+    'You do not have a talent problem. You have a method problem: {t}.',
     'Everyone gets {t} wrong. Including me, for two years.',
-    'The 1% who get {desire} do {t}. The rest do not.',
+    'Everyone wants {desire}. Almost nobody does this: {t}.',
     '{T}. Watch this before you try again.',
-    'This is the {t} breakdown I get asked for every single week.'
+    'The breakdown I get asked for every single week: {t}.'
   ];
 
   C.RETENTION = [
@@ -145,11 +145,12 @@
   };
 
   C.fillHook = function (tpl, topic, n) {
-    const pain = (n.audience.pains[0] || 'you keep starting over').toLowerCase();
-    const desire = (n.audience.desires[0] || 'results').toLowerCase();
-    const T = topic.charAt(0).toUpperCase() + topic.slice(1);
-    return tpl.replace(/\{T\}/g, T).replace(/\{t\}/g, topic)
-      .replace(/\{pain\}/g, pain).replace(/\{desire\}/g, desire);
+    const pain = n.audience.pains[0] || 'you keep starting over';
+    const desire = n.audience.desires[0] || 'results';
+    const up = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+    return tpl.replace(/\{T\}/g, up(topic)).replace(/\{t\}/g, topic)
+      .replace(/\{Pain\}/g, up(pain)).replace(/\{pain\}/g, pain)
+      .replace(/\{Desire\}/g, up(desire)).replace(/\{desire\}/g, desire);
   };
 
   C.pickCta = function (pillar, format, p) {
@@ -234,11 +235,11 @@
       : '';
     const seo = C.seoLine(p, day);
     return day.hook + '\n\n' +
-      'Most people get stuck here: ' + ctx.pain.toLowerCase() + '. That is not a discipline problem — it is a method problem.\n\n' +
+      'Most people get stuck here: ' + ctx.pain + '. That is not a discipline problem — it is a method problem.\n\n' +
       '1. ' + C.stepLine(day, 1) + '\n' +
       '2. ' + C.stepLine(day, 2) + '\n' +
       '3. ' + C.stepLine(day, 3) + '\n\n' +
-      'Do this for 14 days and the difference shows up where it matters: ' + ctx.desire.toLowerCase() + '.\n\n' +
+      'Do this for 14 days and the difference shows up where it matters: ' + ctx.desire + '.\n\n' +
       ctx.ctaLine + kwLine + '\n\n' + seo;
   };
 
@@ -315,7 +316,7 @@
       { day: 'Tuesday', block: 'Batch production', hrs: Math.max(1, Math.round(h * 0.25)), tasks: ['Film all ' + cap.perWeek.reel + ' reels back to back, one outfit change max', 'Record voiceovers in one take pass', 'Dump footage into the editing folder'] },
       { day: 'Wednesday', block: 'Edit & design', hrs: Math.max(1, Math.round(h * 0.25)), tasks: ['Edit reels (captions, cuts, covers)', 'Design ' + cap.perWeek.carousel + ' carousels from the template file', 'Write all captions in one pass'] },
       { day: 'Thursday', block: 'Schedule & optimise', hrs: Math.max(1, Math.round(h * 0.1)), tasks: ['Schedule the full week', 'Write alt text + keywords for search', 'Prepare story frames for each post day'] },
-      { day: 'Friday', block: 'Sales & outreach', hrs: Math.max(1, Math.round(h * 0.1)), tasks: [cap.dmsPerDay + ' targeted DMs to warm leads', 'Follow up every unanswered conversation from last week', 'Pitch 2 brands or 2 collab partners'] },
+      { day: 'Friday', block: 'Outreach & conversations', hrs: Math.max(1, Math.round(h * 0.1)), tasks: [cap.dmsPerDay + ' targeted DMs to warm leads', 'Follow up every unanswered conversation from last week', 'Pitch 2 brands or 2 collab partners'] },
       { day: 'Saturday', block: 'Engagement sprint', hrs: Math.max(1, Math.round(h * 0.1)), tasks: [cap.commentsPerDay + ' comments on bigger accounts in your niche', 'Reply to every comment on your own posts', 'Engage with 20 accounts that follow competitors'] },
       { day: 'Sunday', block: 'Board review', hrs: Math.max(1, Math.round(h * 0.05)), tasks: ['Log followers, reach, revenue in the Board Report', 'Identify the top and bottom post of the week', 'Decide one thing to repeat and one to kill'] }
     ];

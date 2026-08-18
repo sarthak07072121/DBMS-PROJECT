@@ -35,8 +35,8 @@ generic model that fills your niche name into every template.
 |---|---|
 | **CEO — Strategy** | Positioning, target audience (pains → desires → objections), content-pillar allocation, 90-day OKRs, three growth scenarios, on-track verdict, risk register |
 | **HR** | Role definitions with hire triggers and costs, a time audit of your week, the 7-day production sprint, operating rules |
-| **Sales** | Offer ladder with follower gates, the funnel with your actual numbers, reverse-engineered revenue target, 6 copy-paste DM scripts, brand-deal rate card |
-| **Finance** | Stage-based budget allocation, tool stack with costs, unit economics (CAC / LTV / break-even), and a working ROI ledger |
+| **Script Writer** | A workbench that turns any topic into a filmable script: 8 frameworks with timing maps and per-beat word budgets, a 10-hook laboratory, voice rules, a delete-on-sight list, DM and collab scripts, and a script vault |
+| **Idea Generator** | Your niche's topics × 12 angles, each scored /25 on search demand, emotion, specificity, provability and offer fit, then ranked. Save to a vault, push straight into the Operations pipeline, or send to the Script Writer |
 | **Operations** | A kanban pipeline (Idea → Script → Shoot → Edit → Caption → Schedule → Publish) that seeds itself from the calendar, stage SOPs, automation list |
 | **Marketing** | 28-day content calendar — clickable, regenerable, CSV-exportable — plus growth strategy, engagement quotas, hashtag sets, performance benchmarks |
 | **Content Studio** | For any calendar slot: hook + alternates, 5-beat script, on-screen text, cover, B-roll, full caption, hashtags, story sequence, carousel slide-by-slide |
@@ -44,6 +44,10 @@ generic model that fills your niche name into every template.
 | **Board Report** | Log weekly followers/reach/revenue, see actual vs projected on a chart, get a diagnosis |
 
 **Export plan** downloads the whole thing as Markdown.
+
+The departments are wired to each other: an idea can be pushed into the Operations
+pipeline or opened in the Script Writer in one click, and the Script Writer pulls
+topics straight off the Marketing calendar.
 
 ## The model
 
@@ -61,6 +65,9 @@ All of it lives in `src/engine/growth.js`. The numbers that matter:
 - **Delivery caps** — a solo operator can serve 8 high-ticket and 25 mid-ticket clients a month.
   Past that the model tells you to raise prices, not to chase more reach.
 
+Revenue and offer maths still runs; it surfaces on the CEO screen as the run-rate, the
+target verdict and the offer the thesis is built around.
+
 Three scenarios are shown throughout: conservative (×0.6), base (×1.0), aggressive (×1.75).
 **Base assumes you actually ship what the calendar says.**
 
@@ -76,8 +83,10 @@ instagram-growth-os/
 └── src/
     ├── util.js                 # helpers, store, localStorage
     ├── data/niches.js          # 8 niches + generic fallback — the content brain
-    ├── engine/growth.js        # stages, capacity, reach, funnel, revenue, budget
-    ├── engine/content.js       # hooks, calendar, scripts, captions, sprint
+    ├── engine/growth.js        # stages, capacity, reach, funnel, revenue
+    ├── engine/content.js       # hooks, calendar, captions, weekly sprint
+    ├── engine/scripts.js       # frameworks, hook laboratory, script builder
+    ├── engine/ideas.js         # angles, scoring rubric, seasonal demand
     ├── departments/*.js        # one file per department view
     └── app.js                  # onboarding, router, Markdown export
 ```

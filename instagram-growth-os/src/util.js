@@ -94,9 +94,15 @@ window.IGOS = window.IGOS || {};
     view: 'ceo',
     tasks: {},        // { 'YYYY-MM-DD': { taskId: true } }
     pipeline: [],     // kanban cards
-    ledger: [],       // money in / out
     logs: [],         // weekly metric snapshots
     calendarStart: null,
+    scripts: [],      // script vault
+    scriptTopic: null,
+    scriptFramework: 'pas',
+    ideaVault: [],    // saved ideas
+    ideaSeed: null,
+    ideaCount: 20,
+    angleTopic: null,
     notes: {}
   };
 

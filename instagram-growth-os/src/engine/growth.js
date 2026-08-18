@@ -275,35 +275,6 @@
     };
   };
 
-  /* ---------------- finance ---------------- */
-  E.budget = function (p) {
-    const b = Math.max(0, Number(p.budget) || 0);
-    const t = E.tier(Number(p.followers) || 0);
-    let split;
-    if (t.key === 'foundation') split = { tools: 0.55, promotion: 0.15, outsourcing: 0.10, learning: 0.15, buffer: 0.05 };
-    else if (t.key === 'traction') split = { tools: 0.35, promotion: 0.25, outsourcing: 0.25, learning: 0.10, buffer: 0.05 };
-    else if (t.key === 'authority') split = { tools: 0.20, promotion: 0.30, outsourcing: 0.40, learning: 0.05, buffer: 0.05 };
-    else split = { tools: 0.15, promotion: 0.30, outsourcing: 0.45, learning: 0.05, buffer: 0.05 };
-
-    const labels = {
-      tools: 'Tools & software',
-      promotion: 'Paid promotion (boost proven posts only)',
-      outsourcing: 'Outsourcing (editor / designer / VA)',
-      learning: 'Learning & research',
-      buffer: 'Buffer'
-    };
-    return Object.keys(split).map((k) => ({
-      key: k, label: labels[k], pct: split[k], amount: b * split[k]
-    }));
-  };
-
-  E.ledgerSummary = function () {
-    const L = G.store.ledger || [];
-    const rev = L.filter((r) => r.type === 'revenue').reduce((s, r) => s + Number(r.amount || 0), 0);
-    const exp = L.filter((r) => r.type === 'expense').reduce((s, r) => s + Number(r.amount || 0), 0);
-    return { rev, exp, profit: rev - exp, roi: exp > 0 ? rev / exp : 0, margin: rev > 0 ? (rev - exp) / rev : 0 };
-  };
-
   /* ---------------- goal tracking ---------------- */
   E.goalStatus = function (p) {
     const proj = E.project(p, 6, 'base');
