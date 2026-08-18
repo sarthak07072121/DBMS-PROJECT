@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Growth OS — Instagram Business Operating System</title>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<!-- ============ ONBOARDING ============ -->
+<div id="onboarding" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="logo">GROWTH<span>OS</span></div>
+      <p class="muted">Before the company can operate, the CEO needs three answers.</p>
+    </div>
+    <div class="wizard">
+      <div class="wz-step" data-step="1">
+        <h2>1 · What is your niche?</h2>
+        <p class="muted">Pick the closest preset, or type your own. Everything downstream — offers, hooks, pricing, calendar — is derived from this.</p>
+        <div id="nicheGrid" class="niche-grid"></div>
+        <label class="field">
+          <span>Or describe it in your own words</span>
+          <input id="customNiche" type="text" placeholder="e.g. budget travel for Indian college students">
+        </label>
+        <label class="field">
+          <span>Instagram handle <em>(optional)</em></span>
+          <input id="handle" type="text" placeholder="@yourhandle">
+        </label>
+      </div>
+
+      <div class="wz-step hidden" data-step="2">
+        <h2>2 · What is your current follower count?</h2>
+        <p class="muted">Be honest. The whole plan changes at 1K, 10K and 50K — those are the real business milestones.</p>
+        <label class="field">
+          <span>Followers today</span>
+          <input id="followers" type="number" min="0" value="0" placeholder="0">
+        </label>
+        <div id="tierPreview" class="tier-preview"></div>
+        <label class="field">
+          <span>Currency for every financial number in this app</span>
+          <select id="currency"><option value="INR">₹ INR (Indian rupee)</option><option value="USD">$ USD</option></select>
+        </label>
+        <label class="field">
+          <span>Current monthly revenue from this account (<b class="cur-sym">₹</b>)</span>
+          <input id="currentRev" type="number" min="0" value="0">
+        </label>
+      </div>
+
+      <div class="wz-step hidden" data-step="3">
+        <h2>3 · What is the goal — followers or money?</h2>
+        <div class="choice-row" id="goalRow">
+          <button class="choice" data-goal="followers"><b>Followers</b><span>Reach & authority first. Monetize later.</span></button>
+          <button class="choice" data-goal="money"><b>Money</b><span>Revenue now, even with a small account.</span></button>
+          <button class="choice selected" data-goal="both"><b>Both</b><span>Audience compounding + cash flow in parallel.</span></button>
+        </div>
+        <div class="grid-2">
+          <label class="field"><span>Follower target in 6 months</span><input id="followerTarget" type="number" min="0" value="10000"></label>
+          <label class="field"><span>Monthly revenue target (<b class="cur-sym">₹</b>)</span><input id="revTarget" type="number" min="0" value="50000"></label>
+        </div>
+      </div>
+
+      <div class="wz-step hidden" data-step="4">
+        <h2>4 · Company capacity</h2>
+        <p class="muted">A business plan that ignores your real capacity is a fantasy. This sizes the whole operation.</p>
+        <div class="grid-2">
+          <label class="field"><span>Hours per week you can put in</span><input id="hours" type="number" min="1" max="80" value="10"></label>
+          <label class="field"><span>Monthly budget for tools/ads/help (<b class="cur-sym">₹</b>)</span><input id="budget" type="number" min="0" value="3000"></label>
+        </div>
+        <div class="grid-2">
+          <label class="field"><span>Will you show your face on camera?</span>
+            <select id="face"><option value="yes">Yes — personal brand</option><option value="no">No — faceless / B-roll & voiceover</option></select>
+          </label>
+          <label class="field"><span>Primary audience market</span>
+            <select id="market"><option value="IN">India</option><option value="US">US / Western</option><option value="GLOBAL">Global mix</option></select>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button id="wzBack" class="btn ghost">Back</button>
+      <div class="dots" id="wzDots"></div>
+      <button id="wzNext" class="btn primary">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app" class="hidden">
+  <aside class="sidebar">
+    <div class="logo">GROWTH<span>OS</span></div>
+    <div class="org-card" id="orgCard"></div>
+    <nav id="nav">
+      <button class="nav-item active" data-view="ceo"><i>◆</i> CEO — Strategy</button>
+      <div class="nav-label">Departments</div>
+      <button class="nav-item" data-view="hr"><i>👤</i> HR</button>
+      <button class="nav-item" data-view="sales"><i>💰</i> Sales</button>
+      <button class="nav-item" data-view="finance"><i>📊</i> Finance</button>
+      <button class="nav-item" data-view="operations"><i>⚙️</i> Operations</button>
+      <button class="nav-item" data-view="marketing"><i>📣</i> Marketing</button>
+      <button class="nav-item" data-view="dev"><i>💻</i> Content Studio</button>
+      <div class="nav-label">Execution</div>
+      <button class="nav-item" data-view="daily"><i>✅</i> Today's Standup</button>
+      <button class="nav-item" data-view="tracker"><i>📈</i> Board Report</button>
+    </nav>
+    <div class="side-foot">
+      <button id="btnExport" class="btn ghost sm">Export plan</button>
+      <button id="btnReset" class="btn ghost sm danger">Reset company</button>
+    </div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="src/util.js"></script>
+<script src="src/data/niches.js"></script>
+<script src="src/engine/growth.js"></script>
+<script src="src/engine/content.js"></script>
+<script src="src/departments/ceo.js"></script>
+<script src="src/departments/hr.js"></script>
+<script src="src/departments/sales.js"></script>
+<script src="src/departments/finance.js"></script>
+<script src="src/departments/operations.js"></script>
+<script src="src/departments/marketing.js"></script>
+<script src="src/departments/dev.js"></script>
+<script src="src/departments/daily.js"></script>
+<script src="src/departments/tracker.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
