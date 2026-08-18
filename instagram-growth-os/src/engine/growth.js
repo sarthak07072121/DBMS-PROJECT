@@ -275,6 +275,139 @@
     };
   };
 
+  /* ---------------- 30-day sprint ----------------
+     A short aggressive push is a different problem from steady compounding.
+     Steady growth is arithmetic; a sprint target is mostly decided by whether
+     one post breaks out. So the model treats breakouts as what they are —
+     a probability you can raise with volume, not an outcome you can schedule.
+  ------------------------------------------------- */
+
+  E.SPRINT = {
+    breakoutMultiple: 25,      // a breakout reaches ~25× your normal reel…
+    breakoutFloor: 150000,     // …but never less than this, because a reel that
+                               //    takes off is drawn from the platform's ceiling,
+                               //    not from the size of your own audience
+    breakoutFollowRate: 0.018, // cold viewers convert better on a breakout
+    baseBreakoutRate: 0.020,   // chance any one disciplined reel breaks out
+    hoursPerReel: 1.1          // sprint pace: batched, lighter edits
+  };
+
+  /* How far a post travels when it does break out. A 300-follower account and a
+     30,000-follower account can land the same viral reel — which is exactly why
+     a sprint from a small base is a real, if uncertain, possibility. */
+  E.breakoutReach = function (p, ownReelReach) {
+    const n = G.niche(p);
+    const floor = E.SPRINT.breakoutFloor * n.reach * (E.MARKET[p.market] || 1);
+    return Math.max(floor, ownReelReach * E.SPRINT.breakoutMultiple);
+  };
+
+  /* P(X >= k) for X ~ Poisson(lambda) — the chance of getting enough breakouts. */
+  E.poissonAtLeast = function (k, lambda) {
+    if (k <= 0) return 1;
+    if (lambda <= 0) return 0;
+    let term = Math.exp(-lambda), cum = term;
+    for (let i = 1; i < k; i++) {
+      term *= lambda / i;
+      cum += term;
+    }
+    return Math.max(0, Math.min(1, 1 - cum));
+  };
+
+  /* Volume costs polish. Three reels a day means less time on each hook, each
+     edit, each cover — so intensity buys shots on goal at a discount, never 1:1. */
+  E.sprintQuality = (perDay) => Math.pow(0.85, Math.max(0, perDay - 1));
+
+  E.breakoutRate = function (p) {
+    const n = G.niche(p);
+    /* Broad niches break out more often; narrow B2B niches rarely do. */
+    return E.SPRINT.baseBreakoutRate * (n.reach / 1.2);
+  };
+
+  /* One scenario: `perDay` reels a day for `days` days. */
+  E.sprintScenario = function (p, target, days, perDay) {
+    const followers = Math.max(0, Number(p.followers) || 0);
+    const quality = E.sprintQuality(perDay);
+    const reach = E.reachPerPost(p, followers, quality);
+    const posts = Math.round(perDay * days);
+
+    /* Baseline: what the reels deliver without any post breaking out. */
+    const perPost = reach.reel * E.NONFOLLOWER.reel * E.FOLLOW_RATE.reel;
+    const churn = followers * E.tier(followers).churn * (days / 30);
+    const baseline = Math.max(0, perPost * posts - churn);
+
+    const pBreak = E.breakoutRate(p) * quality;
+    const breakoutReach = E.breakoutReach(p, reach.reel);
+    const perBreakout = breakoutReach * E.NONFOLLOWER.reel * E.SPRINT.breakoutFollowRate;
+    const lambda = posts * pBreak;
+
+    const gap = Math.max(0, target - baseline);
+    const breakoutsNeeded = Math.ceil(gap / Math.max(1, perBreakout));
+    const pHit = gap <= 0 ? 1 : E.poissonAtLeast(breakoutsNeeded, lambda);
+
+    return {
+      perDay, posts, days, quality,
+      hoursPerWeek: perDay * 7 * E.SPRINT.hoursPerReel,
+      baseline, perPost, perBreakout, breakoutReach, pBreak, lambda,
+      pAnyBreakout: 1 - Math.pow(1 - pBreak, posts),
+      breakoutsNeeded,
+      expected: baseline + lambda * perBreakout,
+      pHit
+    };
+  };
+
+  E.sprint = function (p, target, days, perDay) {
+    target = Math.max(1, Number(target) || 5000);
+    days = Math.max(7, Number(days) || 30);
+    const options = [1, 2, 3].map((n) => E.sprintScenario(p, target, days, n));
+    const chosen = E.sprintScenario(p, target, days, perDay || 2);
+    const capacityHours = Number(p.hours) || 10;
+
+    let verdict, tone;
+    if (chosen.baseline >= target) {
+      verdict = 'Reachable on volume alone. No breakout required — just do not miss a day.';
+      tone = 'ok';
+    } else if (chosen.pHit >= 0.5) {
+      verdict = 'A genuine coin flip. ' + Math.round(chosen.pHit * 100) + '% at this intensity, and the odds are yours to raise.';
+      tone = 'ok';
+    } else if (chosen.pHit >= 0.15) {
+      verdict = 'A long shot, but not fantasy — about ' + Math.round(chosen.pHit * 100) + '%. It needs ' +
+        chosen.breakoutsNeeded + ' post' + (chosen.breakoutsNeeded === 1 ? '' : 's') + ' to break out, and that is not something you can schedule.';
+      tone = 'warn';
+    } else {
+      verdict = 'Not honest to plan for. At ' + Math.round(chosen.pHit * 100) + '%, this is a lottery ticket, not a target. ' +
+        'The number this system actually delivers in ' + days + ' days is around ' + G.nice(chosen.expected) + '.';
+      tone = 'hot';
+    }
+
+    return {
+      target, days, chosen, options,
+      requiredPerDay: target / days,
+      capacityGap: chosen.hoursPerWeek - capacityHours,
+      verdict, tone,
+      honestTarget: G.nice(chosen.expected)
+    };
+  };
+
+  /* Day-by-day structure. Four phases, because a 30-day push that does the
+     same thing on day 28 as on day 3 has learned nothing. */
+  E.sprintPhases = function (days) {
+    const q = Math.round(days / 4);
+    return [
+      { name: 'Test', from: 1, to: q,
+        goal: 'Find which hook style and which topic actually travel.',
+        rule: 'Three different hook styles per topic. Change one variable at a time or you learn nothing.' },
+      { name: 'Double down', from: q + 1, to: q * 2,
+        goal: 'Kill what failed, remake what worked.',
+        rule: 'Any post above 2× your average gets rebuilt with a new hook within 48 hours.' },
+      { name: 'Amplify', from: q * 2 + 1, to: q * 3,
+        goal: 'Borrow distribution instead of building it.',
+        rule: 'Two collab posts and two trend-matched posts this week. Collabs put you in front of an audience you did not earn yet.' },
+      { name: 'Push', from: q * 3 + 1, to: days,
+        goal: 'Highest volume of the sprint, aimed only at proven formats.',
+        rule: 'No experiments left. Every post is a variant of something that already worked.' }
+    ];
+  };
+
   /* ---------------- goal tracking ---------------- */
   E.goalStatus = function (p) {
     const proj = E.project(p, 6, 'base');

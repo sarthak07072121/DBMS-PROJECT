@@ -34,7 +34,13 @@ window.IGOS = window.IGOS || {};
     return String(n);
   };
   G.comma = (n) => Math.round(n || 0).toLocaleString('en-IN');
-  G.pct = (n, d) => (n * 100).toFixed(d == null ? 1 : d) + '%';
+  G.pct = function (n, d) {
+    const v = n * 100;
+    /* Never round a real chance down to a flat 0% — "<1%" is honest, "0%" is not. */
+    if (v > 0 && v < 0.5) return '<1%';
+    if (v < 100 && v > 99.5) return '>99%';
+    return v.toFixed(d == null ? 1 : d) + '%';
+  };
 
   /* INR is the internal unit of account. USD is a display/entry conversion. */
   const RATE = 85;
@@ -96,6 +102,7 @@ window.IGOS = window.IGOS || {};
     pipeline: [],     // kanban cards
     logs: [],         // weekly metric snapshots
     calendarStart: null,
+    sprint: null,     // { start, startFollowers, target, days, perDay, log }
     scripts: [],      // script vault
     scriptTopic: null,
     scriptFramework: 'pas',

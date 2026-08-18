@@ -248,7 +248,21 @@
     });
     L.push('\n**House style:** ' + n.visual);
 
-    L.push('\n## 8. Final combined daily action plan\n');
+    {
+      /* Always included, so the section numbering never has a hole in it. */
+      const sc = G.store.sprint || {};
+      const sp = G.engine.sprint(p, sc.target || 5000, sc.days || 30, sc.perDay || 2);
+      L.push('\n## 8. Sprint — ' + G.comma(sp.target) + ' followers in ' + sp.days + ' days\n');
+      L.push('**Verdict:** ' + sp.verdict + '\n');
+      L.push('| Intensity | Posts | Time | Baseline adds | Chance of target | Expected adds |');
+      L.push('|---|---|---|---|---|---|');
+      sp.options.forEach((o) => L.push('| ' + o.perDay + ' reel' + (o.perDay > 1 ? 's' : '') + '/day | ' + o.posts + ' | ' +
+        Math.round(o.hoursPerWeek) + ' h/wk | ' + G.comma(o.baseline) + ' | ' + G.pct(o.pHit, 0) + ' | ' + G.comma(o.expected) + ' |'));
+      G.engine.sprintPhases(sp.days).forEach((ph) =>
+        L.push('- **' + ph.name + ' (day ' + ph.from + '–' + ph.to + ')** — ' + ph.goal + ' ' + ph.rule));
+    }
+
+    L.push('\n## 9. Final combined daily action plan\n');
     L.push('1. Publish the scheduled post at its slot — never improvise the time.');
     L.push('2. Reply to every comment for the first 60 minutes.');
     L.push('3. ' + cap.commentsPerDay + ' comments on larger accounts in the niche.');
