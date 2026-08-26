@@ -28,8 +28,7 @@ Everything is stored in your browser's `localStorage`. Nothing is uploaded anywh
 ## What it does
 
 **Onboarding** asks the three CEO questions, plus capacity (hours/week, budget, market,
-currency). Pick one of 8 built-in niches or type your own — a custom niche falls back to a
-generic model that fills your niche name into every template.
+currency). Search **30 built-in niches**, or type anything at all — see *Any niche* below.
 
 | Screen | What it gives you |
 |---|---|
@@ -41,6 +40,7 @@ generic model that fills your niche name into every template.
 | **Marketing** | 28-day content calendar — clickable, regenerable, CSV-exportable — plus growth strategy, engagement quotas, hashtag sets, performance benchmarks |
 | **Content Studio** | For any calendar slot: hook + alternates, 5-beat script, on-screen text, cover, B-roll, full caption, hashtags, story sequence, carousel slide-by-slide |
 | **Today's Standup** | Every department's output collapsed into one checkable daily list, with a streak counter |
+| **30-Day Sprint** | Set a steep target and get the real odds: breakout probability, expected outcome, a capacity check, a four-phase day-by-day plan and a pace chart |
 | **Board Report** | Log weekly followers/reach/revenue, see actual vs projected on a chart, get a diagnosis |
 
 **Export plan** downloads the whole thing as Markdown.
@@ -48,6 +48,27 @@ generic model that fills your niche name into every template.
 The departments are wired to each other: an idea can be pushed into the Operations
 pipeline or opened in the Script Writer in one click, and the Script Writer pulls
 topics straight off the Marketing calendar.
+
+## Any niche
+
+Thirty niches ship as full presets (fitness, finance, tech, business, food, fashion,
+education, self-improvement, beauty, travel, photography, art, music, gaming, parenting,
+relationships, mental health, pets, home decor, DIY, real estate, automotive, sports,
+comedy, spirituality, books, language, career, wellness, dance) — each with its own
+audience, pillars, offer ladder with prices, hashtag tiers, visual style and reach
+multipliers.
+
+Anything else is *resolved*, not ignored:
+
+1. **Alias matching** — "gym and weight loss" resolves to Fitness, "stock market for
+   beginners" to Finance, "wedding photography" to Photography. You get the full preset,
+   with a handful of topics phrased in your exact words.
+2. **Family fallback** — no preset for beekeeping, pottery or mechanical keyboards, so the
+   niche is classified into one of eight families (skill, body, money, creative, lifestyle,
+   knowledge, tech, entertainment) and every department is generated for it: pillars,
+   offers, pricing, hashtags, calendar and scripts.
+
+The onboarding tells you which of the two happened before you commit.
 
 ## The model
 
@@ -82,11 +103,13 @@ instagram-growth-os/
 ├── assets/app.css              # design system
 └── src/
     ├── util.js                 # helpers, store, localStorage
-    ├── data/niches.js          # 8 niches + generic fallback — the content brain
+    ├── data/niches.js          # 30 niche presets — the content brain
+    ├── data/families.js       # alias resolution + 8 family templates for anything else
     ├── engine/growth.js        # stages, capacity, reach, funnel, revenue
     ├── engine/content.js       # hooks, calendar, captions, weekly sprint
     ├── engine/scripts.js       # frameworks, hook laboratory, script builder
     ├── engine/ideas.js         # angles, scoring rubric, seasonal demand
+    ├── engine/chart.js         # the shared line/area chart with hover tooltips
     ├── departments/*.js        # one file per department view
     └── app.js                  # onboarding, router, Markdown export
 ```
@@ -102,3 +125,18 @@ automatically.
   one place precisely so you can tune them once you have your own numbers.
 - The app plans and writes; it does not post. No Instagram API access, no automation of
   engagement — deliberately, because that is what gets accounts restricted.
+
+## Design
+
+Light-first, cool and deliberately quiet — a tool you sit inside for an hour, not a landing
+page. One steel-blue accent does all the pointing; colour is otherwise reserved for state
+and for data series. The dark theme is a soft slate rather than near-black, and the
+`Theme` button cycles system → light → dark.
+
+Chart series colours are validated for colour-vision separation against both surfaces
+(CVD ΔE ≥ 8, normal-vision ΔE ≥ 15) rather than picked by eye. Charts share one renderer
+with hover tooltips, a recessive grid and endpoint markers, and they re-measure on resize
+— which is what fixed the stretched axis labels in the first version.
+
+The palette, type scale and component specimens are mirrored in Figma as
+**Growth OS — Design System**, with 32 colour variables across Light and Dark collections.

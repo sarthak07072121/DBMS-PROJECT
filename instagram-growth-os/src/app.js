@@ -6,27 +6,61 @@
   /* ---------------- onboarding ---------------- */
   const wz = { step: 1, max: 4, niche: null, goal: 'both' };
 
-  function buildNicheGrid() {
+  const CAT_ORDER = ['Health & Body', 'Money', 'Tech', 'Knowledge', 'Creative', 'Lifestyle', 'Entertainment'];
+
+  function buildNicheGrid(filter) {
     const grid = G.$('#nicheGrid');
-    grid.innerHTML = Object.keys(G.NICHES).map((k) => {
+    const q = (filter || '').trim().toLowerCase();
+    const keys = Object.keys(G.NICHES).filter((k) => {
+      if (!q) return true;
       const n = G.NICHES[k];
-      return `<button class="niche-chip" data-niche="${k}">
-        <b>${G.esc(n.short)}</b><small>${G.esc(n.label)}</small></button>`;
-    }).join('');
+      return (k + ' ' + n.label + ' ' + n.short + ' ' + n.aliases + ' ' + n.category).toLowerCase().indexOf(q) > -1;
+    });
+
+    if (!keys.length) {
+      grid.innerHTML = '<p class="muted" style="grid-column:1/-1">No preset matches that. Type it in the box below instead — ' +
+        'the app builds a full plan for any niche, listed or not.</p>';
+      return;
+    }
+
+    const byCat = {};
+    keys.forEach((k) => { (byCat[G.NICHES[k].category] = byCat[G.NICHES[k].category] || []).push(k); });
+
+    grid.innerHTML = CAT_ORDER.filter((c) => byCat[c]).map((cat) =>
+      `<div class="niche-cat">${G.esc(cat)}</div>` +
+      byCat[cat].map((k) => {
+        const n = G.NICHES[k];
+        return `<button class="niche-chip ${wz.niche === k ? 'selected' : ''}" data-niche="${k}">
+          <b>${G.esc(n.short)}</b><small>${G.esc(n.label)}</small></button>`;
+      }).join('')
+    ).join('');
+
     G.$$('.niche-chip').forEach((b) => {
       b.onclick = function () {
         G.$$('.niche-chip').forEach((x) => x.classList.remove('selected'));
         b.classList.add('selected');
         wz.niche = b.getAttribute('data-niche');
         G.$('#customNiche').value = '';
+        showResolve('');
       };
     });
-    G.$('#customNiche').oninput = function () {
-      if (this.value.trim()) {
-        G.$$('.niche-chip').forEach((x) => x.classList.remove('selected'));
-        wz.niche = null;
-      }
-    };
+  }
+
+  /* Be honest about what a typed niche resolved to, before they commit to it. */
+  function showResolve(text) {
+    const box = G.$('#nicheResolve');
+    const t = (text || '').trim();
+    if (!t) { box.classList.add('hidden'); return; }
+    const m = G.nicheMatch({ customNiche: t });
+    box.classList.remove('hidden');
+    if (m.kind === 'matched') {
+      box.innerHTML = '<b>Matched.</b> You will get the full <b>' + G.esc(m.label) +
+        '</b> playbook — offers, pricing and hashtags built for it — with topics phrased as “' + G.esc(t) + '”.';
+    } else {
+      box.innerHTML = '<b>Building it from the ' + G.esc(G.FAMILIES[m.key].label.toLowerCase()) +
+        ' template.</b> No preset covers “' + G.esc(t) + '” exactly, so every department is generated for it: ' +
+        'pillars, offers, pricing, calendar and scripts.';
+    }
   }
 
   function dots() {
@@ -88,8 +122,16 @@
   }
 
   function initOnboarding() {
-    buildNicheGrid();
+    buildNicheGrid('');
     showStep(1);
+    G.$('#nicheSearch').oninput = function () { buildNicheGrid(this.value); };
+    G.$('#customNiche').oninput = function () {
+      if (this.value.trim()) {
+        G.$$('.niche-chip').forEach((x) => x.classList.remove('selected'));
+        wz.niche = null;
+      }
+      showResolve(this.value);
+    };
     G.$('#followers').oninput = tierPreview;
     tierPreview();
     G.$('#currency').onchange = function () {
@@ -275,11 +317,134 @@
     G.download('instagram-business-plan.md', L.join('\n'), 'text/markdown');
   }
 
+  /* ---------------- inputs drawer ----------------
+     Every number in the app derives from these, so being able to change one
+     and watch all seven departments re-plan is the point of the whole thing. */
+  function openDrawer() {
+    const p = G.store.profile;
+    const d = G.$('#drawer');
+    const nicheOpts = Object.keys(G.NICHES).map((k) =>
+      `<option value="${k}" ${p.nicheKey === k ? 'selected' : ''}>${G.esc(G.NICHES[k].label)}</option>`).join('');
+
+    d.innerHTML = `
+      <h3>Edit inputs</h3>
+      <p class="muted">Change anything. Every department re-plans against the new numbers.</p>
+      <label class="field"><span>Preset niche</span>
+        <select id="dNiche"><option value="">— use my own wording —</option>${nicheOpts}</select></label>
+      <label class="field"><span>Or your own niche</span>
+        <input id="dCustom" type="text" value="${G.esc(p.customNiche || '')}" placeholder="anything at all"></label>
+      <div id="dResolve" class="resolve-note hidden" style="margin-bottom:14px"></div>
+      <div class="grid-2">
+        <label class="field"><span>Followers</span><input id="dFollowers" type="number" min="0" value="${p.followers}"></label>
+        <label class="field"><span>Hours per week</span><input id="dHours" type="number" min="1" max="80" value="${p.hours}"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Follower target (6 mo)</span><input id="dFTarget" type="number" min="0" value="${p.followerTarget}"></label>
+        <label class="field"><span>Revenue target (${G.curSym()}/mo)</span><input id="dRTarget" type="number" min="0" value="${Math.round(G.fromBase(p.revTarget))}"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Budget (${G.curSym()}/mo)</span><input id="dBudget" type="number" min="0" value="${Math.round(G.fromBase(p.budget))}"></label>
+        <label class="field"><span>Goal</span>
+          <select id="dGoal">
+            <option value="followers" ${p.goal === 'followers' ? 'selected' : ''}>Followers</option>
+            <option value="money" ${p.goal === 'money' ? 'selected' : ''}>Money</option>
+            <option value="both" ${p.goal === 'both' ? 'selected' : ''}>Both</option>
+          </select></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Market</span>
+          <select id="dMarket">
+            <option value="IN" ${p.market === 'IN' ? 'selected' : ''}>India</option>
+            <option value="US" ${p.market === 'US' ? 'selected' : ''}>US / Western</option>
+            <option value="GLOBAL" ${p.market === 'GLOBAL' ? 'selected' : ''}>Global</option>
+          </select></label>
+        <label class="field"><span>Currency</span>
+          <select id="dCurrency">
+            <option value="INR" ${p.currency === 'INR' ? 'selected' : ''}>₹ INR</option>
+            <option value="USD" ${p.currency === 'USD' ? 'selected' : ''}>$ USD</option>
+          </select></label>
+      </div>
+      <div class="drawer-foot">
+        <button id="dApply" class="btn primary" style="flex:1">Apply &amp; re-plan</button>
+        <button id="dClose" class="btn">Cancel</button>
+      </div>`;
+
+    d.classList.remove('hidden');
+    G.$('#drawerBack').classList.remove('hidden');
+
+    const resolve = function () {
+      const box = G.$('#dResolve');
+      const txt = G.$('#dCustom').value.trim();
+      if (!txt || G.$('#dNiche').value) { box.classList.add('hidden'); return; }
+      const m = G.nicheMatch({ customNiche: txt });
+      box.classList.remove('hidden');
+      box.innerHTML = m.kind === 'matched'
+        ? '<b>Matched to ' + G.esc(m.label) + '.</b> Full preset playbook, phrased as “' + G.esc(txt) + '”.'
+        : '<b>Generated from the ' + G.esc(G.FAMILIES[m.key].label.toLowerCase()) + ' template</b> for “' + G.esc(txt) + '”.';
+    };
+    G.$('#dCustom').oninput = resolve;
+    G.$('#dNiche').onchange = function () { if (this.value) G.$('#dCustom').value = ''; resolve(); };
+    resolve();
+
+    G.$('#dClose').onclick = closeDrawer;
+    G.$('#drawerBack').onclick = closeDrawer;
+    G.$('#dApply').onclick = function () {
+      const cur = G.$('#dCurrency').value;
+      const key = G.$('#dNiche').value;
+      const custom = G.$('#dCustom').value.trim();
+      Object.assign(G.store.profile, {
+        nicheKey: key || null,
+        customNiche: key ? '' : custom,
+        followers: Math.max(0, Number(G.$('#dFollowers').value) || 0),
+        hours: G.clamp(Number(G.$('#dHours').value) || 10, 1, 80),
+        followerTarget: Math.max(0, Number(G.$('#dFTarget').value) || 0),
+        revTarget: Math.max(0, Math.round(G.toBase(Number(G.$('#dRTarget').value) || 0, cur))),
+        budget: Math.max(0, Math.round(G.toBase(Number(G.$('#dBudget').value) || 0, cur))),
+        goal: G.$('#dGoal').value,
+        market: G.$('#dMarket').value,
+        currency: cur
+      });
+      if (!key && !custom) G.store.profile.nicheKey = 'fitness';
+      G.store.scriptTopic = null;
+      G.save();
+      closeDrawer();
+      G.render();
+      G.toast('Re-planned against the new inputs');
+    };
+  }
+
+  function closeDrawer() {
+    G.$('#drawer').classList.add('hidden');
+    G.$('#drawerBack').classList.add('hidden');
+  }
+
+  /* ---------------- theme ---------------- */
+  function applyTheme() {
+    const t = G.store.theme;
+    if (t) document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  function cycleTheme() {
+    const order = [null, 'light', 'dark'];
+    const i = order.indexOf(G.store.theme || null);
+    G.store.theme = order[(i + 1) % order.length];
+    G.save();
+    applyTheme();
+    G.toast('Theme: ' + (G.store.theme || 'system'));
+    G.render();
+  }
+
   /* ---------------- boot ---------------- */
   function boot() {
     G.load();
     G.$$('.nav-item').forEach((b) => { b.onclick = function () { G.go(b.dataset.view); }; });
     G.$('#btnExport').onclick = exportPlan;
+    G.$('#btnInputs').onclick = openDrawer;
+    G.$('#btnTheme').onclick = cycleTheme;
+    applyTheme();
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDrawer();
+    });
     G.$('#btnReset').onclick = function () {
       if (!confirm('Reset the company? Your profile, pipeline, scripts, ideas and logs will be deleted.')) return;
       G.wipe();

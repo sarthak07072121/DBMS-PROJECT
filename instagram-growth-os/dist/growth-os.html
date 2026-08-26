@@ -3,243 +3,374 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* ================= GROWTH OS — design system ================= */
+/* ================= GROWTH OS — design system =================
+   Cool, light-first and deliberately quiet: this is a tool you sit in for
+   an hour, not a landing page. One steel-blue accent does all the pointing;
+   colour is otherwise reserved for state and for data series.
+   Chart series colours are validated for CVD separation in both themes.
+============================================================== */
+
 :root{
-  --bg:#0a0b10; --bg-2:#101219; --panel:#14161f; --panel-2:#1a1d28;
-  --line:#242836; --line-2:#2f3444;
-  --tx:#e9ecf5; --tx-2:#a3aac0; --tx-3:#6f7791;
-  --acc:#7c5cff; --acc-2:#c04cf0; --hot:#ff4d6d; --ok:#2fd08a; --warn:#ffb347; --info:#4cc9f0;
-  --grad:linear-gradient(135deg,#7c5cff,#c04cf0 55%,#ff4d6d);
-  --r:14px; --r-sm:9px;
-  --sh:0 10px 34px rgba(0,0,0,.45);
-  /* Archivo for headline weight, Public Sans for long reading, Plex Mono
-     wherever digits or labels need to line up. Real fallbacks throughout so
-     the page holds its shape offline. */
+  /* --- surfaces (light) --- */
+  --ground:#f4f7fb;
+  --surface:#ffffff;
+  --surface-2:#eef2f8;
+  --surface-3:#e5ebf4;
+  --line:#dfe6f0;
+  --line-2:#c7d3e3;
+
+  /* --- ink --- */
+  --tx:#16202f;
+  --tx-2:#53637c;
+  --tx-3:#8494ab;
+
+  /* --- accent + state --- */
+  --acc:#2f6bd4;
+  --acc-soft:#e8f0fd;
+  --acc-line:#b9d0f6;
+  --ok:#0f8a6a;
+  --ok-soft:#e2f4ee;
+  --warn:#a9721c;
+  --warn-soft:#fbf0dd;
+  --hot:#c2445a;
+  --hot-soft:#fbe8eb;
+  --info:#2f6bd4;
+
+  /* --- chart series (validated: light surface) --- */
+  --s1:#2f6bd4;
+  --s2:#0f8a6a;
+  --s3:#8b5cd6;
+  --grid:#e8edf5;
+
+  --r:12px; --r-sm:8px;
+  --sh:0 1px 2px rgba(20,32,52,.05), 0 8px 24px rgba(20,32,52,.06);
+  --sh-lift:0 2px 4px rgba(20,32,52,.06), 0 12px 32px rgba(20,32,52,.10);
   --f-display:'Archivo','Helvetica Neue',Arial,sans-serif;
   --f-body:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#141a26;
+    --surface:#1b2130;
+    --surface-2:#222a3b;
+    --surface-3:#2a3346;
+    --line:#2c3648;
+    --line-2:#3d4a61;
+    --tx:#e9eef6;
+    --tx-2:#a6b3c8;
+    --tx-3:#77869d;
+    --acc:#5e90ea;
+    --acc-soft:#1e2a41;
+    --acc-line:#33507e;
+    --ok:#22a37f;
+    --ok-soft:#16302a;
+    --warn:#cb9440;
+    --warn-soft:#332818;
+    --hot:#e0697d;
+    --hot-soft:#361c24;
+    --info:#5e90ea;
+    --s1:#5e90ea;
+    --s2:#22a37f;
+    --s3:#a075e0;
+    --grid:#283244;
+    --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
+    --sh-lift:0 2px 4px rgba(0,0,0,.34), 0 14px 36px rgba(0,0,0,.36);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#141a26; --surface:#1b2130; --surface-2:#222a3b; --surface-3:#2a3346;
+  --line:#2c3648; --line-2:#3d4a61;
+  --tx:#e9eef6; --tx-2:#a6b3c8; --tx-3:#77869d;
+  --acc:#5e90ea; --acc-soft:#1e2a41; --acc-line:#33507e;
+  --ok:#22a37f; --ok-soft:#16302a; --warn:#cb9440; --warn-soft:#332818;
+  --hot:#e0697d; --hot-soft:#361c24; --info:#5e90ea;
+  --s1:#5e90ea; --s2:#22a37f; --s3:#a075e0; --grid:#283244;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
+  --sh-lift:0 2px 4px rgba(0,0,0,.34), 0 14px 36px rgba(0,0,0,.36);
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
-  background:var(--bg); color:var(--tx);
-  font:15px/1.55 var(--f-body);
+  background:var(--ground); color:var(--tx);
+  font:15px/1.6 var(--f-body);
   -webkit-font-smoothing:antialiased;
 }
 .hidden{display:none !important}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
 input,select,textarea{font:inherit}
-a{color:var(--info)}
+a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
 
-/* ---------- logo ---------- */
-.logo{font-family:var(--f-display);font-weight:800;letter-spacing:.14em;font-size:15px}
-.logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* ---------- brand ---------- */
+.logo{font-family:var(--f-display);font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--tx)}
+.logo span{color:var(--acc)}
 
 /* ---------- onboarding ---------- */
-.modal{position:fixed;inset:0;background:radial-gradient(1200px 700px at 20% -10%,#1d1440,#07080c 60%);
-  display:grid;place-items:center;padding:20px;z-index:50;overflow:auto}
-.modal-card{width:min(720px,100%);background:var(--panel);border:1px solid var(--line);
-  border-radius:20px;box-shadow:var(--sh);overflow:hidden}
-.modal-head{padding:26px 30px 6px}
+.modal{position:fixed;inset:0;background:var(--ground);
+  display:grid;place-items:start center;padding:32px 20px;z-index:50;overflow:auto}
+.modal-card{width:min(760px,100%);background:var(--surface);border:1px solid var(--line);
+  border-radius:18px;box-shadow:var(--sh);overflow:hidden}
+.modal-head{padding:26px 30px 4px}
 .modal-head .muted{margin-top:6px}
-.wizard{padding:18px 30px 26px;min-height:340px}
-.wz-step h2{font-family:var(--f-display);font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.wizard{padding:18px 30px 24px;min-height:330px}
+.wz-step h2{font-family:var(--f-display);font-size:21px;font-weight:700;margin-bottom:6px;letter-spacing:-.015em}
 .wz-step .muted{margin-bottom:16px}
 .modal-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:16px 30px;border-top:1px solid var(--line);background:var(--panel-2)}
-.dots{display:flex;gap:7px}
-.dot{width:7px;height:7px;border-radius:99px;background:var(--line-2)}
-.dot.on{background:var(--acc);box-shadow:0 0 0 3px rgba(124,92,255,.18)}
+  padding:14px 30px;border-top:1px solid var(--line);background:var(--surface-2)}
+.dots{display:flex;gap:6px}
+.dot{width:6px;height:6px;border-radius:99px;background:var(--line-2);transition:.2s}
+.dot.on{background:var(--acc);transform:scale(1.25)}
 
-.niche-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px;margin-bottom:16px}
-.niche-chip{border:1px solid var(--line-2);background:var(--panel-2);border-radius:11px;padding:11px 12px;
-  text-align:left;transition:.15s;font-size:13px;line-height:1.3}
-.niche-chip b{display:block;font-size:13px}
-.niche-chip small{color:var(--tx-3);font-size:11px}
-.niche-chip:hover{border-color:var(--acc);transform:translateY(-1px)}
-.niche-chip.selected{border-color:var(--acc);background:linear-gradient(180deg,rgba(124,92,255,.22),rgba(124,92,255,.06))}
+.niche-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:16px;
+  max-height:290px;overflow-y:auto;padding:2px}
+.niche-cat{grid-column:1/-1;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tx-3);margin:8px 0 2px}
+.niche-cat:first-child{margin-top:0}
+.niche-chip{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 11px;
+  text-align:left;transition:.14s;font-size:13px;line-height:1.3}
+.niche-chip b{display:block;font-size:13px;color:var(--tx)}
+.niche-chip small{color:var(--tx-3);font-size:11px;display:block;margin-top:1px}
+.niche-chip:hover{border-color:var(--acc-line);background:var(--acc-soft);transform:translateY(-1px)}
+.niche-chip.selected{border-color:var(--acc);background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc)}
+.resolve-note{background:var(--acc-soft);border:1px solid var(--acc-line);border-radius:10px;
+  padding:11px 14px;font-size:13px;color:var(--tx-2);line-height:1.5}
+.resolve-note b{color:var(--tx)}
 
 .field{display:block;margin-bottom:14px}
-.field>span{display:block;font-size:12px;color:var(--tx-2);margin-bottom:6px;font-weight:600;letter-spacing:.01em}
+.field>span{display:block;font-size:12.5px;color:var(--tx-2);margin-bottom:6px;font-weight:600}
 .field>span em{color:var(--tx-3);font-style:normal;font-weight:400}
-input,select,textarea{width:100%;background:var(--bg-2);border:1px solid var(--line-2);color:var(--tx);
-  padding:11px 13px;border-radius:var(--r-sm);outline:none;transition:.15s}
-input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(124,92,255,.16)}
+input,select,textarea{width:100%;background:var(--surface);border:1px solid var(--line-2);color:var(--tx);
+  padding:10px 12px;border-radius:var(--r-sm);outline:none;transition:.14s}
+input:hover,select:hover{border-color:var(--acc-line)}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .choice-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.choice{border:1px solid var(--line-2);background:var(--panel-2);border-radius:12px;padding:14px;text-align:left}
-.choice b{display:block;margin-bottom:4px}
-.choice span{font-size:12px;color:var(--tx-3);line-height:1.35}
-.choice.selected{border-color:var(--acc);background:linear-gradient(180deg,rgba(124,92,255,.22),rgba(124,92,255,.05))}
-.tier-preview{background:var(--bg-2);border:1px dashed var(--line-2);border-radius:12px;padding:13px 15px;margin-bottom:14px;font-size:13px}
+.choice{border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:13px;text-align:left;transition:.14s}
+.choice b{display:block;margin-bottom:3px;color:var(--tx)}
+.choice span{font-size:12px;color:var(--tx-3);line-height:1.4}
+.choice:hover{border-color:var(--acc-line)}
+.choice.selected{border-color:var(--acc);background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc)}
+.tier-preview{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--tx-2)}
+.tier-preview b{color:var(--tx)}
 
 /* ---------- shell ---------- */
-#app{display:grid;grid-template-columns:246px 1fr;min-height:100vh}
-.sidebar{background:var(--bg-2);border-right:1px solid var(--line);padding:20px 14px;
-  display:flex;flex-direction:column;gap:16px;position:sticky;top:0;height:100vh;overflow:auto}
-.org-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
-.org-card .oc-niche{font-weight:700;font-size:13px;line-height:1.3}
-.org-card .oc-row{display:flex;justify-content:space-between;font-size:11px;color:var(--tx-3);margin-top:8px}
-.org-card .oc-row b{color:var(--tx);font-variant-numeric:tabular-nums}
-nav{display:flex;flex-direction:column;gap:2px;flex:1}
-.nav-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--tx-3);margin:14px 0 4px 10px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;font-size:13.5px;
+#app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--line);padding:20px 14px;
+  display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh;overflow:auto}
+.org-card{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:12px}
+.org-card .oc-niche{font-weight:700;font-size:13px;line-height:1.3;color:var(--tx)}
+.org-card .oc-row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--tx-3);margin-top:7px}
+.org-card .oc-row b{color:var(--tx);font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:11px}
+nav{display:flex;flex-direction:column;gap:1px;flex:1}
+.nav-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tx-3);margin:14px 0 4px 10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:8px;font-size:13.5px;
   color:var(--tx-2);text-align:left;transition:.12s;width:100%}
-.nav-item i{font-style:normal;font-size:13px;width:16px;text-align:center}
-.nav-item:hover{background:var(--panel);color:var(--tx)}
-.nav-item.active{background:linear-gradient(90deg,rgba(124,92,255,.25),rgba(124,92,255,.04));
-  color:#fff;box-shadow:inset 2px 0 0 var(--acc)}
+.nav-item i{font-style:normal;font-size:13px;width:16px;text-align:center;opacity:.85}
+.nav-item:hover{background:var(--surface-2);color:var(--tx)}
+.nav-item.active{background:var(--acc-soft);color:var(--acc);font-weight:600}
 .side-foot{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:12px}
 
-main{padding:30px 34px 70px;max-width:1180px;min-width:0}
-/* grid/flex children default to min-width:auto, which lets wide tables push
-   the whole page sideways. Everything that can hold a table opts out. */
+main{padding:28px 34px 72px;max-width:1200px;min-width:0}
 main *{min-width:0}
 .table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 
-/* ---------- typography / blocks ---------- */
+/* ---------- type ---------- */
 .page-head{margin-bottom:22px}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:600}
-h1,h2,h3{font-family:var(--f-display);text-wrap:balance}
-h1{font-size:30px;letter-spacing:-.025em;font-weight:800;margin:5px 0 7px}
-h2{font-size:19px;font-weight:700;letter-spacing:-.015em}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--acc);font-weight:500}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;color:var(--tx)}
+h1{font-size:29px;letter-spacing:-.025em;font-weight:800;margin:6px 0 8px}
+h2{font-size:18px;font-weight:700;letter-spacing:-.015em}
 h3{font-size:15px;font-weight:700}
-h4{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--tx-2);text-transform:uppercase;letter-spacing:.08em}
+h4{font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--tx-3);
+  text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
 p{color:var(--tx-2)}
-.lead,.card p{max-width:72ch}
+.lead,.card p{max-width:74ch}
 .muted{color:var(--tx-3);font-size:13px}
-.lead{font-size:15px;color:var(--tx-2);max-width:76ch}
+.lead{font-size:15px;color:var(--tx-2)}
 
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:18px 20px;margin-bottom:14px;box-shadow:var(--sh)}
 .card.tight{padding:14px 16px}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.section{margin:26px 0 30px}
+.section{margin:26px 0 28px}
 .section>h2{margin-bottom:4px}
 .section>.muted{margin-bottom:14px}
 
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
-.kpi:before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--grad);opacity:.8}
-.kpi .k-l{font-family:var(--mono);font-size:10.5px;color:var(--tx-3);text-transform:uppercase;letter-spacing:.07em;font-weight:500}
-.kpi .k-v{font-family:var(--f-display);font-size:25px;font-weight:800;letter-spacing:-.02em;margin:5px 0 2px;font-variant-numeric:tabular-nums}
-.kpi .k-s{font-size:11.5px;color:var(--tx-3)}
-.kpi.ok .k-v{color:var(--ok)} .kpi.warn .k-v{color:var(--warn)} .kpi.hot .k-v{color:var(--hot)}
+/* ---------- kpis ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;
+  box-shadow:var(--sh);transition:.14s}
+.kpi:hover{box-shadow:var(--sh-lift);transform:translateY(-1px)}
+.kpi .k-l{font-family:var(--mono);font-size:10px;color:var(--tx-3);text-transform:uppercase;
+  letter-spacing:.08em;font-weight:500;display:flex;align-items:center;gap:6px}
+.kpi .k-v{font-family:var(--f-display);font-size:24px;font-weight:800;letter-spacing:-.025em;
+  margin:6px 0 2px;font-variant-numeric:tabular-nums;color:var(--tx)}
+.kpi .k-s{font-size:11.5px;color:var(--tx-3);line-height:1.4}
+.kpi .k-l:before{content:"";width:6px;height:6px;border-radius:2px;background:var(--line-2);flex:none}
+.kpi.ok .k-l:before{background:var(--ok)} .kpi.ok .k-v{color:var(--ok)}
+.kpi.warn .k-l:before{background:var(--warn)} .kpi.warn .k-v{color:var(--warn)}
+.kpi.hot .k-l:before{background:var(--hot)} .kpi.hot .k-v{color:var(--hot)}
 
+/* ---------- tables ---------- */
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-th{font-family:var(--mono);text-align:left;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--tx-3);
-  padding:8px 10px;border-bottom:1px solid var(--line-2);font-weight:500;white-space:nowrap}
-td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx-2);font-variant-numeric:tabular-nums}
+th{font-family:var(--mono);text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx-3);padding:8px 10px;border-bottom:1px solid var(--line-2);font-weight:500;white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx-2);
+  font-variant-numeric:tabular-nums}
 td b,td strong{color:var(--tx)}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:var(--surface-2)}
 tr:last-child td{border-bottom:none}
-.table-wrap{overflow-x:auto}
 .num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12.5px}
 
-.pill{display:inline-block;font-size:10.5px;padding:3px 9px;border-radius:99px;font-weight:700;
-  letter-spacing:.05em;text-transform:uppercase;background:var(--panel-2);border:1px solid var(--line-2);color:var(--tx-2);
-  font-family:var(--mono)}
-.pill.acc{background:rgba(124,92,255,.16);border-color:rgba(124,92,255,.4);color:#c6b6ff}
-.pill.ok{background:rgba(47,208,138,.13);border-color:rgba(47,208,138,.35);color:#7ff0c0}
-.pill.warn{background:rgba(255,179,71,.13);border-color:rgba(255,179,71,.35);color:#ffd9a0}
-.pill.hot{background:rgba(255,77,109,.13);border-color:rgba(255,77,109,.35);color:#ff9db1}
-.pill.info{background:rgba(76,201,240,.13);border-color:rgba(76,201,240,.35);color:#a5e6ff}
+/* ---------- pills ---------- */
+.pill{display:inline-block;font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:5px;
+  font-weight:500;letter-spacing:.04em;text-transform:uppercase;
+  background:var(--surface-2);border:1px solid var(--line);color:var(--tx-2)}
+.pill.acc{background:var(--acc-soft);border-color:var(--acc-line);color:var(--acc)}
+.pill.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.pill.hot{background:var(--hot-soft);border-color:var(--hot);color:var(--hot)}
+.pill.info{background:var(--acc-soft);border-color:var(--acc-line);color:var(--acc)}
 
-.btn{background:var(--panel-2);border:1px solid var(--line-2);padding:8px 14px;border-radius:9px;
-  font-size:13px;font-weight:600;transition:.15s}
-.btn:hover{border-color:var(--acc);color:#fff}
-.btn.primary{background:var(--grad);border:none;color:#fff}
-.btn.primary:hover{filter:brightness(1.12)}
+/* ---------- buttons ---------- */
+.btn{background:var(--surface);border:1px solid var(--line-2);padding:7px 13px;border-radius:8px;
+  font-size:13px;font-weight:600;color:var(--tx-2);transition:.14s}
+.btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-soft)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.primary:hover{filter:brightness(1.07);color:#fff}
 .btn.ghost{background:transparent}
-.btn.sm{padding:6px 10px;font-size:12px}
-.btn.danger:hover{border-color:var(--hot);color:#ff9db1}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.danger:hover{border-color:var(--hot);color:var(--hot);background:var(--hot-soft)}
+.btn[disabled]{opacity:.45;pointer-events:none}
 
-.grid{display:grid;gap:14px}
+.grid{display:grid;gap:12px}
+.grid>*{min-width:0}
 .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(232px,1fr))}
 .g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 
-.bullets{list-style:none;display:flex;flex-direction:column;gap:8px}
-.bullets li{display:flex;gap:9px;font-size:13.5px;color:var(--tx-2);line-height:1.5}
-.bullets li:before{content:"▸";color:var(--acc);flex:none;font-size:12px;line-height:1.6}
-.ol{counter-reset:s;list-style:none;display:flex;flex-direction:column;gap:10px}
-.ol li{counter-increment:s;display:flex;gap:11px;font-size:13.5px;color:var(--tx-2)}
-.ol li:before{content:counter(s);flex:none;width:21px;height:21px;border-radius:6px;background:var(--panel-2);
-  border:1px solid var(--line-2);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--acc)}
+.bullets{list-style:none;display:flex;flex-direction:column;gap:7px}
+.bullets li{display:flex;gap:9px;font-size:13.5px;color:var(--tx-2);line-height:1.55}
+.bullets li:before{content:"";width:5px;height:5px;border-radius:99px;background:var(--acc);
+  flex:none;margin-top:8px;opacity:.7}
+.ol{counter-reset:s;list-style:none;display:flex;flex-direction:column;gap:9px}
+.ol li{counter-increment:s;display:flex;gap:11px;font-size:13.5px;color:var(--tx-2);line-height:1.55}
+.ol li:before{content:counter(s);flex:none;width:20px;height:20px;border-radius:5px;background:var(--acc-soft);
+  border:1px solid var(--acc-line);display:grid;place-items:center;font-size:10.5px;font-weight:700;
+  color:var(--acc);font-family:var(--mono);margin-top:1px}
 
-.callout{border-left:3px solid var(--acc);background:linear-gradient(90deg,rgba(124,92,255,.1),transparent);
-  padding:12px 16px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--tx-2);margin:12px 0}
-.callout.warn{border-color:var(--warn);background:linear-gradient(90deg,rgba(255,179,71,.1),transparent)}
-.callout.ok{border-color:var(--ok);background:linear-gradient(90deg,rgba(47,208,138,.1),transparent)}
+.callout{border-left:3px solid var(--acc);background:var(--acc-soft);
+  padding:12px 16px;border-radius:0 9px 9px 0;font-size:13.5px;color:var(--tx-2);margin:12px 0;line-height:1.55}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-color:var(--ok);background:var(--ok-soft)}
 .callout b{color:var(--tx)}
 
-.bar{height:7px;background:var(--panel-2);border-radius:99px;overflow:hidden;margin-top:7px}
-.bar>i{display:block;height:100%;background:var(--grad);border-radius:99px}
+.bar{height:6px;background:var(--surface-3);border-radius:99px;overflow:hidden;margin-top:7px}
+.bar>i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .4s ease}
 
-.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
 .tab{padding:8px 13px;font-size:13px;color:var(--tx-3);border-bottom:2px solid transparent;font-weight:600}
-.tab.active{color:var(--tx);border-color:var(--acc)}
+.tab.active{color:var(--acc);border-color:var(--acc)}
 .tab:hover{color:var(--tx)}
 
-/* ---------- pipeline / kanban ---------- */
-.kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:start}
-.kcol{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:10px;min-height:90px}
-.kcol h5{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx-3);margin-bottom:8px;font-weight:500;
-  display:flex;justify-content:space-between}
-.kitem{background:var(--panel);border:1px solid var(--line-2);border-radius:9px;padding:9px 10px;margin-bottom:7px;font-size:12.5px}
-.kitem .kt{color:var(--tx);line-height:1.35;margin-bottom:6px}
-.kitem .kb{display:flex;gap:5px}
-.kitem button{font-size:10px;padding:3px 7px;border-radius:6px;border:1px solid var(--line-2);color:var(--tx-3)}
-.kitem button:hover{color:var(--tx);border-color:var(--acc)}
+/* ---------- kanban ---------- */
+.kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:9px;align-items:start}
+.kcol{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:10px;min-height:88px}
+.kcol h5{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--tx-3);margin-bottom:8px;display:flex;justify-content:space-between;font-weight:500}
+.kitem{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 10px;
+  margin-bottom:6px;font-size:12.5px;box-shadow:var(--sh);transition:.14s}
+.kitem:hover{box-shadow:var(--sh-lift)}
+.kitem .kt{color:var(--tx);line-height:1.4;margin-bottom:6px}
+.kitem .kb{display:flex;gap:4px}
+.kitem button{font-size:10px;padding:3px 7px;border-radius:5px;border:1px solid var(--line-2);color:var(--tx-3)}
+.kitem button:hover{color:var(--acc);border-color:var(--acc)}
 
 /* ---------- checklists ---------- */
 .check{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);
-  border-radius:10px;background:var(--panel);margin-bottom:7px;cursor:pointer;transition:.12s}
-.check:hover{border-color:var(--line-2)}
-.check.done{opacity:.5}
+  border-radius:9px;background:var(--surface);margin-bottom:6px;cursor:pointer;transition:.14s}
+.check:hover{border-color:var(--acc-line);background:var(--acc-soft)}
+.check.done{opacity:.55;background:var(--surface-2)}
 .check.done .c-t{text-decoration:line-through}
 .check .box{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--line-2);flex:none;margin-top:1px;
-  display:grid;place-items:center;font-size:11px;color:transparent}
-.check.done .box{background:var(--ok);border-color:var(--ok);color:#06231a}
-.c-t{font-size:13.5px;color:var(--tx);line-height:1.4}
-.c-s{font-size:11.5px;color:var(--tx-3);margin-top:2px}
+  display:grid;place-items:center;font-size:11px;color:transparent;transition:.14s}
+.check.done .box{background:var(--ok);border-color:var(--ok);color:#fff}
+.c-t{font-size:13.5px;color:var(--tx);line-height:1.45}
+.c-s{font-size:11.5px;color:var(--tx-3);margin-top:2px;line-height:1.45}
 .c-tag{margin-left:auto;flex:none}
 
 /* ---------- calendar ---------- */
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
-.cal-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx-3);text-align:center;padding-bottom:4px;font-weight:500}
-.cday{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px;min-height:104px;
-  text-align:left;transition:.12s;display:flex;flex-direction:column;gap:5px}
-.cday:hover{border-color:var(--acc);transform:translateY(-1px)}
-.cday .cd-n{font-family:var(--mono);font-size:9.5px;color:var(--tx-3);font-weight:500;letter-spacing:.04em}
-.cday .cd-f{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em}
-.cday .cd-t{font-size:11.5px;color:var(--tx);line-height:1.3}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-h{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--tx-3);text-align:center;padding-bottom:4px;font-weight:500}
+.cday{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px;min-height:100px;
+  text-align:left;transition:.14s;display:flex;flex-direction:column;gap:4px}
+.cday:hover{border-color:var(--acc);box-shadow:var(--sh-lift);transform:translateY(-1px)}
+.cday .cd-n{font-family:var(--mono);font-size:9px;color:var(--tx-3);font-weight:500;letter-spacing:.03em}
+.cday .cd-f{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.05em}
+.cday .cd-t{font-size:11.5px;color:var(--tx);line-height:1.35}
 .cday .cd-p{font-size:10px;color:var(--tx-3);margin-top:auto}
-.f-reel{color:#ff9db1}.f-carousel{color:#a5e6ff}.f-story{color:#ffd9a0}.f-static{color:#c6b6ff}.f-rest{color:var(--tx-3)}
+.f-reel{color:var(--s1)}.f-carousel{color:var(--s2)}.f-static{color:var(--s3)}
+.f-story{color:var(--warn)}.f-rest{color:var(--tx-3)}
 
 /* ---------- script viewer ---------- */
-.script{background:var(--bg-2);border:1px solid var(--line-2);border-radius:12px;padding:16px 18px;font-size:13.5px;line-height:1.65}
-.script .sl{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);font-weight:500;margin:14px 0 5px}
+.script{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;font-size:13.5px;line-height:1.65}
+.script .sl{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--acc);font-weight:500;margin:14px 0 5px}
 .script .sl:first-child{margin-top:0}
-.script .hookline{font-family:var(--f-display);font-size:17px;font-weight:700;color:#fff;line-height:1.35;text-wrap:balance}
+.script .hookline{font-family:var(--f-display);font-size:17px;font-weight:700;color:var(--tx);
+  line-height:1.35;text-wrap:balance}
 .script pre{white-space:pre-wrap;font-family:inherit;color:var(--tx-2)}
 .copy-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
 
-.tagcloud{display:flex;flex-wrap:wrap;gap:6px}
-.tagcloud code{background:var(--panel-2);border:1px solid var(--line-2);padding:4px 9px;border-radius:7px;
-  font-size:12px;font-family:var(--mono);color:var(--tx-2)}
+.tagcloud{display:flex;flex-wrap:wrap;gap:5px}
+.tagcloud code{background:var(--surface-2);border:1px solid var(--line);padding:4px 8px;border-radius:6px;
+  font-size:11.5px;font-family:var(--mono);color:var(--tx-2)}
 
+/* ---------- charts ---------- */
+.chart-wrap{position:relative}
 canvas{max-width:100%;display:block}
+.chart-tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:8px;padding:8px 11px;font-size:12px;box-shadow:var(--sh-lift);z-index:5;
+  transform:translate(-50%,-115%);white-space:nowrap;transition:opacity .1s}
+.chart-tip .ct-x{font-family:var(--mono);font-size:10px;color:var(--tx-3);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.chart-tip .ct-row{display:flex;align-items:center;gap:7px;color:var(--tx);line-height:1.7}
+.chart-tip .ct-dot{width:7px;height:7px;border-radius:2px;flex:none}
+.chart-tip .ct-v{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;padding-left:10px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--tx-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
 
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--panel);
-  border:1px solid var(--acc);padding:11px 20px;border-radius:11px;font-size:13px;z-index:99;box-shadow:var(--sh)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--tx);
+  color:var(--surface);padding:10px 18px;border-radius:9px;font-size:13px;z-index:99;box-shadow:var(--sh-lift)}
 
 .log-row{display:grid;grid-template-columns:repeat(5,1fr) auto;gap:8px;align-items:end}
 .form-row{display:grid;grid-template-columns:1fr 1fr 2fr 1fr auto;gap:8px;align-items:end;margin-bottom:14px}
 .split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .right{margin-left:auto}
 
+/* ---------- inputs drawer ---------- */
+.drawer-back{position:fixed;inset:0;background:rgba(20,32,52,.32);z-index:60;backdrop-filter:blur(2px)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--surface);
+  border-left:1px solid var(--line);z-index:61;padding:24px;overflow:auto;box-shadow:var(--sh-lift)}
+.drawer h3{margin-bottom:4px}
+.drawer .muted{margin-bottom:16px}
+.drawer-foot{display:flex;gap:8px;margin-top:8px;position:sticky;bottom:-24px;
+  background:var(--surface);padding:14px 0 0;border-top:1px solid var(--line)}
+
 @media(max-width:900px){
   #app{grid-template-columns:1fr}
-  .sidebar{position:static;height:auto;flex-direction:column}
+  .sidebar{position:static;height:auto}
   nav{flex-direction:row;flex-wrap:wrap}
   .nav-item{width:auto}
   .nav-label{display:none}
@@ -250,14 +381,15 @@ canvas{max-width:100%;display:block}
   .log-row,.form-row{grid-template-columns:1fr 1fr}
   .log-row button,.form-row button{grid-column:1/-1}
   .kanban{grid-template-columns:1fr 1fr}
-  h1{font-size:24px}
+  h1{font-size:23px}
+  .niche-grid{max-height:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{
   .sidebar,.toast,.btn{display:none!important}
   #app{grid-template-columns:1fr}
-  body{background:#fff;color:#000}
-  .card,.kpi{border-color:#ccc;background:#fff;break-inside:avoid}
+  body{background:#fff}
+  .card,.kpi{box-shadow:none;break-inside:avoid}
 }
 
 </style>
@@ -273,11 +405,16 @@ canvas{max-width:100%;display:block}
       <div class="wz-step" data-step="1">
         <h2>1 · What is your niche?</h2>
         <p class="muted">Pick the closest preset, or type your own. Everything downstream — offers, hooks, pricing, calendar — is derived from this.</p>
+        <label class="field">
+          <span>Search 30 built-in niches</span>
+          <input id="nicheSearch" type="text" placeholder="fitness, money, cooking, art, gaming…" autocomplete="off">
+        </label>
         <div id="nicheGrid" class="niche-grid"></div>
         <label class="field">
-          <span>Or describe it in your own words</span>
-          <input id="customNiche" type="text" placeholder="e.g. budget travel for Indian college students">
+          <span>Not listed? Describe it in your own words — anything works</span>
+          <input id="customNiche" type="text" placeholder="e.g. urban gardening for small balconies">
         </label>
+        <div id="nicheResolve" class="resolve-note hidden"></div>
         <label class="field">
           <span>Instagram handle <em>(optional)</em></span>
           <input id="handle" type="text" placeholder="@yourhandle">
@@ -360,13 +497,19 @@ canvas{max-width:100%;display:block}
       <button class="nav-item" data-view="tracker"><i>📈</i> Board Report</button>
     </nav>
     <div class="side-foot">
-      <button id="btnExport" class="btn ghost sm">Export plan</button>
+      <button id="btnInputs" class="btn sm">Edit inputs</button>
+      <div class="split" style="gap:6px">
+        <button id="btnTheme" class="btn ghost sm" style="flex:1">Theme</button>
+        <button id="btnExport" class="btn ghost sm" style="flex:1">Export</button>
+      </div>
       <button id="btnReset" class="btn ghost sm danger">Reset company</button>
     </div>
   </aside>
   <main id="main"></main>
 </div>
 
+<div id="drawerBack" class="drawer-back hidden"></div>
+<aside id="drawer" class="drawer hidden"></aside>
 <div id="toast" class="toast hidden"></div>
 
 <script>
@@ -471,6 +614,7 @@ window.IGOS = window.IGOS || {};
     profile: null,
     seed: 20260818,
     view: 'ceo',
+    theme: null,      // null = follow the system
     tasks: {},        // { 'YYYY-MM-DD': { taskId: true } }
     pipeline: [],     // kanban cards
     logs: [],         // weekly metric snapshots
@@ -597,6 +741,8 @@ window.IGOS = window.IGOS || {};
     fitness: {
       label: 'Fitness & Body Transformation',
       short: 'Fitness',
+      category: 'Health & Body',
+      aliases: 'gym, workout, weight loss, fat loss, bodybuilding, muscle, calisthenics, personal trainer, home workout, abs, strength, crossfit, running, marathon',
       reach: 1.30, cpm: 1.0, buyRate: 1.05,
       positioning: 'the no-nonsense coach for people who have failed diets before',
       audience: {
@@ -643,6 +789,8 @@ window.IGOS = window.IGOS || {};
     finance: {
       label: 'Personal Finance & Investing',
       short: 'Finance',
+      category: 'Money',
+      aliases: 'money, investing, stock, stocks, stock market, share market, mutual funds, sip, crypto, bitcoin, trading, tax, savings, budgeting, wealth, insurance, credit card, personal finance, financial freedom',
       reach: 1.15, cpm: 1.9, buyRate: 1.25,
       positioning: 'the person who explains money the way a friend would, not a bank would',
       audience: {
@@ -689,6 +837,8 @@ window.IGOS = window.IGOS || {};
     tech: {
       label: 'Tech, AI & Digital Tools',
       short: 'Tech / AI',
+      category: 'Tech',
+      aliases: 'ai, artificial intelligence, chatgpt, software, saas, coding, programming, automation, no code, gadgets, apps, productivity tools, prompt engineering, developer',
       reach: 1.35, cpm: 1.7, buyRate: 1.15,
       positioning: 'the person who finds the tool 6 months before everyone else and shows the workflow',
       audience: {
@@ -735,6 +885,8 @@ window.IGOS = window.IGOS || {};
     business: {
       label: 'Business, Freelancing & Entrepreneurship',
       short: 'Business',
+      category: 'Money',
+      aliases: 'business, entrepreneur, startup, freelance, freelancing, agency, clients, marketing agency, consulting, side hustle, ecommerce, dropshipping, smma, solopreneur',
       reach: 1.10, cpm: 1.8, buyRate: 1.3,
       positioning: 'the operator who shows the actual mechanics, not motivational quotes',
       audience: {
@@ -781,6 +933,8 @@ window.IGOS = window.IGOS || {};
     food: {
       label: 'Food, Recipes & Cooking',
       short: 'Food',
+      category: 'Lifestyle',
+      aliases: 'food, cooking, recipes, chef, baking, cakes, restaurant, street food, meal prep, vegan, vegetarian, healthy eating, kitchen, home cook, nutrition recipes',
       reach: 1.55, cpm: 0.9, buyRate: 0.8,
       positioning: 'the cook who makes restaurant results possible in a normal kitchen',
       audience: {
@@ -827,6 +981,8 @@ window.IGOS = window.IGOS || {};
     fashion: {
       label: 'Fashion, Style & Grooming',
       short: 'Fashion',
+      category: 'Lifestyle',
+      aliases: 'fashion, style, outfit, ootd, clothing, streetwear, grooming, menswear, womenswear, thrift, shoes, sneakers, accessories, styling, wardrobe',
       reach: 1.40, cpm: 1.3, buyRate: 0.95,
       positioning: 'the stylist for normal bodies and normal budgets, not runway fantasy',
       audience: {
@@ -873,6 +1029,8 @@ window.IGOS = window.IGOS || {};
     education: {
       label: 'Study, Exams & Career Skills',
       short: 'Education',
+      category: 'Knowledge',
+      aliases: 'study, exam, upsc, jee, neet, cat, gate, student, school, college, placement, resume, interview, career prep, notes, competitive exam, coaching',
       reach: 1.20, cpm: 1.2, buyRate: 1.2,
       positioning: 'the senior who already cracked it and gives the shortcut nobody else shares',
       audience: {
@@ -919,6 +1077,8 @@ window.IGOS = window.IGOS || {};
     selfimprovement: {
       label: 'Self-Improvement & Mindset',
       short: 'Self-Improvement',
+      category: 'Knowledge',
+      aliases: 'self improvement, motivation, discipline, mindset, habits, productivity, focus, confidence, personal growth, stoicism, morning routine, self help, journaling',
       reach: 1.45, cpm: 1.0, buyRate: 1.0,
       positioning: 'the person who replaces vague motivation with systems that survive a bad week',
       audience: {
@@ -960,82 +1120,1457 @@ window.IGOS = window.IGOS || {};
       visual: 'Cinematic b-roll (walking, desk, gym, city), slow push-ins, muted colour grade, voiceover-first with subtitles, one sentence on screen at a time, silence used deliberately before the key line.',
       brands: ['habit & meditation apps', 'books/audiobooks', 'coffee & supplements', 'journals', 'courses'],
       proof: ['your own documented change', 'client transformations', 'consistency streak on the page itself']
+    },
+
+    beauty: {
+      label: 'Beauty & Skincare',
+      short: 'Beauty',
+      category: 'Lifestyle',
+      aliases: 'beauty, skincare, makeup, cosmetics, haircare, nails, acne, glow, grwm, dermatology, self care, salon, hair, skin',
+      reach: 1.45, cpm: 1.6, buyRate: 0.9,
+      positioning: 'the one who reads the ingredient list so nobody has to waste money on marketing',
+      audience: {
+        age: '18–34', who: 'students and working women, first-time skincare buyers, acne sufferers',
+        interests: ['skincare routines', 'affordable dupes', 'makeup tutorials', 'ingredient science', 'hair care'],
+        pains: ['spent thousands on products that did nothing', 'acne that never fully clears', 'no idea which ingredients clash', 'routines built for skin types that are not theirs', 'makeup that looks wrong in daylight'],
+        desires: ['clear skin without a 12-step routine', 'looking effortless', 'buying right the first time', 'confidence without makeup'],
+        objections: ['my skin is too sensitive', 'that brand is not available here', 'I do not have time for a routine']
+      },
+      pillars: [
+        { name: 'Ingredient education', pct: 30, why: 'The differentiator in a niche full of unexplained recommendations.' },
+        { name: 'Routines & tutorials', pct: 25, why: 'Saves engine — people bookmark what they intend to copy.' },
+        { name: 'Dupes & budget picks', pct: 20, why: 'Price is the hook. "Under ₹500 that beats the ₹3,000" travels.' },
+        { name: 'Before / after', pct: 15, why: 'Proof sells the products and the consultations both.' },
+        { name: 'Myth-busting', pct: 10, why: 'Correcting bad beauty advice is fast authority.' }
+      ],
+      ideas: [
+        'the 4-step routine that actually clears acne', 'ingredients you must never layer together',
+        'the ₹300 product that outperforms the ₹3,000 one', 'why your sunscreen is pilling',
+        'reading a skincare label in 60 seconds', 'a full routine for oily skin in Indian humidity',
+        'the makeup base that survives 12 hours', 'what dermatologists actually recommend vs what ads say',
+        '30 days of one active — honest before and after', 'the hair fall fix nobody sells you',
+        'drugstore dupes for the products on everyone\'s shelf', 'the order to apply everything, finally explained'
+      ],
+      offers: [
+        { name: 'Free skin-type quiz + routine PDF', type: 'Lead magnet', price: 0, gate: 0, promise: 'Segments your audience by skin type, which makes every future offer relevant.', deliver: 'Quiz + 3 routine PDFs' },
+        { name: 'Routine builder ebook', type: 'Digital product', price: 499, gate: 800, promise: 'Impulse-priced, solves the single most common question you get.', deliver: 'PDF with routines by skin type and budget' },
+        { name: 'Affiliate storefront', type: 'Affiliate', price: 0, gate: 500, promise: 'You are already driving purchases — get paid for them from day one.', deliver: 'Curated links, refreshed monthly' },
+        { name: '1:1 skin consultation', type: 'Productised service', price: 2500, gate: 4000, promise: 'High margin, no inventory. Frame as education, never as medical advice.', deliver: '30-min call + written routine plan' },
+        { name: 'Brand deals — skincare & cosmetics', type: 'Sponsorship', price: 0, gate: 6000, promise: 'Beauty brands buy at small sizes. Protect trust by refusing what you would not use.', deliver: 'Reel + stories + code' }
+      ],
+      hashtags: {
+        broad: ['#skincare', '#beauty', '#makeup', '#glowup'],
+        mid: ['#skincareroutine', '#acnetreatment', '#skincaretips', '#makeuptutorial', '#indianskincare', '#haircare'],
+        niche: ['#skincareindia', '#acnejourney', '#oilyskinroutine', '#budgetskincare', '#ingredientfocused', '#skincareforbeginners', '#indianbeauty', '#sunscreendaily']
+      },
+      visual: 'Soft natural window light, close-up skin texture shots, clean flat-lays on a single-colour surface, on-screen ingredient names, honest unfiltered before/after in the same lighting and angle.',
+      brands: ['skincare brands', 'cosmetics', 'haircare', 'derma clinics'],
+      proof: ['your own unfiltered progress', 'reader results you can repost', 'ingredient sources you cite']
+    },
+
+    travel: {
+      label: 'Travel & Places',
+      short: 'Travel',
+      category: 'Lifestyle',
+      aliases: 'travel, trip, tourism, backpacking, solo travel, hotels, flights, itinerary, vanlife, road trip, budget travel, destinations, hiking, adventure',
+      reach: 1.50, cpm: 1.3, buyRate: 0.85,
+      positioning: 'the one who makes a trip bookable instead of merely beautiful',
+      audience: {
+        age: '20–38', who: 'first-time travellers, budget backpackers, couples planning a trip, remote workers',
+        interests: ['itineraries', 'cheap flights', 'hidden spots', 'solo travel safety', 'stay recommendations'],
+        pains: ['beautiful reels with no useful information', 'no idea what a trip actually costs', 'planning takes longer than the trip', 'tourist traps and overpriced stays', 'travelling solo feels unsafe'],
+        desires: ['a trip that fits their budget', 'places without the crowd', 'a plan they can copy exactly', 'the confidence to go alone'],
+        objections: ['I cannot afford it', 'I do not have leave', 'it is not safe for me']
+      },
+      pillars: [
+        { name: 'Copyable itineraries', pct: 30, why: 'Saves engine. A dreamy shot gets a like; an itinerary gets bookmarked.' },
+        { name: 'Real costs', pct: 25, why: 'Nobody publishes honest budgets. Doing it makes you the trusted source.' },
+        { name: 'Hidden spots', pct: 20, why: 'Discovery drives shares and tags.' },
+        { name: 'Logistics & hacks', pct: 15, why: 'Visa, transport, booking timing — the boring stuff people desperately need.' },
+        { name: 'Story & atmosphere', pct: 10, why: 'This is what makes the account feel like a person, not a listing site.' }
+      ],
+      ideas: [
+        '3 days in this city for under ₹8,000, itemised', 'the booking window that halves flight prices',
+        'places locals go instead of the famous spot', 'what a week here really costs, receipt by receipt',
+        'the packing list after 30 trips', 'solo travel safety rules that actually matter',
+        'the visa process, step by step, no agent', 'how to find stays that are not on the booking apps',
+        'the mistake that cost me a whole day at the airport', 'best time of year for this place and why',
+        'a complete copy-paste itinerary for first-timers', 'transport from the airport without getting scammed'
+      ],
+      offers: [
+        { name: 'Free 3-day itinerary PDF', type: 'Lead magnet', price: 0, gate: 0, promise: 'Travel audiences trade an email for a plan instantly.', deliver: 'PDF itinerary + budget sheet' },
+        { name: 'Full itinerary pack', type: 'Digital product', price: 799, gate: 1500, promise: 'You already did the research for your own trip. Sell the artefact.', deliver: 'Day-by-day plan, maps, bookings, budgets' },
+        { name: 'Affiliate bookings', type: 'Affiliate', price: 0, gate: 500, promise: 'Hotels and gear pay commission on trips you are already inspiring.', deliver: 'Tracked booking and gear links' },
+        { name: 'Trip planning call', type: 'Productised service', price: 3000, gate: 5000, promise: 'One hour of your knowledge is worth more than a hundred saves.', deliver: '45-min call + custom plan doc' },
+        { name: 'Hosted group trip', type: 'High ticket', price: 45000, gate: 20000, promise: 'The endgame in travel. Ten people is a real income and a permanent community.', deliver: 'Small-group trip you host and organise' }
+      ],
+      hashtags: {
+        broad: ['#travel', '#wanderlust', '#travelgram', '#explore'],
+        mid: ['#budgettravel', '#solotravel', '#travelitinerary', '#traveltips', '#indiatravel', '#backpacking'],
+        niche: ['#budgettravelindia', '#solotravelindia', '#itineraryplanner', '#hiddengems', '#offbeattravel', '#travelonabudget', '#weekendgetaway', '#travelhacks']
+      },
+      visual: 'Wide establishing shot in frame one, movement in every clip, on-screen price and place name at all times, golden-hour grade kept consistent, no drone shot longer than two seconds without information on screen.',
+      brands: ['tourism boards', 'hotels & stays', 'luggage & gear', 'travel insurance & forex'],
+      proof: ['receipts and real costs', 'unedited footage of the actual stay', 'follower trips you inspired']
+    },
+
+    photography: {
+      label: 'Photography & Videography',
+      short: 'Photography',
+      category: 'Creative',
+      aliases: 'photography, photographer, camera, lens, dslr, mirrorless, editing, lightroom, portrait, wedding photography, videography, filmmaking, cinematography, mobile photography',
+      reach: 1.20, cpm: 1.0, buyRate: 1.15,
+      positioning: 'the one who proves the gear mattered less than the decision',
+      audience: {
+        age: '18–35', who: 'hobbyists with a first camera, phone shooters, aspiring wedding and product shooters',
+        interests: ['composition', 'editing presets', 'gear comparisons', 'lighting', 'client work'],
+        pains: ['photos look flat compared to what they saw', 'bought expensive gear and improved nothing', 'editing takes hours and still looks off', 'no idea how to price client work', 'cannot get past friends-and-family clients'],
+        desires: ['a recognisable personal style', 'paid client work', 'shots that look professional', 'confidence in manual mode'],
+        objections: ['my camera is not good enough', 'I only have a phone', 'the market is saturated']
+      },
+      pillars: [
+        { name: 'Before / after edits', pct: 30, why: 'The single highest-retention format in this niche — the reveal does the work.' },
+        { name: 'Technique breakdowns', pct: 25, why: 'Composition and light are what people actually lack.' },
+        { name: 'Gear reality checks', pct: 20, why: 'High search demand and it positions you as honest rather than sponsored.' },
+        { name: 'Client & business', pct: 15, why: 'Where the money is, and where the audience quietly wants to go.' },
+        { name: 'Behind the shoot', pct: 10, why: 'Process content builds the trust that books jobs.' }
+      ],
+      ideas: [
+        'the same photo with a ₹80,000 camera and a phone', 'one edit that fixes 90% of flat photos',
+        'the light you already have at home, used properly', 'composition rules ranked by how much they matter',
+        'my full Lightroom edit in 60 seconds', 'what I charge and how I got there',
+        'posing people who hate being photographed', 'the settings I use in every low light situation',
+        'a full wedding shoot, start to delivery', 'phone camera settings people never turn on',
+        'building a portfolio with no clients yet', 'the gear I regret buying'
+      ],
+      offers: [
+        { name: 'Free preset pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'The single most requested thing in this niche. Trade it for an email.', deliver: '5 presets + install guide' },
+        { name: 'Preset / LUT pack', type: 'Digital product', price: 999, gate: 1000, promise: 'Zero marginal cost, permanent income, and it spreads your look.', deliver: '20 presets + video walkthrough' },
+        { name: 'Portfolio review', type: 'Productised service', price: 2500, gate: 3000, promise: 'One call, one recording, immediate value.', deliver: '45-min review + written notes' },
+        { name: 'Shoot workshop', type: 'High ticket', price: 12000, gate: 8000, promise: 'Small in-person groups price high and generate a month of content.', deliver: 'Full-day hands-on workshop, 8 seats' },
+        { name: 'Client photography work', type: 'Service', price: 35000, gate: 2000, promise: 'The account is a portfolio and a lead source. Book the actual work.', deliver: 'Event, wedding or product shoot' }
+      ],
+      hashtags: {
+        broad: ['#photography', '#photographer', '#photooftheday', '#camera'],
+        mid: ['#portraitphotography', '#lightroomediting', '#photographytips', '#mobilephotography', '#weddingphotography', '#videography'],
+        niche: ['#photographyindia', '#beforeandafteredit', '#lightroompreset', '#naturallightportrait', '#photographybeginner', '#indianweddingphotographer', '#phonephotographytips', '#cinematiclook']
+      },
+      visual: 'Split-screen before/after with a hard wipe, the final image held on screen for two full seconds, screen recordings of the edit at 2x, your hands and the camera in frame, muted grade so the photos are the brightest thing on screen.',
+      brands: ['camera & lens brands', 'editing software', 'memory & storage', 'lighting gear'],
+      proof: ['your actual portfolio', 'client galleries', 'raw-to-final comparisons']
+    },
+
+    art: {
+      label: 'Art & Illustration',
+      short: 'Art',
+      category: 'Creative',
+      aliases: 'art, drawing, painting, sketch, illustration, digital art, procreate, artist, doodle, calligraphy, anime art, portrait drawing, watercolour, crafts art',
+      reach: 1.45, cpm: 0.8, buyRate: 0.9,
+      positioning: 'the artist who shows the ugly middle stage, not just the finished piece',
+      audience: {
+        age: '15–30', who: 'self-taught artists, students, hobbyists, aspiring freelance illustrators',
+        interests: ['drawing tutorials', 'art supplies', 'digital tools', 'style development', 'commissions'],
+        pains: ['art looks wrong and they cannot say why', 'no consistent style', 'comparison with artists who started earlier', 'no idea how to price commissions', 'motivation dies mid-piece'],
+        desires: ['a style people recognise', 'getting paid to draw', 'visible improvement', 'finishing what they start'],
+        objections: ['I do not have a tablet', 'I cannot draw from imagination', 'nobody would pay for mine']
+      },
+      pillars: [
+        { name: 'Process & timelapse', pct: 30, why: 'Watching something appear is the most hypnotic format on the platform.' },
+        { name: 'Technique fixes', pct: 25, why: 'Naming the specific error is what turns viewers into followers.' },
+        { name: 'Supplies & tools', pct: 15, why: 'High search demand and easy affiliate revenue.' },
+        { name: 'Progress & story', pct: 20, why: 'A year-of-progress post is the most shared thing in this niche.' },
+        { name: 'Art business', pct: 10, why: 'Moves an audience of hobbyists toward paying you.' }
+      ],
+      ideas: [
+        'the one fix that makes faces stop looking wrong', 'a full piece start to finish in 45 seconds',
+        'cheap supplies that beat the expensive ones', 'how I found my style — the honest version',
+        'drawing the same thing 1 year apart', 'the colour rule that changed my work',
+        'procreate settings I wish I knew on day one', 'how I price commissions',
+        'fixing a piece I nearly threw away', 'anatomy shortcuts that actually hold up',
+        'shading explained without theory', 'what I draw when I have no ideas'
+      ],
+      offers: [
+        { name: 'Free brush / practice pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'Artists collect tools. This is the fastest opt-in in the niche.', deliver: 'Brush set + practice sheet PDF' },
+        { name: 'Brush pack / procreate set', type: 'Digital product', price: 399, gate: 1000, promise: 'Impulse price, infinite supply, spreads your look through other people\'s work.', deliver: 'Brushes, palettes, install guide' },
+        { name: 'Commissions', type: 'Service', price: 3500, gate: 1000, promise: 'The most direct income in art. Open a limited slot count so it stays scarce.', deliver: 'Custom portrait or illustration' },
+        { name: 'Beginner drawing course', type: 'Digital product', price: 2499, gate: 5000, promise: 'Your process is the product. Record it once, sell it forever.', deliver: '10 lessons + practice files' },
+        { name: 'Prints & merch', type: 'Physical product', price: 799, gate: 10000, promise: 'Only once demand is proven — inventory is where artists lose money.', deliver: 'Print-on-demand, no upfront stock' }
+      ],
+      hashtags: {
+        broad: ['#art', '#drawing', '#artist', '#illustration'],
+        mid: ['#digitalart', '#procreate', '#sketchbook', '#arttutorial', '#artistsoninstagram', '#painting'],
+        niche: ['#artprocess', '#drawingtips', '#procreateart', '#artprogress', '#selftaughtartist', '#indianartist', '#characterdesign', '#artcommissions']
+      },
+      visual: 'Overhead fixed camera, timelapse with the reveal held at the end, hands and tool visible, paper or canvas filling the frame, quiet audio so the pencil or brush is audible.',
+      brands: ['art supplies', 'tablets & styluses', 'creative software', 'print services'],
+      proof: ['your progress over years', 'commission gallery', 'client and buyer reactions']
+    },
+
+    music: {
+      label: 'Music & Production',
+      short: 'Music',
+      category: 'Creative',
+      aliases: 'music, singing, guitar, piano, producer, music production, beats, fl studio, ableton, mixing, mastering, songwriting, rap, instrument, band, dj',
+      reach: 1.35, cpm: 0.9, buyRate: 1.0,
+      positioning: 'the one who shows the ten seconds where a track actually becomes good',
+      audience: {
+        age: '16–32', who: 'bedroom producers, self-taught instrumentalists, singers, aspiring artists',
+        interests: ['production tutorials', 'gear and plugins', 'theory made simple', 'covers', 'release strategy'],
+        pains: ['tracks sound amateur next to released music', 'finishing nothing', 'theory feels like homework', 'no idea how to get heard', 'mixing that never sits right'],
+        desires: ['a release they are proud of', 'their sound recognised', 'playing without thinking', 'an audience that listens'],
+        objections: ['I do not have the gear', 'I never learned theory', 'the market is impossible']
+      },
+      pillars: [
+        { name: 'Before / after production', pct: 30, why: 'The A/B is instantly understandable and endlessly rewatchable.' },
+        { name: 'Technique in 30 seconds', pct: 25, why: 'One trick, demonstrated, beats any explanation.' },
+        { name: 'Theory made practical', pct: 20, why: 'Turns the boring thing into the useful thing.' },
+        { name: 'Performance & covers', pct: 15, why: 'Reach — people share music they enjoy, not music they learn from.' },
+        { name: 'Artist business', pct: 10, why: 'Release, distribution and money. Nobody teaches this well.' }
+      ],
+      ideas: [
+        'the one plugin move that makes vocals sit', 'this chord progression is in half the songs you love',
+        'a beat from nothing in 60 seconds', 'why your mix sounds muddy — and the fix',
+        'the cheapest setup that sounds professional', 'how I finish tracks instead of abandoning them',
+        'theory you can use tonight, no notation', 'the difference between mixing and mastering, demonstrated',
+        'turning a voice memo into a finished song', 'how streaming payouts actually work',
+        'the reference track method', 'recording vocals in an untreated room'
+      ],
+      offers: [
+        { name: 'Free sample / preset pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'Producers download packs reflexively. Fastest list build in the niche.', deliver: '20 samples + 5 presets' },
+        { name: 'Sample pack / preset bank', type: 'Digital product', price: 799, gate: 1500, promise: 'Made once, sold forever, and it puts your sound in other people\'s tracks.', deliver: 'Full pack with stems and presets' },
+        { name: 'Mixing / mastering service', type: 'Service', price: 4000, gate: 2000, promise: 'Steady income from an audience that already trusts your ears.', deliver: 'One track mixed and mastered, 2 revisions' },
+        { name: '1:1 production coaching', type: 'High ticket', price: 15000, gate: 6000, promise: 'Small number of serious students, deep results, strong testimonials.', deliver: '6 sessions with project feedback' },
+        { name: 'Brand deals — plugins & gear', type: 'Sponsorship', price: 0, gate: 12000, promise: 'Plugin companies pay well and repeat at every release.', deliver: 'Demo reel + discount code' }
+      ],
+      hashtags: {
+        broad: ['#music', '#producer', '#musician', '#singer'],
+        mid: ['#musicproduction', '#beatmaker', '#homestudio', '#mixingandmastering', '#songwriting', '#guitarist'],
+        niche: ['#bedroomproducer', '#flstudio', '#abletonlive', '#musicproductiontips', '#vocalmixing', '#indianmusician', '#independentartist', '#musictheorytips']
+      },
+      visual: 'Screen recording of the DAW with the waveform visible, A/B toggle shown on screen, close-ups of hands on the instrument or controller, audio never compressed under music — the sound is the content.',
+      brands: ['plugin & software companies', 'audio interfaces & mics', 'instruments', 'distribution platforms'],
+      proof: ['your released tracks and streams', 'client mixes A/B', 'student results']
+    },
+
+    gaming: {
+      label: 'Gaming & Esports',
+      short: 'Gaming',
+      category: 'Entertainment',
+      aliases: 'gaming, gamer, esports, bgmi, pubg, valorant, free fire, minecraft, gta, cod, streaming, twitch, gameplay, mobile gaming, pc build',
+      reach: 1.55, cpm: 1.1, buyRate: 0.6,
+      positioning: 'the one whose clips teach a skill instead of only showing off',
+      audience: {
+        age: '14–28', who: 'mobile and PC gamers, aspiring streamers, competitive players',
+        interests: ['gameplay clips', 'settings and sensitivity', 'patch meta', 'setups and builds', 'streamer culture'],
+        pains: ['stuck at the same rank for months', 'settings copied from pros that feel wrong', 'no idea how to start streaming to nobody', 'device or PC that cannot keep up', 'tilt after losses'],
+        desires: ['ranking up visibly', 'clips their friends share', 'a following from playing', 'reaction speed and aim'],
+        objections: ['my device is weak', 'I do not have time to grind', 'I am too old to start']
+      },
+      pillars: [
+        { name: 'Skill breakdowns', pct: 30, why: 'A clip that teaches gets saved. A clip that flexes gets scrolled.' },
+        { name: 'Highlight clips', pct: 25, why: 'Raw reach. The share driver of the whole niche.' },
+        { name: 'Settings & setup', pct: 20, why: 'Enormous search demand and it repeats with every patch.' },
+        { name: 'Meta & news', pct: 15, why: 'Free distribution from attention you did not have to create.' },
+        { name: 'Personality & story', pct: 10, why: 'Gaming audiences follow people, not gameplay.' }
+      ],
+      ideas: [
+        'the sensitivity setting that fixed my aim', 'this rotation wins you the endgame every time',
+        'settings for low-end devices that actually help', 'why you keep losing the 1v1 — frame by frame',
+        'the drill that took me up two ranks', 'best loadout after this patch, ranked',
+        'a full match with my thinking narrated', 'the mistake 90% of players make in the first minute',
+        'my setup and what it actually cost', 'how to start streaming when nobody is watching',
+        'reaction time training that is not a myth', 'what pros do differently in the same situation'
+      ],
+      offers: [
+        { name: 'Free settings + sensitivity guide', type: 'Lead magnet', price: 0, gate: 0, promise: 'The most-asked question in gaming, packaged.', deliver: 'PDF settings guide by device' },
+        { name: 'Coaching session', type: 'Productised service', price: 999, gate: 3000, promise: 'Ranked players pay to rank up. Screen-share is the whole delivery.', deliver: '1-hour VOD review + drills' },
+        { name: 'Discord community', type: 'Subscription', price: 199, gate: 5000, promise: 'Recurring revenue and a squad that shows up to every stream.', deliver: 'Private server, scrims, coaching nights' },
+        { name: 'Merch drop', type: 'Physical product', price: 899, gate: 25000, promise: 'Gaming audiences buy identity, not utility. Only once the community exists.', deliver: 'Limited print-on-demand run' },
+        { name: 'Brand deals — games & peripherals', type: 'Sponsorship', price: 0, gate: 15000, promise: 'The main revenue line in gaming. Needs scale before it pays properly.', deliver: 'Sponsored gameplay + code' }
+      ],
+      hashtags: {
+        broad: ['#gaming', '#gamer', '#esports', '#gameplay'],
+        mid: ['#bgmi', '#valorant', '#mobilegaming', '#gamingclips', '#gamingsetup', '#streamer'],
+        niche: ['#bgmitips', '#valoranttips', '#gamingindia', '#ranktips', '#gamingmontage', '#lowendpc', '#sensitivitysettings', '#indiangamer']
+      },
+      visual: 'Screen capture at full framerate, kill or key moment in frame one, facecam small in the corner, on-screen callouts pointing at the exact input, punchy sound design, cuts on every action.',
+      brands: ['game publishers', 'peripherals & phones', 'energy drinks', 'gaming chairs & PCs'],
+      proof: ['your rank and stats', 'clip results', 'students who ranked up']
+    },
+
+    parenting: {
+      label: 'Parenting & Family',
+      short: 'Parenting',
+      category: 'Lifestyle',
+      aliases: 'parenting, mom, dad, baby, toddler, kids, newborn, pregnancy, motherhood, fatherhood, child development, family, momlife, parenting tips',
+      reach: 1.40, cpm: 1.3, buyRate: 1.05,
+      positioning: 'the parent who says the quiet part out loud and then offers something that works',
+      audience: {
+        age: '25–42', who: 'new parents, parents of toddlers, working mothers, expecting couples',
+        interests: ['sleep and feeding', 'child development', 'activities', 'discipline without shouting', 'mum guilt'],
+        pains: ['no sleep and no help', 'guilt about every decision', 'contradictory advice from family and internet', 'screen time battles', 'losing their own identity'],
+        desires: ['a child who sleeps', 'calm mornings', 'confidence in their own decisions', 'time that is theirs'],
+        objections: ['every child is different', 'that will not work with mine', 'I do not have the time or support']
+      },
+      pillars: [
+        { name: 'Practical solutions', pct: 30, why: 'Exhausted parents save what solves tonight, not what inspires.' },
+        { name: 'Relatable truth', pct: 25, why: 'The highest-share format here — parents send these to each other constantly.' },
+        { name: 'Development & science', pct: 20, why: 'Authority. It is what separates you from a diary account.' },
+        { name: 'Activities & routines', pct: 15, why: 'Screenshot-able, repeatable, endlessly reusable.' },
+        { name: 'Parent wellbeing', pct: 10, why: 'The most under-served topic in the niche, and the most emotionally loyal.' }
+      ],
+      ideas: [
+        'the bedtime routine that finally worked', 'what to say instead of shouting',
+        'fussy eater fixes that are not bribery', '10 minutes of this replaces an hour of screen time',
+        'the developmental reason behind the tantrum', 'what nobody tells you about the first 6 weeks',
+        'activities with things already in your house', 'the morning routine that stopped the chaos',
+        'how to handle unsolicited advice from family', 'sleep regressions, explained and survived',
+        'the thing I got wrong as a first-time parent', 'dividing the invisible work fairly'
+      ],
+      offers: [
+        { name: 'Free routine / sleep guide', type: 'Lead magnet', price: 0, gate: 0, promise: 'Solves the single most desperate problem your audience has.', deliver: 'PDF routine by age' },
+        { name: 'Activity pack / printables', type: 'Digital product', price: 399, gate: 1000, promise: 'Low price, instant download, bought at 11pm by an exhausted parent.', deliver: 'Printables, activity cards, schedules' },
+        { name: 'Sleep or feeding consult', type: 'Productised service', price: 3000, gate: 4000, promise: 'Parents pay real money for sleep. Stay within your qualifications.', deliver: '45-min call + written plan + follow-up' },
+        { name: 'Parenting course', type: 'Digital product', price: 4999, gate: 10000, promise: 'Record once. This audience buys when the pain peaks, which is constantly.', deliver: '8 modules + printables + community' },
+        { name: 'Brand deals — baby & family', type: 'Sponsorship', price: 0, gate: 8000, promise: 'Strong category with high trust requirements — never take what you would not use.', deliver: 'Integrated reel + stories' }
+      ],
+      hashtags: {
+        broad: ['#parenting', '#momlife', '#family', '#baby'],
+        mid: ['#toddlerlife', '#newmom', '#parentingtips', '#momsofinstagram', '#gentleparenting', '#babysleep'],
+        niche: ['#indianmom', '#toddleractivities', '#parentinghacks', '#sleeptraining', '#firsttimemom', '#momguilt', '#positiveparenting', '#workingmom']
+      },
+      visual: 'Real home settings, no staging, natural light, child faces optional — hands and backs of heads work fine, on-screen text carrying the whole message for mute viewing at 2am, warm soft grade.',
+      brands: ['baby care & food', 'toys & learning', 'strollers & gear', 'family services'],
+      proof: ['your own children\'s progress', 'parent messages you can repost', 'qualifications if you have them']
+    },
+
+    relationships: {
+      label: 'Relationships & Dating',
+      short: 'Relationships',
+      category: 'Knowledge',
+      aliases: 'relationships, dating, love, marriage, couple, breakup, attachment, communication, situationship, red flags, boundaries, romance, dating advice',
+      reach: 1.55, cpm: 0.9, buyRate: 0.95,
+      positioning: 'the one who explains the pattern instead of taking sides',
+      audience: {
+        age: '20–38', who: 'single people dating, couples in friction, people recovering from a breakup',
+        interests: ['communication', 'attachment styles', 'red flags', 'breakup recovery', 'long-term compatibility'],
+        pains: ['the same fight on repeat', 'attracting the same wrong person', 'not being able to say what they mean', 'anxiety between texts', 'staying too long in the wrong thing'],
+        desires: ['being understood', 'a relationship that feels calm', 'walking away without guilt', 'trusting their own judgement'],
+        objections: ['my situation is different', 'they will never change', 'this is just pop psychology']
+      },
+      pillars: [
+        { name: 'Patterns explained', pct: 30, why: 'Naming a pattern someone is living inside is the strongest hook in this niche.' },
+        { name: 'Scripts & what to say', pct: 25, why: 'Concrete words to use. This is what gets saved and used the same night.' },
+        { name: 'Hard truths', pct: 20, why: 'Highest share rate — people send these instead of saying it themselves.' },
+        { name: 'Story & example', pct: 15, why: 'Makes the abstract land.' },
+        { name: 'Self-work', pct: 10, why: 'Moves the audience from blaming to acting, which is where your offer lives.' }
+      ],
+      ideas: [
+        'what to say instead of "you never listen"', 'the four behaviours that predict a breakup',
+        'why you keep choosing the same person in different bodies', 'attachment styles in 45 seconds, no jargon',
+        'the difference between a boundary and an ultimatum', 'how to have the conversation you keep avoiding',
+        'green flags nobody talks about', 'texting anxiety and what it is actually telling you',
+        'repairing after a fight, step by step', 'when leaving is the healthy choice',
+        'the questions to ask before getting serious', 'rebuilding trust after it broke'
+      ],
+      offers: [
+        { name: 'Free conversation scripts', type: 'Lead magnet', price: 0, gate: 0, promise: 'Exact words for the hardest conversations. Extremely high opt-in.', deliver: 'PDF of 10 scripts' },
+        { name: 'Workbook / guide', type: 'Digital product', price: 699, gate: 1500, promise: 'Emotional timing sells. People buy at 1am after a fight.', deliver: 'Workbook + exercises + audio' },
+        { name: '1:1 coaching session', type: 'Productised service', price: 3500, gate: 4000, promise: 'High willingness to pay. Be explicit that coaching is not therapy.', deliver: '60-min call + action plan' },
+        { name: 'Couples course', type: 'Digital product', price: 5999, gate: 12000, promise: 'Two buyers, one purchase. Highest-value product in the niche.', deliver: '6 modules + exercises for two' },
+        { name: 'Membership community', type: 'Subscription', price: 599, gate: 15000, promise: 'Recurring, and the community does much of the support work itself.', deliver: 'Group calls + private space' }
+      ],
+      hashtags: {
+        broad: ['#relationships', '#love', '#dating', '#couples'],
+        mid: ['#relationshipadvice', '#datingtips', '#attachmentstyles', '#healthyrelationships', '#breakuprecovery', '#communication'],
+        niche: ['#relationshipcoach', '#datingadviceforwomen', '#anxiousattachment', '#redflagsindating', '#relationshiptips', '#couplegoalsreal', '#selfworthfirst', '#boundariesmatter']
+      },
+      visual: 'Direct-to-camera at eye level, one idea per video, plain background so nothing competes with the face, subtitles always, calm pacing — urgency undermines the authority this niche needs.',
+      brands: ['dating apps', 'therapy & wellness platforms', 'books', 'journals'],
+      proof: ['client outcomes with permission', 'your credentials', 'follower messages describing change']
+    },
+
+    mentalhealth: {
+      label: 'Mental Health & Emotional Wellbeing',
+      short: 'Mental Health',
+      category: 'Knowledge',
+      aliases: 'mental health, anxiety, depression, therapy, burnout, stress, trauma, healing, emotional health, overthinking, self care mental, psychology, mindfulness',
+      reach: 1.40, cpm: 0.9, buyRate: 0.9,
+      positioning: 'the one who explains what is happening in the body, not just what to feel',
+      audience: {
+        age: '18–35', who: 'students and young professionals under pressure, people in therapy or considering it',
+        interests: ['anxiety tools', 'burnout', 'nervous system', 'therapy explained', 'boundaries'],
+        pains: ['overthinking that will not stop', 'exhausted but cannot rest', 'shame about needing help', 'coping strategies that stopped working', 'no affordable access to therapy'],
+        desires: ['a quieter mind', 'understanding why they react that way', 'functioning again', 'not feeling broken'],
+        objections: ['therapy is too expensive', 'nothing works for me', 'I should be able to handle this alone']
+      },
+      pillars: [
+        { name: 'Explain the mechanism', pct: 30, why: 'Understanding why the body does this is itself relieving — and it is your authority.' },
+        { name: 'Tools you can use now', pct: 25, why: 'One technique, demonstrated, usable in the next five minutes.' },
+        { name: 'Validation', pct: 20, why: 'Highest share rate. People send these instead of explaining themselves.' },
+        { name: 'Myth correction', pct: 15, why: 'This niche is full of harmful oversimplification. Correcting it earns trust fast.' },
+        { name: 'Personal story', pct: 10, why: 'Removes the distance. Share what is healed, not what is raw.' }
+      ],
+      ideas: [
+        'what is actually happening in your body during a panic response', 'the 90-second rule for an emotion',
+        'why you are tired after doing nothing', 'grounding that works in public without anyone noticing',
+        'burnout is not laziness — here is the difference', 'how to ask for help without over-explaining',
+        'the difference between rest and distraction', 'what therapy actually looks like in session one',
+        'overthinking at night — the practical fix', 'boundaries when saying no feels impossible',
+        'the coping habit that stopped working and why', 'what to say to someone struggling'
+      ],
+      offers: [
+        { name: 'Free coping toolkit', type: 'Lead magnet', price: 0, gate: 0, promise: 'Immediate relief in exchange for an email. Highest opt-in in the niche.', deliver: 'PDF of techniques + audio exercise' },
+        { name: 'Workbook / journal', type: 'Digital product', price: 599, gate: 2000, promise: 'Low price, real utility, no clinical claims required.', deliver: 'Printable workbook + prompts' },
+        { name: 'Group workshop', type: 'Productised service', price: 999, gate: 5000, promise: 'Scales without inventory and builds community at the same time.', deliver: '90-min live session + recording' },
+        { name: 'Therapy / coaching practice', type: 'High ticket', price: 15000, gate: 3000, promise: 'If you are qualified, the account is the best client pipeline you will ever build.', deliver: 'Package of sessions' },
+        { name: 'Membership', type: 'Subscription', price: 499, gate: 15000, promise: 'Consistent support, recurring revenue, lower emotional load than 1:1.', deliver: 'Monthly calls + private community' }
+      ],
+      hashtags: {
+        broad: ['#mentalhealth', '#anxiety', '#wellbeing', '#selfcare'],
+        mid: ['#mentalhealthawareness', '#anxietyrelief', '#burnoutrecovery', '#therapytools', '#mindfulness', '#emotionalhealth'],
+        niche: ['#anxietytips', '#nervoussystemregulation', '#mentalhealthindia', '#therapyexplained', '#overthinkinghelp', '#groundingtechniques', '#burnoutprevention', '#healingjourney']
+      },
+      visual: 'Calm and slow. Soft light, muted palette, no jump cuts, direct address or gentle b-roll, subtitles always, silence used deliberately. Anything frantic contradicts the message.',
+      brands: ['therapy platforms', 'meditation apps', 'journals & books', 'wellness products'],
+      proof: ['your qualifications, stated plainly', 'follower messages with permission', 'sources you cite']
+    },
+
+    pets: {
+      label: 'Pets & Animal Care',
+      short: 'Pets',
+      category: 'Lifestyle',
+      aliases: 'pets, dog, cat, puppy, kitten, pet care, dog training, veterinary, animals, pet food, rescue, dog grooming',
+      reach: 1.60, cpm: 1.0, buyRate: 0.7,
+      positioning: 'the one whose cute clips quietly teach owners something they were getting wrong',
+      audience: {
+        age: '18–40', who: 'first-time dog and cat owners, rescuers, people about to get a pet',
+        interests: ['training', 'nutrition', 'health signs', 'breed information', 'enrichment'],
+        pains: ['destructive behaviour they cannot stop', 'conflicting training advice', 'expensive vet surprises', 'not knowing what is normal', 'guilt about leaving the pet alone'],
+        desires: ['a calm well-behaved pet', 'a longer healthier life for them', 'understanding what the animal is saying', 'confidence as an owner'],
+        objections: ['my dog is too old to train', 'that breed is different', 'I do not have time for training']
+      },
+      pillars: [
+        { name: 'Training that works', pct: 30, why: 'Cute gets reach; training gets follows. Pair them in the same video.' },
+        { name: 'Health & warning signs', pct: 25, why: 'Fear-of-missing-something drives saves and shares to other owners.' },
+        { name: 'Cute + informative', pct: 20, why: 'The reach engine. Never post cute without one line of value.' },
+        { name: 'Cost & products', pct: 15, why: 'High affiliate potential and genuinely useful.' },
+        { name: 'Rescue & story', pct: 10, why: 'The emotional core that turns viewers into a community.' }
+      ],
+      ideas: [
+        'the recall command that actually holds outdoors', 'signs your pet is in pain that owners miss',
+        'stop the leash pulling in one week', 'what this behaviour is actually telling you',
+        'the ₹200 enrichment that ends destructive chewing', 'human foods that are quietly dangerous',
+        'how much a dog really costs per month, itemised', 'separation anxiety, fixed properly',
+        'first 48 hours with a rescue', 'grooming at home without the fight',
+        'the vet visit checklist nobody gives you', 'why your cat does that, explained'
+      ],
+      offers: [
+        { name: 'Free new-owner checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'Captures people at the exact moment they get a pet and need everything.', deliver: 'PDF checklist + first-week schedule' },
+        { name: 'Training guide', type: 'Digital product', price: 599, gate: 1500, promise: 'Solves the behaviour problem that made them follow you.', deliver: 'PDF + demonstration videos' },
+        { name: 'Affiliate product picks', type: 'Affiliate', price: 0, gate: 500, promise: 'Owners buy constantly. You are already recommending — get paid.', deliver: 'Curated gear and food links' },
+        { name: '1:1 behaviour consult', type: 'Productised service', price: 2500, gate: 5000, promise: 'Owners at their wits\' end pay quickly. Stay inside your competence.', deliver: '45-min video consult + plan' },
+        { name: 'Brand deals — pet food & products', type: 'Sponsorship', price: 0, gate: 10000, promise: 'Loyal category with repeat contracts, and audiences hold you to high standards.', deliver: 'Integrated reel + code' }
+      ],
+      hashtags: {
+        broad: ['#dog', '#cat', '#pets', '#petsofinstagram'],
+        mid: ['#dogtraining', '#puppytraining', '#petcare', '#dogsofinstagram', '#catsofinstagram', '#rescuedog'],
+        niche: ['#dogtrainingtips', '#indiandogs', '#petcaretips', '#puppyparenting', '#dogbehaviour', '#indiestreetdogs', '#catbehaviour', '#petnutrition']
+      },
+      visual: 'Get the camera down to animal eye level, natural light, capture real behaviour rather than staged tricks, on-screen text explaining what is happening, keep clips under 3 seconds each.',
+      brands: ['pet food', 'toys & accessories', 'vet & insurance services', 'grooming products'],
+      proof: ['your own animal\'s progress over time', 'client dogs before and after', 'credentials if you have them']
+    },
+
+    homedecor: {
+      label: 'Home Decor & Interiors',
+      short: 'Home Decor',
+      category: 'Lifestyle',
+      aliases: 'home decor, interior design, interiors, home makeover, furniture, room makeover, apartment, rental decor, organisation, home styling, house tour, small space',
+      reach: 1.45, cpm: 1.4, buyRate: 0.9,
+      positioning: 'the one who makes a rented, ordinary space look intentional on a real budget',
+      audience: {
+        age: '24–42', who: 'renters, first-home buyers, newly married couples, small-space dwellers',
+        interests: ['budget makeovers', 'small space solutions', 'organisation', 'furniture sourcing', 'colour and light'],
+        pains: ['a space that feels cramped and dark', 'cannot make permanent changes in a rental', 'everything inspiring is unaffordable', 'clutter that returns within a week', 'no idea where to start'],
+        desires: ['a home that feels calm', 'a space people compliment', 'more usable room without moving', 'doing it without a designer'],
+        objections: ['I am renting', 'my space is too small', 'that costs more than my whole budget']
+      },
+      pillars: [
+        { name: 'Before / after', pct: 30, why: 'The single most watched format in interiors. Lead with the after.' },
+        { name: 'Budget sourcing', pct: 25, why: 'Where to buy it and what it cost is the information nobody gives.' },
+        { name: 'Small-space fixes', pct: 20, why: 'Most of your audience lives in less space than they want.' },
+        { name: 'Renter-safe hacks', pct: 15, why: 'Enormous under-served audience — everything else assumes ownership.' },
+        { name: 'Design principles', pct: 10, why: 'Teaches the why, which is what makes people trust you with a paid project.' }
+      ],
+      ideas: [
+        'this room transformed for under ₹15,000, itemised', 'the lighting change that made the room feel twice as big',
+        'renter-safe upgrades with zero drilling', 'the 3 mistakes making your space feel cramped',
+        'where I actually buy furniture that looks expensive', 'a small bedroom, completely reorganised',
+        'the colour rule that fixes a dull room', 'kitchen storage that survived six months',
+        'styling a shelf so it does not look cluttered', 'a full home tour with prices on screen',
+        'what designers do first in any room', 'the ₹500 change with the biggest impact'
+      ],
+      offers: [
+        { name: 'Free room-planning checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'Catches people at the start of a project, before they spend anything.', deliver: 'Checklist + budget template' },
+        { name: 'Source list / mood board pack', type: 'Digital product', price: 799, gate: 2000, promise: 'Your sourcing knowledge is the product people actually want.', deliver: 'Source list, boards, palettes' },
+        { name: 'Affiliate storefront', type: 'Affiliate', price: 0, gate: 1000, promise: 'Every "where is that from" comment is unclaimed commission.', deliver: 'Curated shoppable links' },
+        { name: 'E-design consultation', type: 'Productised service', price: 6000, gate: 5000, promise: 'Remote design has no travel cost and scales far past local clients.', deliver: 'Layout, mood board, shopping list' },
+        { name: 'Full design project', type: 'High ticket', price: 60000, gate: 8000, promise: 'The account is a portfolio. Two projects a month is a full income.', deliver: 'End-to-end room or home design' }
+      ],
+      hashtags: {
+        broad: ['#homedecor', '#interiordesign', '#home', '#decor'],
+        mid: ['#smallspaces', '#budgetdecor', '#rentalfriendly', '#roommakeover', '#homestyling', '#interiors'],
+        niche: ['#indianhomedecor', '#budgethomedecor', '#rentalapartment', '#smallapartmentdesign', '#homeorganisation', '#beforeandafterhome', '#indianinteriors', '#diyhomedecor']
+      },
+      visual: 'Same camera position for before and after, hard cut between them, wide shots that show the whole room, natural daylight, prices on screen for every item, one warm consistent grade across the entire grid.',
+      brands: ['furniture & home stores', 'paint brands', 'appliances', 'e-commerce marketplaces'],
+      proof: ['your own space over time', 'client project photos', 'itemised real budgets']
+    },
+    diy: {
+      label: 'DIY, Crafts & Making',
+      short: 'DIY',
+      category: 'Creative',
+      aliases: 'diy, craft, crafts, handmade, woodworking, resin, knitting, crochet, sewing, repair, restoration, upcycle, maker, 3d printing, home improvement',
+      reach: 1.55, cpm: 1.0, buyRate: 0.8,
+      positioning: 'the one who makes a thing look genuinely achievable with what people already own',
+      audience: {
+        age: '20–45', who: 'weekend hobbyists, people furnishing a first home, small handmade sellers',
+        interests: ['step-by-step builds', 'tool basics', 'upcycling', 'selling handmade', 'cheap materials'],
+        pains: ['tutorials that skip the hard step', 'projects abandoned halfway', 'expensive tools for one job', 'results that look obviously homemade', 'no space to work'],
+        desires: ['making something people admire', 'saving money by doing it themselves', 'a side income from making', 'a skill that is theirs'],
+        objections: ['I do not have those tools', 'I have no space', 'mine would never look like that']
+      },
+      pillars: [
+        { name: 'Full builds', pct: 30, why: 'Start-to-finish satisfies completely and gets watched twice.' },
+        { name: 'Skill in 30 seconds', pct: 25, why: 'One technique, isolated. This is what gets saved.' },
+        { name: 'Tools & materials', pct: 20, why: 'High search intent and natural affiliate revenue.' },
+        { name: 'Fails & fixes', pct: 15, why: 'Showing the failure is what makes people believe they can try.' },
+        { name: 'Selling handmade', pct: 10, why: 'Moves hobbyists toward the offer you actually sell.' }
+      ],
+      ideas: [
+        'this build cost ₹800 and looks like ₹8,000', 'the joint that stops everything wobbling',
+        'tools worth buying vs tools to borrow', 'turning something broken into something better',
+        'the finish that separates homemade from handmade', 'a full project with only hand tools',
+        'the mistake that ruins resin every time', 'how I price what I make',
+        'workspace setup in a rented flat', 'materials from the hardware shop you are ignoring',
+        'restoring a piece nobody wanted', 'the beginner project that teaches five skills'
+      ],
+      offers: [
+        { name: 'Free project plan', type: 'Lead magnet', price: 0, gate: 0, promise: 'A plan with measurements is worth an email to anyone who wants to build it.', deliver: 'PDF plan + cut list + materials' },
+        { name: 'Plan / pattern pack', type: 'Digital product', price: 499, gate: 1500, promise: 'You already made the thing. The plan costs nothing more to sell.', deliver: 'Plans, patterns, cut lists' },
+        { name: 'Affiliate tool picks', type: 'Affiliate', price: 0, gate: 500, promise: 'Every build is a tool recommendation. Get paid for it.', deliver: 'Curated tool and material links' },
+        { name: 'Sell what you make', type: 'Physical product', price: 2500, gate: 3000, promise: 'The most direct revenue. Make to order so inventory never traps your cash.', deliver: 'Made-to-order pieces, limited slots' },
+        { name: 'Workshop / class', type: 'High ticket', price: 6000, gate: 8000, promise: 'In-person or live online, both price far above a PDF.', deliver: 'Hands-on session, small group' }
+      ],
+      hashtags: {
+        broad: ['#diy', '#handmade', '#craft', '#maker'],
+        mid: ['#woodworking', '#diyprojects', '#upcycle', '#craftideas', '#homeimprovement', '#diyhome'],
+        niche: ['#diyindia', '#beginnerwoodworking', '#handmadeindia', '#diyfurniture', '#resinart', '#smallspaceworkshop', '#craftbusiness', '#toolsforbeginners']
+      },
+      visual: 'Overhead and over-shoulder alternating, the finished object in frame one, satisfying process sound kept loud, measurements on screen, hard cuts between stages, no step skipped silently.',
+      brands: ['tool brands', 'hardware & materials', 'craft suppliers', 'home improvement retailers'],
+      proof: ['the finished pieces', 'customer orders shipped', 'your workspace over time']
+    },
+
+    realestate: {
+      label: 'Real Estate & Property',
+      short: 'Real Estate',
+      category: 'Money',
+      aliases: 'real estate, property, realtor, housing, rent, buying a home, apartment, flat, land, home loan, mortgage, investment property, broker, builder',
+      reach: 1.05, cpm: 1.8, buyRate: 1.2,
+      positioning: 'the one who shows the numbers a broker would rather you did not calculate',
+      audience: {
+        age: '28–48', who: 'first-time buyers, renters weighing a purchase, small property investors, NRIs',
+        interests: ['property tours', 'loan and EMI maths', 'locality comparisons', 'rental yield', 'legal checks'],
+        pains: ['no idea if a price is fair', 'loan maths they cannot verify', 'fear of legal and title problems', 'brokers with hidden incentives', 'buying at the wrong time'],
+        desires: ['owning without being cheated', 'a property that appreciates', 'rental income', 'clarity before committing decades'],
+        objections: ['prices are too high right now', 'renting is smarter', 'I do not have the down payment']
+      },
+      pillars: [
+        { name: 'Numbers & maths', pct: 30, why: 'EMI, yield and true cost. The most valuable and least published content in the niche.' },
+        { name: 'Property tours', pct: 25, why: 'Reach engine. Always put the price on screen or the tour is entertainment.' },
+        { name: 'Legal & process', pct: 20, why: 'Fear-driven saves. Buyers are terrified of what they do not know.' },
+        { name: 'Locality intelligence', pct: 15, why: 'Hyper-local knowledge is your unfair advantage over national accounts.' },
+        { name: 'Deals & case studies', pct: 10, why: 'Proof that you know what you are talking about — and it generates leads.' }
+      ],
+      ideas: [
+        'the true cost of a ₹50 lakh flat over 20 years', 'rent vs buy, with the actual numbers',
+        'this locality in 90 seconds — price, commute, schools', 'the documents to check before paying anything',
+        'why the carpet-area difference matters more than the price', 'rental yield ranked across the city',
+        'a full tour with the real asking price on screen', 'the negotiation that saved ₹4 lakh',
+        'home loan mistakes that cost lakhs in interest', 'what builders do not put in the brochure',
+        'the ₹0 checks you can do yourself before a site visit', 'how much down payment you actually need'
+      ],
+      offers: [
+        { name: 'Free buyer checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'Captures serious buyers at the research stage, months before they transact.', deliver: 'Legal + inspection checklist PDF' },
+        { name: 'EMI & yield calculator pack', type: 'Digital product', price: 999, gate: 2000, promise: 'Cheap, useful, and it filters your list down to real buyers.', deliver: 'Sheets + walkthrough video' },
+        { name: 'Buyer consultation', type: 'Productised service', price: 5000, gate: 3000, promise: 'One call at a decision worth lakhs is trivially easy to justify.', deliver: '60-min call + shortlist review' },
+        { name: 'Brokerage / advisory', type: 'High ticket', price: 150000, gate: 2000, promise: 'One closed transaction dwarfs every other revenue line here.', deliver: 'End-to-end representation on a purchase' },
+        { name: 'Developer partnerships', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Pays extremely well. Disclose it every time or you lose the trust that earns it.', deliver: 'Project feature + tour + leads' }
+      ],
+      hashtags: {
+        broad: ['#realestate', '#property', '#home', '#investment'],
+        mid: ['#propertyinvestment', '#homebuying', '#realestatetips', '#housetour', '#homeloan', '#rentalproperty'],
+        niche: ['#realestateindia', '#propertyindia', '#firsttimehomebuyer', '#emicalculator', '#rentvsbuy', '#realestateinvesting', '#propertytour', '#homeloantips']
+      },
+      visual: 'Steady walking tour shots, price and carpet area permanently on screen, wide angle without distortion, natural light, calculations shown as clean full-screen graphics, credible pacing over hype.',
+      brands: ['developers', 'home loan providers', 'furnishing brands', 'legal & valuation services'],
+      proof: ['transactions you closed', 'client testimonials', 'your licence and track record']
+    },
+
+    automotive: {
+      label: 'Cars, Bikes & Automotive',
+      short: 'Automotive',
+      category: 'Entertainment',
+      aliases: 'cars, car, bike, motorcycle, automotive, auto, driving, ev, electric vehicle, car review, modification, road test, mechanic, car care, scooter',
+      reach: 1.40, cpm: 1.4, buyRate: 0.8,
+      positioning: 'the one who tells you what to buy for your actual budget and use, not what is exciting',
+      audience: {
+        age: '20–40', who: 'first-time buyers, enthusiasts, commuters comparing options, EV-curious',
+        interests: ['reviews and comparisons', 'ownership costs', 'modifications', 'maintenance', 'new launches'],
+        pains: ['reviews that never mention running costs', 'dealer pressure and hidden charges', 'no idea what a used vehicle is worth', 'service centre overcharging', 'choosing between two similar options'],
+        desires: ['buying the right one first time', 'lower running costs', 'a vehicle that holds value', 'confidence at the service centre'],
+        objections: ['it is out of my budget', 'resale is bad on that one', 'EV charging is not practical for me']
+      },
+      pillars: [
+        { name: 'Honest reviews', pct: 30, why: 'The whole niche is sponsored. Being unsponsored is the position.' },
+        { name: 'Ownership cost maths', pct: 25, why: 'Nobody publishes 5-year cost. Doing it makes you the reference.' },
+        { name: 'Comparisons', pct: 20, why: 'Highest search intent — people compare exactly two options before buying.' },
+        { name: 'Maintenance & care', pct: 15, why: 'Evergreen saves and it keeps existing owners following you.' },
+        { name: 'Drives & culture', pct: 10, why: 'Reach and personality. Where the enthusiasm lives.' }
+      ],
+      ideas: [
+        'the 5-year cost of owning this, itemised', 'these two cars, same budget — which one and why',
+        'the hidden charges on your on-road price', 'what to check before buying used',
+        'EV vs petrol with the real maths for your commute', 'service centre upsells to refuse',
+        'the mileage figure nobody actually gets', 'modifications worth doing and ones that kill resale',
+        'a full honest review with the flaws first', 'what ₹8 lakh actually buys you right now',
+        'monsoon and summer care that prevents big bills', 'why the resale on this one is so poor'
+      ],
+      offers: [
+        { name: 'Free buying checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'People about to spend lakhs will absolutely give you an email.', deliver: 'PDF checklist + cost calculator' },
+        { name: 'Ownership cost calculator', type: 'Digital product', price: 499, gate: 2000, promise: 'Simple tool, real utility, filters serious buyers.', deliver: 'Sheet + guide' },
+        { name: 'Buying consultation', type: 'Productised service', price: 2500, gate: 5000, promise: 'One call before a lakhs-level purchase pays for itself instantly.', deliver: '45-min call + shortlist + negotiation notes' },
+        { name: 'Affiliate & dealer referrals', type: 'Affiliate', price: 0, gate: 3000, promise: 'Accessories, insurance and dealer referrals all pay. Disclose every one.', deliver: 'Tracked links and referrals' },
+        { name: 'Brand deals — manufacturers & accessories', type: 'Sponsorship', price: 0, gate: 20000, promise: 'The dominant revenue line, but it is exactly what erodes the trust you built.', deliver: 'Review + drive feature' }
+      ],
+      hashtags: {
+        broad: ['#cars', '#bikes', '#automotive', '#car'],
+        mid: ['#carreview', '#bikelife', '#electricvehicle', '#carsofinstagram', '#automobile', '#motorcycle'],
+        niche: ['#carsindia', '#bikesindia', '#carbuyingtips', '#evindia', '#usedcartips', '#carmaintenance', '#carcomparison', '#ownershipcost']
+      },
+      visual: 'Rolling shots and static walkarounds, engine and exhaust audio kept prominent, price and variant permanently on screen, one honest flaw shown on camera every review, cool neutral grade.',
+      brands: ['manufacturers', 'accessories & tyres', 'insurance', 'car care products'],
+      proof: ['long-term ownership of what you review', 'real bills and service invoices', 'disclosed sponsorships']
+    },
+
+    sports: {
+      label: 'Sports & Athletic Skill',
+      short: 'Sports',
+      category: 'Health & Body',
+      aliases: 'sports, football, soccer, cricket, basketball, badminton, tennis, athlete, coaching, skills, training drills, boxing, mma, swimming, athletics',
+      reach: 1.45, cpm: 1.2, buyRate: 0.8,
+      positioning: 'the coach who breaks a skill down slowly enough that it is actually copyable',
+      audience: {
+        age: '14–30', who: 'school and club players, weekend amateurs, aspiring competitive athletes',
+        interests: ['skill drills', 'match analysis', 'conditioning', 'gear', 'pro technique'],
+        pains: ['plateaued despite practising', 'no coach or structured plan', 'injuries that keep returning', 'not being selected', 'technique copied wrong from clips'],
+        desires: ['a skill that works under pressure', 'selection', 'moving like the players they watch', 'staying injury-free'],
+        objections: ['I have no proper facility', 'I started too late', 'I do not have anyone to train with']
+      },
+      pillars: [
+        { name: 'Drills to copy', pct: 30, why: 'Copyable is the whole promise. Solo drills perform best — most viewers train alone.' },
+        { name: 'Technique breakdown', pct: 25, why: 'Slow motion plus annotation is the format that builds authority fastest.' },
+        { name: 'Conditioning & injury', pct: 20, why: 'The part that quietly decides careers and that nobody covers well.' },
+        { name: 'Match analysis', pct: 15, why: 'Rides existing attention around games people already watched.' },
+        { name: 'Journey & mindset', pct: 10, why: 'Turns a drill account into someone people follow.' }
+      ],
+      ideas: [
+        'the drill that fixed my first touch in two weeks', 'this technique in slow motion, annotated',
+        'training alone with no equipment', 'the warm-up that prevented my recurring injury',
+        'why your shot lacks power — it is not your arm', 'what the pro does differently in the same moment',
+        'a full solo session you can copy today', 'the footwork nobody teaches beginners',
+        'conditioning for people with 20 minutes', 'gear that matters and gear that does not',
+        'the mental routine before a match', 'getting selected: what coaches actually watch for'
+      ],
+      offers: [
+        { name: 'Free drill pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'A week of solo drills for an email. Very high opt-in with young athletes.', deliver: 'PDF + demo videos' },
+        { name: 'Training program', type: 'Digital product', price: 999, gate: 2000, promise: 'Structure is what they lack. Sell the plan, not the motivation.', deliver: '8-week program with video library' },
+        { name: 'Video technique analysis', type: 'Productised service', price: 1500, gate: 4000, promise: 'They send a clip, you annotate it. Fully asynchronous and scalable.', deliver: 'Annotated video breakdown + drills' },
+        { name: '1:1 or small-group coaching', type: 'High ticket', price: 12000, gate: 5000, promise: 'In person or online, this is where the real income sits.', deliver: 'Monthly coaching block' },
+        { name: 'Brand deals — sportswear & gear', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Good category, and product seeding starts far earlier than cash deals.', deliver: 'Training reel + code' }
+      ],
+      hashtags: {
+        broad: ['#sports', '#football', '#cricket', '#athlete'],
+        mid: ['#footballskills', '#crickettraining', '#basketballtraining', '#sportstraining', '#athletetraining', '#drills'],
+        niche: ['#footballdrills', '#cricketcoaching', '#solotraining', '#skilldevelopment', '#sportsindia', '#injuryprevention', '#youthathlete', '#techniquebreakdown']
+      },
+      visual: 'Shoot from the angle that shows the mechanic, slow motion on the key frame, annotation arrows and freeze frames, real pitch or court sound, repeat the movement three times before explaining it.',
+      brands: ['sportswear & footwear', 'equipment', 'sports nutrition', 'academies & leagues'],
+      proof: ['your own playing level', 'athletes you have coached', 'before/after technique clips']
+    },
+
+    comedy: {
+      label: 'Comedy & Entertainment',
+      short: 'Comedy',
+      category: 'Entertainment',
+      aliases: 'comedy, funny, memes, skits, standup, humour, humor, entertainment, satire, parody, relatable, sketch, prank, roast',
+      reach: 1.70, cpm: 0.9, buyRate: 0.5,
+      positioning: 'the one whose jokes are about a life the audience is actually living',
+      audience: {
+        age: '16–35', who: 'a broad general audience, students, young professionals who share content in group chats',
+        interests: ['relatable situations', 'observational humour', 'trends and formats', 'characters', 'topical jokes'],
+        pains: ['a boring feed', 'a day that needs breaking up', 'situations they cannot say out loud themselves'],
+        desires: ['a genuine laugh', 'something to send to friends', 'feeling seen in a ridiculous moment'],
+        objections: ['seen this format already', 'it went on too long']
+      },
+      pillars: [
+        { name: 'Relatable situations', pct: 35, why: 'Recognition is the share trigger. "This is literally you" is the entire business.' },
+        { name: 'Characters', pct: 20, why: 'A recurring character is the only durable asset in comedy — it makes people follow, not just laugh.' },
+        { name: 'Trend formats', pct: 20, why: 'Free distribution. Take the format, change the content.' },
+        { name: 'Topical & observational', pct: 15, why: 'Timely reach, but it dates fast — never build the whole account on it.' },
+        { name: 'Behind the scenes', pct: 10, why: 'Turns a joke account into a person people follow.' }
+      ],
+      ideas: [
+        'the group chat when someone suggests splitting the bill', 'every Indian parent on a phone call',
+        'the meeting that should have been an email, dramatised', 'types of people in every gym',
+        'when the WiFi goes down at the worst moment', 'the friend who is always "5 minutes away"',
+        'first day at work vs six months in', 'how everyone acts during a power cut',
+        'the interview question everyone lies about', 'ordering food with an indecisive group',
+        'the relative who asks about marriage at every function', 'monday morning versus friday evening, same person'
+      ],
+      offers: [
+        { name: 'Brand collaborations', type: 'Sponsorship', price: 0, gate: 10000, promise: 'The main revenue line in comedy, and it comes earlier here than in most niches.', deliver: 'Branded skit with product woven in' },
+        { name: 'Merch', type: 'Physical product', price: 799, gate: 30000, promise: 'Catchphrases become merch. Only once a phrase has genuinely stuck.', deliver: 'Print-on-demand tees and prints' },
+        { name: 'Live shows & tickets', type: 'High ticket', price: 499, gate: 25000, promise: 'The highest-margin path for comedy, and the audience is already yours.', deliver: 'Ticketed live performance' },
+        { name: 'Content writing for brands', type: 'Service', price: 25000, gate: 5000, promise: 'Brands pay for the skill, not just the audience. Works far below 10K followers.', deliver: 'Scripted content for a brand\'s channels' },
+        { name: 'Paid community / extras', type: 'Subscription', price: 199, gate: 50000, promise: 'Only for a deeply attached audience — comedy fans follow widely and commit rarely.', deliver: 'Unreleased sketches, early access' }
+      ],
+      hashtags: {
+        broad: ['#comedy', '#funny', '#memes', '#relatable'],
+        mid: ['#comedyreels', '#indiancomedy', '#skits', '#funnyvideos', '#standupcomedy', '#humour'],
+        niche: ['#relatablecontent', '#desicomedy', '#officehumour', '#collegelifehumour', '#indianparents', '#sketchcomedy', '#comedyindia', '#dailyrelatable']
+      },
+      visual: 'Punchline in the first three seconds, hard cuts with no dead air, one costume or prop per character so switches read instantly, clear audio above everything, captions for mute viewing, under 30 seconds.',
+      brands: ['consumer apps', 'FMCG', 'telecom & fintech', 'entertainment platforms'],
+      proof: ['share counts', 'recurring character recognition', 'brand work you have done']
+    },
+
+    spirituality: {
+      label: 'Spirituality & Astrology',
+      short: 'Spirituality',
+      category: 'Knowledge',
+      aliases: 'spirituality, astrology, tarot, meditation, manifestation, horoscope, zodiac, numerology, vedic, chakra, energy, mindfulness spiritual, healing spiritual, law of attraction',
+      reach: 1.50, cpm: 0.8, buyRate: 1.0,
+      positioning: 'the one who offers a practice, not a prediction',
+      audience: {
+        age: '20–40', who: 'people in transition — new job, breakup, move, loss — seeking meaning and structure',
+        interests: ['daily practice', 'astrology readings', 'meditation', 'manifestation', 'symbolism'],
+        pains: ['feeling directionless', 'anxiety about the future', 'practices started and abandoned', 'scepticism from people around them', 'overwhelmed by conflicting systems'],
+        desires: ['calm and clarity', 'a sense of direction', 'a daily practice that sticks', 'trusting their intuition'],
+        objections: ['I do not believe in this', 'I do not have time to meditate', 'it feels self-indulgent']
+      },
+      pillars: [
+        { name: 'Daily practice', pct: 30, why: 'A practice they can do tonight beats a philosophy they cannot use.' },
+        { name: 'Readings & interpretation', pct: 25, why: 'The reach engine. Collective readings pull enormous non-follower traffic.' },
+        { name: 'Explain the system', pct: 20, why: 'Teaching the framework builds credibility beyond prediction.' },
+        { name: 'Reflection & story', pct: 15, why: 'The emotional core that turns viewers into a community.' },
+        { name: 'Grounded scepticism', pct: 10, why: 'Acknowledging limits is what makes the rest believable.' }
+      ],
+      ideas: [
+        'the 5-minute practice for a chaotic morning', 'your chart\'s first house, explained simply',
+        'what this card actually means in context', 'manifestation without the magical thinking',
+        'a breathing practice that works in public', 'the difference between intuition and anxiety',
+        'reading for the collective this week', 'grounding when everything feels unstable',
+        'the ritual I do before any big decision', 'what the moon phase practically means for planning',
+        'starting a practice when you are sceptical', 'journalling prompts for a hard week'
+      ],
+      offers: [
+        { name: 'Free practice guide', type: 'Lead magnet', price: 0, gate: 0, promise: 'A gentle, immediately usable practice in exchange for an email.', deliver: 'PDF + guided audio' },
+        { name: 'Guided audio / meditation pack', type: 'Digital product', price: 499, gate: 1500, promise: 'Recorded once, delivered forever, and it becomes part of their routine.', deliver: 'Audio set + practice calendar' },
+        { name: '1:1 reading or session', type: 'Productised service', price: 2500, gate: 2000, promise: 'The core income here, and it starts working at a very small size.', deliver: '45-min personal session + recording' },
+        { name: 'Course or cohort', type: 'High ticket', price: 8000, gate: 10000, promise: 'Teach the system instead of only performing it — far more scalable.', deliver: '4-week live course + materials' },
+        { name: 'Membership circle', type: 'Subscription', price: 399, gate: 12000, promise: 'Recurring revenue and a community that sustains itself between your posts.', deliver: 'Monthly circle, readings, practice space' }
+      ],
+      hashtags: {
+        broad: ['#spirituality', '#astrology', '#meditation', '#mindfulness'],
+        mid: ['#tarotreading', '#manifestation', '#zodiacsigns', '#spiritualjourney', '#dailypractice', '#numerology'],
+        niche: ['#vedicastrology', '#tarotcommunity', '#meditationpractice', '#spiritualindia', '#moonphases', '#journalprompts', '#innerwork', '#astrologyreadings']
+      },
+      visual: 'Warm low light, candle and natural textures, slow deliberate movement, handwriting and physical objects on camera, calm voice with space between sentences, no urgency and no countdown timers.',
+      brands: ['wellness products', 'meditation apps', 'books & decks', 'retreats'],
+      proof: ['client sessions with permission', 'your own documented practice', 'how long you have studied']
+    },
+
+    books: {
+      label: 'Books & Reading',
+      short: 'Books',
+      category: 'Knowledge',
+      aliases: 'books, reading, bookstagram, literature, novels, book review, book recommendations, authors, writing, poetry, fiction, non fiction, reader',
+      reach: 1.25, cpm: 0.7, buyRate: 0.7,
+      positioning: 'the one whose recommendation is worth more than a rating out of five',
+      audience: {
+        age: '18–40', who: 'readers rebuilding a habit, students, people who want to read more but do not',
+        interests: ['recommendations', 'summaries and ideas', 'reading habits', 'author deep-dives', 'aesthetic shelves'],
+        pains: ['a reading slump that will not break', 'buying books they never finish', 'no idea what to read next', 'no time to read', 'forgetting everything they read'],
+        desires: ['finishing books again', 'a shelf that means something', 'ideas they can actually use', 'being someone who reads'],
+        objections: ['I have no time', 'I cannot focus on a book anymore', 'books are expensive']
+      },
+      pillars: [
+        { name: 'Recommendations with a reason', pct: 30, why: '"Read this if you feel X" outperforms any list of titles.' },
+        { name: 'Ideas from the book', pct: 25, why: 'Deliver the value, not the summary. This is what gets saved.' },
+        { name: 'Reading habit', pct: 20, why: 'The real problem your audience has is not what to read, it is reading at all.' },
+        { name: 'Aesthetic & shelf', pct: 15, why: 'The reach engine of bookstagram. Beautiful, but it does not build authority alone.' },
+        { name: 'Author & industry', pct: 10, why: 'Depth that separates you from an account posting covers.' }
+      ],
+      ideas: [
+        'read this if you are in a slump', 'the one idea from this book worth the whole read',
+        'how I went from 2 books a year to 30', 'books that are actually short — start here',
+        'the note system that made me remember what I read', 'a book for each mood, ranked',
+        'why you keep abandoning books at page 40', 'the classic that is genuinely worth it',
+        'building a shelf on a student budget', 'fiction that changed how I think',
+        'reading when you have 15 minutes a day', 'the book everyone recommends that I disagree with'
+      ],
+      offers: [
+        { name: 'Free reading list / tracker', type: 'Lead magnet', price: 0, gate: 0, promise: 'Readers love a system. The tracker is the easiest opt-in in the niche.', deliver: 'Notion tracker + curated list' },
+        { name: 'Reading guide / notes pack', type: 'Digital product', price: 399, gate: 2000, promise: 'Low price, real utility, and it suits a student wallet.', deliver: 'Summaries, notes template, curated lists' },
+        { name: 'Affiliate book links', type: 'Affiliate', price: 0, gate: 500, promise: 'You are already driving purchases. Small commissions, but constant.', deliver: 'Tracked links to every recommendation' },
+        { name: 'Book club membership', type: 'Subscription', price: 299, gate: 8000, promise: 'Recurring revenue and the community carries most of the activity.', deliver: 'Monthly pick, discussion, live call' },
+        { name: 'Publisher partnerships', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Modest fees, but early copies and access cost publishers nothing.', deliver: 'Featured review + giveaway' }
+      ],
+      hashtags: {
+        broad: ['#books', '#reading', '#bookstagram', '#booklover'],
+        mid: ['#bookrecommendations', '#bookreview', '#currentlyreading', '#booksofinstagram', '#readingchallenge', '#bookshelf'],
+        niche: ['#bookstagramindia', '#readingslump', '#booksummary', '#indianauthors', '#readmorebooks', '#bookrecsforyou', '#annualreadingchallenge', '#readinghabit']
+      },
+      visual: 'Natural light on the physical book, hands turning pages, one quote on screen at a time held long enough to read, warm paper-toned grade, quiet audio, no rushed cuts — the pace should feel like reading.',
+      brands: ['publishers', 'e-readers & audiobooks', 'stationery', 'bookstores'],
+      proof: ['your genuine reading record', 'annotated copies', 'follower reading streaks']
+    },
+
+    language: {
+      label: 'Language Learning',
+      short: 'Language',
+      category: 'Knowledge',
+      aliases: 'language, english, spoken english, ielts, french, spanish, german, japanese, korean, language learning, grammar, vocabulary, accent, fluency, translation',
+      reach: 1.30, cpm: 1.1, buyRate: 1.2,
+      positioning: 'the one who gets people speaking badly on day one instead of studying silently for a year',
+      audience: {
+        age: '16–35', who: 'job seekers needing English, exam candidates, hobby learners, people relocating',
+        interests: ['everyday phrases', 'pronunciation', 'grammar shortcuts', 'exam prep', 'immersion methods'],
+        pains: ['understand it but cannot speak it', 'embarrassed by mistakes in front of others', 'years of study with no fluency', 'grammar rules that never transfer to conversation', 'no one to practise with'],
+        desires: ['speaking without translating in their head', 'a job that requires the language', 'sounding natural', 'confidence in a room'],
+        objections: ['I am too old to learn', 'I have no one to practise with', 'my accent is too strong']
+      },
+      pillars: [
+        { name: 'Use it today', pct: 30, why: 'One phrase, used in a real situation. Immediately valuable, endlessly repeatable.' },
+        { name: 'Common mistakes', pct: 25, why: 'Recognition drives shares — every learner makes the same errors.' },
+        { name: 'Pronunciation', pct: 20, why: 'The most requested and hardest to self-diagnose. Video is the perfect medium.' },
+        { name: 'Method & habit', pct: 15, why: 'How to learn beats what to learn, and it sells your program.' },
+        { name: 'Culture & context', pct: 10, why: 'Why a phrase lands or does not — the part textbooks never explain.' }
+      ],
+      ideas: [
+        'say this instead — it sounds natural', 'the mistake almost every learner makes with this word',
+        'the 10 phrases that cover most conversations', 'pronunciation fix in 20 seconds',
+        'how to think in the language instead of translating', 'grammar rule you can ignore entirely',
+        'a real conversation broken down line by line', 'what to say when you do not understand',
+        'the 15-minute daily routine that got me fluent', 'formal vs casual — when to use which',
+        'the exam mistake that costs the most marks', 'practising alone when you have no partner'
+      ],
+      offers: [
+        { name: 'Free phrase pack + audio', type: 'Lead magnet', price: 0, gate: 0, promise: 'Instantly usable, and audio makes it feel like a real product.', deliver: '50 phrases + native audio' },
+        { name: 'Course / phrasebook', type: 'Digital product', price: 1499, gate: 2000, promise: 'Language learners buy readily — the pain is career-shaped, not hobby-shaped.', deliver: 'Video lessons + audio + workbook' },
+        { name: 'Speaking practice sessions', type: 'Productised service', price: 1200, gate: 3000, promise: 'The one thing they cannot get free anywhere. Recurring by nature.', deliver: '45-min 1:1 conversation + corrections' },
+        { name: 'Exam prep intensive', type: 'High ticket', price: 12000, gate: 8000, promise: 'Deadline-driven and high-stakes — the strongest willingness to pay in this niche.', deliver: '6-week batch with mocks and feedback' },
+        { name: 'Brand deals — edtech & apps', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Language apps spend heavily, but never promote one that competes with your own course.', deliver: 'Integrated lesson + code' }
+      ],
+      hashtags: {
+        broad: ['#language', '#english', '#learning', '#languagelearning'],
+        mid: ['#spokenenglish', '#englishspeaking', '#ielts', '#vocabulary', '#pronunciation', '#learnenglish'],
+        niche: ['#englishspeakingpractice', '#spokenenglishindia', '#ieltspreparation', '#englishgrammartips', '#dailyvocabulary', '#languagelearningtips', '#speakfluently', '#accenttraining']
+      },
+      visual: 'Text on screen for every single phrase, clear front-facing audio, mouth visible for pronunciation shots, slow repetition twice, colour-coded correct versus incorrect, no background music under speech.',
+      brands: ['edtech & language apps', 'test prep', 'study abroad services', 'headphones'],
+      proof: ['learner audio before and after', 'exam scores achieved', 'your own qualifications']
+    },
+
+    career: {
+      label: 'Career & Corporate Life',
+      short: 'Career',
+      category: 'Money',
+      aliases: 'career, job, corporate, linkedin, resume, interview, salary, promotion, workplace, hr, recruiter, job search, office, professional, negotiation',
+      reach: 1.15, cpm: 1.5, buyRate: 1.3,
+      positioning: 'the one who says what actually happens inside the hiring room',
+      audience: {
+        age: '22–40', who: 'job seekers, early-career professionals, people stuck at one level, career switchers',
+        interests: ['resume and LinkedIn', 'interviews', 'salary negotiation', 'promotions', 'office politics'],
+        pains: ['applications that vanish without a reply', 'underpaid and unsure how to ask', 'passed over for promotion repeatedly', 'no idea how decisions are really made', 'stuck in a role with no growth'],
+        desires: ['a better offer', 'being paid what they are worth', 'a title that opens doors', 'work that is not draining'],
+        objections: ['my industry does not work that way', 'I do not have the right degree', 'negotiating will cost me the offer']
+      },
+      pillars: [
+        { name: 'Insider mechanics', pct: 30, why: 'What actually happens behind the process. The highest-value content you can publish.' },
+        { name: 'Scripts & templates', pct: 25, why: 'Exact words for the email, the negotiation, the review. Saved and used immediately.' },
+        { name: 'Resume & profile', pct: 20, why: 'Enormous search volume and the easiest thing to convert into a paid review.' },
+        { name: 'Career strategy', pct: 15, why: 'Long-horizon thinking that separates you from tip accounts.' },
+        { name: 'Workplace reality', pct: 10, why: 'Relatable reach that brings in people who were not searching for advice.' }
+      ],
+      ideas: [
+        'what recruiters do in the first 7 seconds of your resume', 'the exact words to negotiate salary',
+        'why your applications get no reply', 'answer "tell me about yourself" in 60 seconds',
+        'the LinkedIn headline that gets recruiters messaging you', 'how promotion decisions are actually made',
+        'the email that gets your manager to act', 'switching industries without starting from zero',
+        'what to say when asked your expected salary', 'red flags in an interview — from the candidate\'s side',
+        'the performance review prep nobody does', 'building a case for a raise with evidence'
+      ],
+      offers: [
+        { name: 'Free resume template + checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'The single most requested thing in this niche. Enormous opt-in rate.', deliver: 'ATS-safe template + checklist' },
+        { name: 'Interview / negotiation toolkit', type: 'Digital product', price: 1299, gate: 1000, promise: 'A ₹1,299 product that adds lakhs to a salary is an easy decision.', deliver: 'Scripts, frameworks, question bank' },
+        { name: 'Resume review + mock interview', type: 'Productised service', price: 3500, gate: 2000, promise: 'High willingness to pay, no delivery overhead, immediate testimonials.', deliver: 'Line-by-line review + 45-min mock' },
+        { name: 'Career coaching package', type: 'High ticket', price: 25000, gate: 6000, promise: 'A handful of clients is a full income, and the results are dramatic and quotable.', deliver: '6 sessions across 3 months' },
+        { name: 'Corporate workshops', type: 'High ticket', price: 60000, gate: 10000, promise: 'Companies have budgets individuals do not. One booking beats a month of products.', deliver: 'Half-day workshop for a company team' }
+      ],
+      hashtags: {
+        broad: ['#career', '#job', '#work', '#professional'],
+        mid: ['#careeradvice', '#jobsearch', '#resumetips', '#interviewtips', '#linkedintips', '#salarynegotiation'],
+        niche: ['#careeradviceindia', '#jobsearchtips', '#atsresume', '#interviewpreparation', '#careergrowth', '#workplacetips', '#promotiontips', '#careerswitch']
+      },
+      visual: 'Clean and professional without being corporate-stock. Screen recordings of real documents with names blurred, side-by-side before/after of a resume line, calm confident delivery, restrained neutral palette.',
+      brands: ['job platforms', 'edtech & certifications', 'resume tools', 'corporate SaaS'],
+      proof: ['offers your clients received', 'your own hiring or recruiting experience', 'salary increases with numbers']
+    },
+
+    wellness: {
+      label: 'Wellness, Yoga & Holistic Health',
+      short: 'Wellness',
+      category: 'Health & Body',
+      aliases: 'wellness, yoga, holistic health, ayurveda, nutrition, sleep, gut health, hormones, pilates, stretching, breathwork, women health, detox, immunity',
+      reach: 1.35, cpm: 1.2, buyRate: 1.1,
+      positioning: 'the one who separates what is evidence-backed from what is merely ancient or merely trendy',
+      audience: {
+        age: '24–45', who: 'people with desk-job bodies, women tracking hormonal health, anyone recovering from burnout',
+        interests: ['mobility and yoga', 'sleep', 'gut and hormone health', 'nutrition basics', 'stress'],
+        pains: ['constantly tired despite sleeping', 'back and neck pain from sitting', 'bloating and digestion nobody explains', 'wellness advice that contradicts itself', 'no time for a two-hour routine'],
+        desires: ['energy through the whole day', 'a body that does not hurt', 'sleeping properly', 'feeling in control of their health'],
+        objections: ['I have no time', 'I am not flexible', 'that sounds like pseudoscience']
+      },
+      pillars: [
+        { name: 'Do it with me', pct: 30, why: 'Follow-along content gets saved and repeated — repetition is retention.' },
+        { name: 'Explain the mechanism', pct: 25, why: 'Why the body does this. It is what separates you from wellness noise.' },
+        { name: 'Evidence vs myth', pct: 20, why: 'This niche is drowning in claims. Sorting them is the position.' },
+        { name: 'Routines for real lives', pct: 15, why: 'Ten minutes at a desk beats a perfect routine nobody does.' },
+        { name: 'Personal practice', pct: 10, why: 'Consistency shown over months is the proof.' }
+      ],
+      ideas: [
+        '5 minutes that undo eight hours of sitting', 'why you are tired after a full night of sleep',
+        'the stretch order that finally fixed my lower back', 'gut health without buying a single supplement',
+        'what actually helps bloating, and what does not', 'a 10-minute morning routine at your desk',
+        'the sleep change with the biggest measurable effect', 'ayurveda claims: what holds up and what does not',
+        'breathwork you can do in a meeting', 'hormonal health basics nobody explained',
+        'building flexibility when you are not flexible', 'the supplement tier list — evidence ranked'
+      ],
+      offers: [
+        { name: 'Free 7-day routine', type: 'Lead magnet', price: 0, gate: 0, promise: 'A week of ten-minute sessions is an easy yes for a tired audience.', deliver: 'PDF + follow-along videos' },
+        { name: 'Program / guide', type: 'Digital product', price: 999, gate: 1500, promise: 'Structure sells. They do not need more information, they need a sequence.', deliver: '4-week program with video library' },
+        { name: '1:1 sessions', type: 'Productised service', price: 2500, gate: 3000, promise: 'Online sessions have no room hire and no travel — margin is close to total.', deliver: 'Live 1:1 class or consultation' },
+        { name: 'Group programme / retreat', type: 'High ticket', price: 18000, gate: 8000, promise: 'Cohorts and retreats price high and produce your best testimonials.', deliver: 'Multi-week cohort or weekend retreat' },
+        { name: 'Brand deals — wellness products', type: 'Sponsorship', price: 0, gate: 10000, promise: 'Lucrative but the category is full of unsupported claims. Refuse those.', deliver: 'Integrated routine reel' }
+      ],
+      hashtags: {
+        broad: ['#wellness', '#yoga', '#health', '#selfcare'],
+        mid: ['#yogapractice', '#mobility', '#guthealth', '#sleephygiene', '#holistichealth', '#stretching'],
+        niche: ['#deskstretches', '#yogaforbeginners', '#guthealthtips', '#ayurvedadaily', '#wellnessindia', '#morningmobility', '#hormonehealth', '#breathworkpractice']
+      },
+      visual: 'Full body in frame with room to move, natural light, plain uncluttered floor space, real-time demonstration rather than sped-up, on-screen timers and counts, calm audio with the voice clearly above any music.',
+      brands: ['wellness & supplements', 'yoga and activewear', 'sleep products', 'health platforms'],
+      proof: ['your own practice over years', 'student progress', 'qualifications and sources cited']
+    },
+
+    dance: {
+      label: 'Dance & Choreography',
+      short: 'Dance',
+      category: 'Creative',
+      aliases: 'dance, dancer, choreography, hiphop, bollywood dance, classical dance, kathak, bharatanatyam, contemporary, dance tutorial, dance cover, freestyle, ballet, salsa',
+      reach: 1.55, cpm: 0.9, buyRate: 0.85,
+      positioning: 'the one who breaks a routine down slowly enough that beginners actually finish it',
+      audience: {
+        age: '14–32', who: 'self-taught dancers, students, wedding performers, class-goers',
+        interests: ['tutorials', 'choreography', 'trending routines', 'technique', 'performances'],
+        pains: ['can copy steps but look stiff', 'tutorials too fast to follow', 'no studio or space at home', 'self-conscious about being watched', 'no foundation, only copied routines'],
+        desires: ['moving like it is effortless', 'performing without freezing', 'a routine ready for the wedding', 'confidence in their body'],
+        objections: ['I have no rhythm', 'I have no space', 'I started too late']
+      },
+      pillars: [
+        { name: 'Slow tutorials', pct: 30, why: 'Break it to counts. This is the format that turns viewers into followers.' },
+        { name: 'Performance clips', pct: 25, why: 'Reach engine. People share dance they enjoy watching.' },
+        { name: 'Technique & basics', pct: 20, why: 'Body isolation, posture, musicality — what makes copied steps look real.' },
+        { name: 'Trend routines', pct: 15, why: 'Free distribution when the audio is already moving.' },
+        { name: 'Journey & practice', pct: 10, why: 'Progress content is the most motivating thing in this niche.' }
+      ],
+      ideas: [
+        'this routine broken into 8 counts, slowly', 'the reason your moves look stiff',
+        'body isolation drill for absolute beginners', 'a wedding routine anyone can learn in a week',
+        'dancing in a small room without breaking anything', 'musicality: hitting the beat instead of chasing it',
+        'the warm-up that prevents dance injuries', 'a year of practice, first day to now',
+        'freestyle when your mind goes blank', 'the classical basic that improves every style',
+        'front and back angles of the same routine', 'how to practise without a mirror'
+      ],
+      offers: [
+        { name: 'Free beginner routine', type: 'Lead magnet', price: 0, gate: 0, promise: 'One complete learnable routine builds enormous goodwill fast.', deliver: 'Tutorial series + practice track' },
+        { name: 'Choreography / tutorial pack', type: 'Digital product', price: 799, gate: 2000, promise: 'Filmed once, sold forever, and every buyer performs your work publicly.', deliver: 'Multi-angle tutorials + counts' },
+        { name: 'Online classes', type: 'Productised service', price: 1500, gate: 3000, promise: 'Live classes scale past any studio\'s floor space.', deliver: 'Weekly live class + recording' },
+        { name: 'Wedding choreography', type: 'High ticket', price: 35000, gate: 3000, promise: 'The highest-paying work in dance, and the account is the portfolio that books it.', deliver: 'Full sangeet choreography and rehearsals' },
+        { name: 'Workshops', type: 'High ticket', price: 12000, gate: 10000, promise: 'City workshops sell out from a modest following and generate a month of content.', deliver: 'In-person workshop, limited seats' }
+      ],
+      hashtags: {
+        broad: ['#dance', '#dancer', '#choreography', '#dancevideo'],
+        mid: ['#dancetutorial', '#hiphopdance', '#bollywooddance', '#dancecover', '#dancersofinstagram', '#contemporarydance'],
+        niche: ['#dancetutorialforbeginners', '#weddingchoreography', '#sangeetdance', '#danceindia', '#slowtutorial', '#bodyisolation', '#freestyledance', '#classicaldanceindia']
+      },
+      visual: 'Full body always in frame with headroom, fixed camera at chest height, mirror and front angle side by side, counts on screen, slow version before full speed, audio unclipped and beat-synced cuts.',
+      brands: ['activewear & shoes', 'music platforms', 'dance academies', 'event companies'],
+      proof: ['your performances', 'students performing your choreography', 'progress over time']
+    }
+  };
+})(window.IGOS);
+
+</script>
+<script>
+/* src/data/families.js */
+/* ================= GROWTH OS · niche resolution =================
+   Thirty niches are preset. Everything else in the world is handled by
+   resolving what someone typed: first against the presets' aliases, and
+   failing that into one of eight families, each with its own templates.
+   The goal is that nobody types a niche and gets a generic plan.
+============================================================== */
+(function (G) {
+  'use strict';
+
+  /* ---------------- families ---------------- */
+  G.FAMILIES = {
+    skill: {
+      label: 'Skill & craft',
+      keys: 'learn, practice, technique, training, lessons, tutorial, beginner, coaching, mastery, drills, hobby, instrument, craft skill',
+      reach: 1.25, cpm: 1.0, buyRate: 1.15,
+      who: 'self-taught beginners and improvers practising {NICHE} on their own',
+      pains: ['practising for months with no visible improvement', 'tutorials that skip the step they are stuck on', 'no feedback from anyone who actually knows', 'plateau with no idea what to change', 'no structured path from beginner to competent'],
+      desires: ['visible progress they can point at', 'doing it without thinking', 'being good enough to be paid', 'confidence in front of other people'],
+      objections: ['I do not have the right equipment', 'I started too late', 'I have no natural talent for it'],
+      pillars: [
+        ['Slow breakdowns', 30, 'Copyable beats impressive. Slow enough to follow is the whole promise.'],
+        ['Common mistakes', 25, 'Naming the exact error someone is making is the fastest way to earn trust.'],
+        ['Progress & proof', 20, 'Your own improvement over time is the evidence that the method works.'],
+        ['Gear & setup', 15, 'High search demand, and it is where affiliate revenue lives.'],
+        ['Practice systems', 10, 'How to practise beats what to practise, and it sells your program.']
+      ],
+      ideas: [
+        'the {NICHE} mistake that keeps you stuck', 'this {NICHE} skill broken down slowly',
+        'what I would practise if I started {NICHE} again', '10 minutes of this beats an hour of {NICHE} practice',
+        'the {NICHE} gear worth buying and what to skip', 'a year of {NICHE} — first day to now',
+        'the {NICHE} drill nobody teaches beginners', 'practising {NICHE} with no space and no equipment',
+        'why your {NICHE} looks stiff and how to fix it', 'the {NICHE} fundamentals everyone skips',
+        'how to practise {NICHE} without a coach', 'getting paid for {NICHE} — the honest path'
+      ],
+      offers: [
+        ['Free starter drill pack', 'Lead magnet', 0, 0, 'A week of structured practice for an email — the easiest yes in any skill niche.', 'PDF + demo videos'],
+        ['{NICHE} beginner program', 'Digital product', 999, 1500, 'They do not lack information, they lack a sequence. Sell the sequence.', '6-week program + video library'],
+        ['Video feedback / review', 'Productised service', 1500, 3000, 'They send a clip, you annotate it. Fully asynchronous.', 'Annotated breakdown + corrective drills'],
+        ['1:1 coaching', 'High ticket', 15000, 5000, 'Few students, deep results, and the testimonials feed everything else.', '8 sessions with ongoing feedback'],
+        ['Workshop', 'High ticket', 8000, 10000, 'Group teaching prices far above a PDF and generates a month of content.', 'Live or in-person session, limited seats']
+      ],
+      visual: 'Shoot from the angle that shows the mechanic. Slow motion on the key moment, repeat it three times before explaining, on-screen counts and arrows, real ambient sound rather than music.',
+      brands: ['{NICHE} equipment', 'learning platforms', 'tools & accessories'],
+      proof: ['your own progress over time', 'students who improved', 'before and after clips']
+    },
+
+    body: {
+      label: 'Body & health',
+      keys: 'health, body, physical, weight, muscle, diet, nutrition, therapy, pain, posture, energy, medical, recovery, rehab, hormones',
+      reach: 1.35, cpm: 1.2, buyRate: 1.1,
+      who: 'people whose {NICHE} results have stalled despite genuine effort',
+      pains: ['effort with nothing to show for it', 'advice that contradicts itself everywhere they look', 'no time for what the plans demand', 'quitting in week three every time', 'not knowing what is normal and what is a problem'],
+      desires: ['a visible change within 30 days', 'energy that lasts the whole day', 'a plan simple enough to actually follow', 'feeling in control of their own body'],
+      objections: ['my body is different', 'I have no time', 'I have tried everything already'],
+      pillars: [
+        ['Myth-busting', 25, 'This space is full of confident nonsense. Correcting it is instant authority.'],
+        ['Actionable how-to', 30, 'The saves engine — people bookmark what they intend to do tonight.'],
+        ['Proof & transformation', 20, 'Nothing converts like a real result with a real timeline.'],
+        ['Mechanism explained', 15, 'Why the body does this. It is what makes the advice believable.'],
+        ['Personal story', 10, 'The trust that turns a follower into a client.']
+      ],
+      ideas: [
+        'the {NICHE} advice that is quietly wrong', 'the 3 things that gave me 80% of my {NICHE} results',
+        '5 minutes a day of this changes {NICHE} more than an hour of the usual', 'what actually happens in your body during {NICHE}',
+        'a full day of {NICHE} done properly', '30 days of {NICHE} — honest before and after',
+        'the {NICHE} mistake beginners make in week one', '{NICHE} when you have no time and no equipment',
+        'the {NICHE} numbers nobody explains to you', 'why you plateaued on {NICHE}, and the fix',
+        'what I would tell someone starting {NICHE} today', 'the {NICHE} habit that survived the bad weeks'
+      ],
+      offers: [
+        ['Free 7-day starter plan', 'Lead magnet', 0, 0, 'A week of structure for an email. Highest opt-in rate there is.', 'PDF plan + checklist'],
+        ['{NICHE} guide', 'Digital product', 599, 800, 'First revenue, and proof people will pay before you build anything bigger.', 'PDF guide + tracker'],
+        ['Personalised plan', 'Productised service', 2999, 2000, 'Highest revenue per follower at a small size.', 'Intake form, custom plan, one revision'],
+        ['Coaching program', 'High ticket', 18000, 5000, 'Six clients is a serious income from a small account.', '12 weeks, weekly check-ins, plan updates'],
+        ['Brand partnerships', 'Sponsorship', 0, 8000, 'Only after your own offers work. Never recommend what you would not use.', 'Integrated reel + stories']
+      ],
+      visual: 'High contrast, real settings, hard cuts, big bold captions with one word emphasised, before and after in identical lighting and angle, voice always above the music.',
+      brands: ['supplements & nutrition', 'apparel & equipment', 'health apps & services'],
+      proof: ['your own documented change', 'client results with timelines', 'sources you cite']
+    },
+
+    money: {
+      label: 'Money & business',
+      keys: 'money, business, income, sell, selling, clients, revenue, profit, invest, trading, market, sales, ecommerce, shop, side hustle, earn, salary, pricing',
+      reach: 1.10, cpm: 1.8, buyRate: 1.3,
+      who: 'people trying to earn from {NICHE} and unsure which lever actually moves money',
+      pains: ['effort that does not convert into income', 'no idea what to charge', 'advice from people who never did it', 'inconsistent months with no floor', 'no system, only hustle'],
+      desires: ['predictable monthly income', 'charging without flinching', 'a business that runs without them', 'proof they can point at'],
+      objections: ['my market is different', 'I have no audience or capital', 'that only worked because you started early'],
+      pillars: [
+        ['Numbers & case studies', 25, 'Specific figures are the credibility currency here. Vague advice is worthless.'],
+        ['Playbooks', 30, 'Step-by-step systems get saved and implemented, which is what grows the account.'],
+        ['Contrarian takes', 20, 'Comment volume drives distribution, and this space is full of lazy consensus.'],
+        ['Proof & receipts', 15, 'Screenshots close what content alone cannot.'],
+        ['Founder story', 10, 'People buy from a person with a track record, not a tips account.']
+      ],
+      ideas: [
+        'what {NICHE} actually pays, with real numbers', 'the {NICHE} pricing mistake costing you the most',
+        'how I got my first client in {NICHE}', 'the {NICHE} system that replaced 10 hours a week',
+        'a full month of {NICHE} revenue broken down', 'the {NICHE} advice that is quietly bad',
+        'starting {NICHE} with no audience and no budget', 'the {NICHE} offer that finally sold',
+        'why cheap clients in {NICHE} cost the most', 'the {NICHE} mistake that cost me real money',
+        'how to raise {NICHE} prices without losing everyone', 'what I would do differently starting {NICHE} today'
+      ],
+      offers: [
+        ['Free checklist / template', 'Lead magnet', 0, 0, 'Opens DM conversations with exactly the people who can pay you.', '1-page checklist + script'],
+        ['{NICHE} toolkit', 'Digital product', 1299, 400, 'Solves a painful immediate problem — the fastest first sale in this space.', 'Templates, calculator, scripts'],
+        ['Audit call', 'Productised service', 4999, 1500, 'One hour, one recording, one plan. No delivery overhead.', '60-min call + recorded action plan'],
+        ['Consulting retainer', 'High ticket', 25000, 5000, 'Four retainers is a full income from a sub-10K account.', 'Monthly: 2 calls + async review'],
+        ['Cohort / course', 'High ticket', 15000, 8000, 'Sells in launches, twice a year, hard.', 'Live cohort + templates + community']
+      ],
+      visual: 'Talking head with b-roll of real work, screenshots of invoices and dashboards with numbers visible and names blurred, whiteboard frames for the maths, calm confident delivery — no shouting hustle edits.',
+      brands: ['SaaS & tools', 'payment and finance platforms', 'education platforms'],
+      proof: ['real revenue screenshots', 'client results with numbers', 'your own P&L']
+    },
+
+    creative: {
+      label: 'Creative & making',
+      keys: 'design, create, creative, make, making, build, craft, aesthetic, visual, style, brand, animation, writing, content creation, editing',
+      reach: 1.40, cpm: 0.9, buyRate: 0.95,
+      who: 'self-taught creators building a {NICHE} practice and hoping to be paid for it',
+      pains: ['work that looks amateur and they cannot say why', 'no consistent style of their own', 'comparison with people years ahead', 'no idea how to price the work', 'projects abandoned halfway'],
+      desires: ['a style people recognise instantly', 'getting paid for what they make', 'finishing things', 'work they are proud to show'],
+      objections: ['I do not have the software or gear', 'I am not naturally creative', 'nobody would pay for mine'],
+      pillars: [
+        ['Process & timelapse', 30, 'Watching something appear is the most watchable format there is.'],
+        ['One technique', 25, 'Isolated, demonstrated, immediately usable. This is what gets saved.'],
+        ['Before & after', 20, 'The reveal does the persuading for you.'],
+        ['Tools & setup', 15, 'Search demand plus natural affiliate revenue.'],
+        ['Getting paid', 10, 'Moves an audience of hobbyists toward the thing you sell.']
+      ],
+      ideas: [
+        'the {NICHE} fix that makes work look professional', 'a full {NICHE} piece start to finish',
+        'the {NICHE} tools worth paying for', 'how I found my style in {NICHE}',
+        'the same {NICHE} work one year apart', 'the {NICHE} rule I break on purpose',
+        'my full {NICHE} process in 60 seconds', 'how I price {NICHE} work',
+        'fixing a {NICHE} piece I nearly deleted', 'the {NICHE} shortcut that saves hours',
+        'building a {NICHE} portfolio with no clients', 'what I get asked most about {NICHE}'
+      ],
+      offers: [
+        ['Free asset / template pack', 'Lead magnet', 0, 0, 'Creators collect tools reflexively. Fastest list build there is.', 'Templates, presets or assets'],
+        ['{NICHE} asset pack', 'Digital product', 799, 1000, 'Made once, sold forever, and it spreads your look through other people\'s work.', 'Full pack + walkthrough video'],
+        ['Client work', 'Service', 3500, 1000, 'The account is a portfolio. Book the actual work.', 'Commissioned {NICHE} project'],
+        ['{NICHE} course', 'Digital product', 2499, 5000, 'Your process is the product. Record it once.', '10 lessons + working files'],
+        ['Portfolio review', 'Productised service', 2500, 3000, 'One call, immediate value, no delivery overhead.', '45-min review + written notes']
+      ],
+      visual: 'Overhead or over-shoulder framing, timelapse with the reveal held at the end, hands and tools in frame, the work itself the brightest thing on screen, satisfying process audio kept loud.',
+      brands: ['creative software', 'hardware & tools', 'materials & supplies', 'print services'],
+      proof: ['your portfolio', 'client work delivered', 'progress over years']
+    },
+
+    lifestyle: {
+      label: 'Lifestyle & living',
+      keys: 'lifestyle, home, living, daily, routine, product, review, shopping, decor, minimal, organise, vlog, city, local, family life, budget living',
+      reach: 1.45, cpm: 1.3, buyRate: 0.9,
+      who: 'people trying to make their everyday {NICHE} better without a big budget',
+      pains: ['inspiration everywhere and instructions nowhere', 'everything appealing is unaffordable', 'no idea where to start', 'money wasted on things that did not help', 'no time for elaborate routines'],
+      desires: ['a life that feels intentional', 'getting it right the first time they buy', 'something people compliment', 'less friction in the everyday'],
+      objections: ['that is out of my budget', 'my situation is too different', 'I do not have the space or time'],
+      pillars: [
+        ['Before & after', 30, 'The reach engine. Lead with the after, always.'],
+        ['Budget and sourcing', 25, 'Where to get it and what it cost is the information nobody publishes.'],
+        ['Practical fixes', 20, 'Small changes with visible results are what get saved.'],
+        ['Honest reviews', 15, 'Being the person who says what is not worth buying is the position.'],
+        ['Day in the life', 10, 'Personality and reach, but never the whole account.']
+      ],
+      ideas: [
+        'this {NICHE} upgrade for under ₹2,000', 'the {NICHE} change with the biggest impact',
+        'what {NICHE} actually costs per month, itemised', 'the {NICHE} purchase I regret',
+        '{NICHE} in a small space or a rental', 'my full {NICHE} routine, unedited',
+        'the {NICHE} mistakes that waste money', 'where I actually buy {NICHE} things',
+        'a complete {NICHE} setup on a real budget', 'the {NICHE} habit that stuck',
+        '{NICHE} before and after, same angle', 'answering the {NICHE} question I get most'
+      ],
+      offers: [
+        ['Free checklist / starter guide', 'Lead magnet', 0, 0, 'Catches people at the start, before they spend anything.', 'Checklist + budget template'],
+        ['Affiliate storefront', 'Affiliate', 0, 500, 'Every "where is that from" comment is unclaimed commission.', 'Curated shoppable links'],
+        ['{NICHE} guide / source list', 'Digital product', 699, 2000, 'Your sourcing knowledge is what people actually want.', 'Guide, source list, budget sheet'],
+        ['Consultation', 'Productised service', 3000, 5000, 'Remote advice has no travel cost and scales past local clients.', '45-min call + written plan'],
+        ['Brand partnerships', 'Sponsorship', 0, 6000, 'This space monetises through brands earlier than through products.', 'Integrated reel + stories + code']
+      ],
+      visual: 'Same camera position for before and after with a hard cut between, wide shots that show context, natural daylight, prices on screen for everything, one consistent warm grade across the whole grid.',
+      brands: ['home & consumer brands', 'e-commerce platforms', 'appliances & products'],
+      proof: ['your own space or setup over time', 'itemised real costs', 'follower recreations']
+    },
+
+    knowledge: {
+      label: 'Knowledge & teaching',
+      keys: 'explain, teach, education, learn about, history, science, philosophy, psychology, facts, analysis, research, theory, study of, guide to',
+      reach: 1.25, cpm: 1.1, buyRate: 1.15,
+      who: 'curious people who want {NICHE} explained properly rather than dumbed down',
+      pains: ['explanations that are either too shallow or unreadable', 'no idea what to trust', 'learning that never connects to anything useful', 'forgetting everything within a week', 'no path from curiosity to competence'],
+      desires: ['genuinely understanding it', 'being the person who can explain it', 'knowledge they can use', 'a structured path through the subject'],
+      objections: ['this is too complicated for me', 'I do not have the background', 'when would I ever use this'],
+      pillars: [
+        ['Explainers', 30, 'Complex made simple without being made wrong. That is the entire value proposition.'],
+        ['Myth correction', 25, 'Fixing a widely held misconception is the fastest authority there is.'],
+        ['Frameworks', 20, 'Screenshot-able structure gets saved, and saves drive reach.'],
+        ['Topical analysis', 15, 'Attach to attention that already exists rather than creating it.'],
+        ['Sources & credibility', 10, 'Showing your working is what separates you from confident guessing.']
+      ],
+      ideas: [
+        '{NICHE} explained in 60 seconds, properly', 'the biggest misconception about {NICHE}',
+        'the {NICHE} framework that makes the rest click', 'what nobody tells you about {NICHE}',
+        'how {NICHE} actually works, step by step', 'the {NICHE} question I get asked constantly',
+        'a beginner roadmap for {NICHE}', 'the {NICHE} detail everyone skips over',
+        'why {NICHE} matters more than people think', 'the free resources that beat paid {NICHE} courses',
+        'the {NICHE} thing I was wrong about', 'how to remember what you learn about {NICHE}'
+      ],
+      offers: [
+        ['Free starter guide', 'Lead magnet', 0, 0, 'Turns passive interest into an owned audience.', 'PDF primer + reading list'],
+        ['{NICHE} course or notes', 'Digital product', 999, 1000, 'Structure is the product. They have the information already.', 'Lessons + notes + exercises'],
+        ['Live workshop', 'Productised service', 1499, 4000, 'Scales without inventory — one session, unlimited seats.', '90-min live session + recording'],
+        ['Cohort program', 'High ticket', 12000, 8000, 'Cohorts sell out from small accounts when the audience is serious.', '4-week live cohort + community'],
+        ['1:1 tutoring / consulting', 'High ticket', 15000, 3000, 'Small number of clients, high value, strong testimonials.', 'Package of sessions']
+      ],
+      visual: 'One idea per frame, big readable type, diagrams built in front of the viewer rather than appearing finished, calm delivery with deliberate pauses, restrained palette so the information is the loudest thing.',
+      brands: ['education platforms', 'books & publishers', 'software & research tools'],
+      proof: ['your credentials or track record', 'sources cited on screen', 'student outcomes']
+    },
+
+    tech: {
+      label: 'Tech & tools',
+      keys: 'app, software, tool, platform, digital, online, website, computer, phone, gadget, automation, system, workflow, plugin, device',
+      reach: 1.35, cpm: 1.6, buyRate: 1.15,
+      who: 'people who want {NICHE} to save them real hours rather than add another subscription',
+      pains: ['drowning in repetitive work', 'too many tools and no system', 'setup guides that skip the hard part', 'paying for things they do not use', 'fear of being left behind'],
+      desires: ['doing a day of work in an hour', 'building things without a team', 'being the person who knows this', 'a setup that just works'],
+      objections: ['this needs technical skill', 'the free version is useless', 'I will never keep it up'],
+      pillars: [
+        ['Demos', 30, 'Screen-recorded results are the most re-shared format in tech.'],
+        ['Workflows', 25, 'A tool list is forgettable. A workflow gets bookmarked and built.'],
+        ['News & reaction', 20, 'Surf search spikes you did not have to create.'],
+        ['Build in public', 15, 'Turns viewers into a waitlist for whatever you ship.'],
+        ['Cost & alternatives', 10, 'Saving people money is the fastest way to be trusted.']
+      ],
+      ideas: [
+        '{NICHE} that replaced half my toolstack', 'automate this with {NICHE} in 10 minutes',
+        'the {NICHE} setup I wish I had on day one', '{NICHE} tools that are genuinely free',
+        'my full {NICHE} workflow, screen recorded', 'the {NICHE} feature nobody turns on',
+        'stop paying for these {NICHE} subscriptions', '{NICHE} for people who are not technical',
+        'the fastest way to learn {NICHE}', 'what {NICHE} still cannot do',
+        'the {NICHE} mistake that cost me a week', 'a real {NICHE} build, start to finish'
+      ],
+      offers: [
+        ['Free template / prompt pack', 'Lead magnet', 0, 0, 'Tech audiences trade an email for utility instantly.', 'Templates + setup guide'],
+        ['{NICHE} workflow vault', 'Digital product', 799, 400, 'Templates outsell courses here — people want the artefact.', 'Vault of workflows and templates'],
+        ['Done-for-you setup', 'Productised service', 7500, 1500, 'Businesses pay for outcomes, not education. Best margin at a small size.', 'One system built, documented, handed over'],
+        ['Cohort for teams', 'High ticket', 15000, 5000, 'B2B budgets, no price resistance.', '6 live sessions + workflow library'],
+        ['Brand deals — software', 'Sponsorship', 0, 7000, 'SaaS pays 2–3× consumer rates and renews monthly.', 'Demo reel + tracked link']
+      ],
+      visual: 'Screen recordings at 1.5× with cursor highlighting, dark app themes with one neon accent on the key click, each step named on screen, the payoff shown in the first three seconds.',
+      brands: ['SaaS & apps', 'hardware & peripherals', 'cloud & hosting', 'education platforms'],
+      proof: ['live screen recordings', 'real outputs and hours saved', 'things you actually shipped']
+    },
+
+    entertainment: {
+      label: 'Entertainment & fandom',
+      keys: 'fan, fandom, movie, film, tv, series, celebrity, reaction, anime, cricket fan, football fan, music fan, culture, pop culture, trending, review show',
+      reach: 1.60, cpm: 0.9, buyRate: 0.6,
+      who: 'fans of {NICHE} who want opinion and detail, not a recap they could get anywhere',
+      pains: ['recaps with no actual insight', 'takes that are just consensus repeated', 'missing the detail that mattered', 'nobody to talk about it with'],
+      desires: ['a take worth arguing with', 'noticing what everyone else missed', 'belonging to a community that cares as much'],
+      objections: ['I have seen this take everywhere', 'spoilers', 'that is just your opinion'],
+      pillars: [
+        ['Detail nobody caught', 30, 'The share trigger of every fandom. Being first or being sharpest.'],
+        ['Hot takes', 25, 'Disagreement is distribution. Defend it in the comments and reach compounds.'],
+        ['Breakdowns', 20, 'Depth is what turns a casual viewer into a follower.'],
+        ['Topical reaction', 15, 'Free reach from attention that already exists — but it dates fast.'],
+        ['Community', 10, 'Fandoms follow people who make them feel part of something.']
+      ],
+      ideas: [
+        'the {NICHE} detail everyone missed', 'my honest {NICHE} take — and why I will defend it',
+        'ranking every {NICHE} moment', 'the {NICHE} theory that actually holds up',
+        'what {NICHE} got right that nobody credits', '{NICHE} explained for people who came in late',
+        'the most overrated thing in {NICHE}', 'breaking down the {NICHE} scene frame by frame',
+        'the {NICHE} moment that changed everything', 'answering the {NICHE} debate once and for all',
+        'my {NICHE} tier list', 'the {NICHE} thing I was completely wrong about'
+      ],
+      offers: [
+        ['Brand collaborations', 'Sponsorship', 0, 10000, 'The main revenue line here, and it starts earlier than in most spaces.', 'Integrated feature or sponsored breakdown'],
+        ['Merch', 'Physical product', 799, 30000, 'Fandoms buy identity. Only once a phrase or symbol has genuinely stuck.', 'Print-on-demand run'],
+        ['Paid community', 'Subscription', 199, 20000, 'Recurring, and the community sustains itself between your posts.', 'Private space + early access'],
+        ['Content work for brands', 'Service', 25000, 5000, 'Brands pay for the skill, not only the audience. Works well below 10K.', 'Scripted content for their channels'],
+        ['Live events / watchalongs', 'High ticket', 499, 25000, 'Highest margin, and the audience is already assembled.', 'Ticketed live event']
+      ],
+      visual: 'Payoff in the first three seconds, hard cuts with no dead air, clips and stills with your commentary layered over, captions always, high energy but never longer than the idea deserves.',
+      brands: ['streaming & entertainment platforms', 'consumer apps', 'merch & collectibles'],
+      proof: ['takes that aged well', 'community size and activity', 'brand work you have done']
     }
   };
 
-  /* ---------- generic fallback for any custom niche ---------- */
-  G.GENERIC = {
-    label: 'Custom niche',
-    short: 'Custom',
-    reach: 1.15, cpm: 1.2, buyRate: 1.0,
-    positioning: 'the clearest, most practical voice in {NICHE} for beginners',
-    audience: {
-      age: '20–35', who: 'beginners and intermediates actively searching for {NICHE} help',
-      interests: ['{NICHE} basics', '{NICHE} tools and gear', 'results and case studies', 'common mistakes', 'shortcuts'],
-      pains: ['too much contradictory {NICHE} advice online', 'no step-by-step path from zero', 'tried and quit before seeing results', 'cannot tell good {NICHE} advice from bad', 'no time to figure it out alone'],
-      desires: ['a visible result within 30 days', 'a plan they can follow without thinking', 'to be respected for their {NICHE} skill', 'to save money and time'],
-      objections: ['it will not work for my situation', 'I do not have the money/gear/time', 'I have tried something like this before']
-    },
-    pillars: [
-      { name: 'Beginner how-to', pct: 30, why: 'Biggest addressable audience — most people in any niche are beginners.' },
-      { name: 'Myth-busting', pct: 25, why: 'Correcting a belief is the fastest way to earn authority.' },
-      { name: 'Proof & results', pct: 20, why: 'What converts followers into buyers.' },
-      { name: 'Trend & reaction', pct: 15, why: 'Free reach from demand you did not have to create.' },
-      { name: 'Personal story', pct: 10, why: 'Makes you a person, not an account.' }
-    ],
-    ideas: [
-      'the beginner mistakes everyone makes in {NICHE}', 'what I wish I knew before starting {NICHE}',
-      'the 5 things that gave me 80% of my {NICHE} results', 'a complete beginner roadmap for {NICHE}',
-      '{NICHE} on a budget — what to buy and what to skip', 'the fastest way to get your first result in {NICHE}',
-      'the biggest myth in {NICHE}, debunked', 'my exact {NICHE} routine, unedited',
-      '30 days of {NICHE} — honest results', 'the tools I actually use for {NICHE}',
-      'how to fix the most common {NICHE} problem', '{NICHE} in 60 seconds for complete beginners',
-      'why most people quit {NICHE} in week 2', 'the free resources that beat paid {NICHE} courses',
-      'answering the questions I get most about {NICHE}', 'a day in my life doing {NICHE}'
-    ],
-    offers: [
-      { name: 'Free starter guide ({NICHE})', type: 'Lead magnet', price: 0, gate: 0, promise: 'Every business starts by turning attention into an owned list.', deliver: '1-page PDF checklist + quick-start steps' },
-      { name: 'Beginner ebook / template pack', type: 'Digital product', price: 599, gate: 500, promise: 'Prove willingness to pay before you build anything bigger.', deliver: 'PDF guide + templates' },
-      { name: 'Personalised plan / audit', type: 'Productised service', price: 2999, gate: 1500, promise: 'Highest revenue per follower at a small account size.', deliver: 'Intake form + custom plan + 1 revision' },
-      { name: '1:1 coaching / done-for-you', type: 'High ticket', price: 15000, gate: 5000, promise: 'The offer that makes this a real business, not a side hustle.', deliver: 'Multi-week engagement with weekly calls' },
-      { name: 'Brand partnerships', type: 'Sponsorship', price: 0, gate: 8000, promise: 'Comes last. Sponsor money is rented; product money is owned.', deliver: '1 integrated reel + stories + usage rights' }
-    ],
-    hashtags: {
-      broad: ['#{TAG}', '#reels', '#explorepage', '#viral', '#instagood'],
-      mid: ['#{TAG}tips', '#{TAG}forbeginners', '#{TAG}life', '#{TAG}daily', '#{TAG}community', '#learn{TAG}', '#{TAG}india'],
-      niche: ['#{TAG}beginner', '#{TAG}hacks', '#{TAG}coach', '#{TAG}journey', '#{TAG}2026', '#{TAG}guide', '#{TAG}basics', '#daily{TAG}']
-    },
-    visual: 'Bright, high-contrast footage; the payoff visible in frame one; large readable captions; consistent 3-colour palette across every post so the grid reads as one brand.',
-    brands: ['tools & gear in {NICHE}', 'apps & software', 'courses & edtech', 'e-commerce brands'],
-    proof: ['your own documented results', 'follower wins you can repost', 'process transparency', 'consistency over time']
+  /* ---------------- resolution ---------------- */
+  function words(s) {
+    return String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length > 2);
+  }
+
+  /* "stock" and "stocks" are the same intent — match on a crude stem. */
+  function stem(w) {
+    return w.replace(/(ies)$/, 'y').replace(/(es|s)$/, '');
+  }
+
+  /* Score typed text against every preset's aliases, label and key. */
+  G.resolveNiche = function (text) {
+    const ws = words(text);
+    if (!ws.length) return null;
+    let best = null;
+
+    Object.keys(G.NICHES).forEach((key) => {
+      const n = G.NICHES[key];
+      const hay = (key + ' ' + n.label + ' ' + n.short + ' ' + n.aliases).toLowerCase();
+      const aliases = n.aliases.split(',').map((a) => a.trim()).filter(Boolean);
+      let score = 0;
+
+      aliases.forEach((a) => {
+        /* A whole alias phrase appearing in the text is a strong signal. */
+        if (a.indexOf(' ') > -1 && text.toLowerCase().indexOf(a) > -1) score += 6;
+      });
+      const stems = aliases.map(stem);
+      ws.forEach((w) => {
+        const sw = stem(w);
+        if (aliases.indexOf(w) > -1 || stems.indexOf(sw) > -1) score += 4;   // alias hit
+        else if (hay.indexOf(sw) > -1) score += 1.5;                          // appears somewhere
+      });
+      if (score > 0 && (!best || score > best.score)) best = { key: key, score: score };
+    });
+
+    return best && best.score >= 4 ? best : null;
   };
 
-  /* Resolve the niche object for a profile, filling {NICHE}/{TAG} tokens. */
+  /* Classify anything unmatched into a family. */
+  G.classifyFamily = function (text) {
+    const ws = words(text);
+    let best = { key: 'skill', score: 0 };
+    Object.keys(G.FAMILIES).forEach((key) => {
+      const f = G.FAMILIES[key];
+      const keys = f.keys.split(',').map((k) => k.trim());
+      let score = 0;
+      keys.forEach((k) => {
+        if (k.indexOf(' ') > -1 && text.toLowerCase().indexOf(k) > -1) score += 3;
+      });
+      ws.forEach((w) => { if (keys.indexOf(w) > -1) score += 2; });
+      if (score > best.score) best = { key: key, score: score };
+    });
+    return best.key;
+  };
+
+  /* Build a full niche object from a family template. */
+  function fromFamily(familyKey, name) {
+    const f = G.FAMILIES[familyKey];
+    const tag = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 14) || 'niche';
+    const fill = (s) => String(s).replace(/\{NICHE\}/g, name);
+
+    return {
+      label: name.replace(/^\w/, (c) => c.toUpperCase()),
+      short: name.replace(/^\w/, (c) => c.toUpperCase()),
+      category: f.label,
+      aliases: name,
+      custom: true,
+      family: familyKey,
+      familyLabel: f.label,
+      reach: f.reach, cpm: f.cpm, buyRate: f.buyRate,
+      positioning: 'the clearest, most practical voice in ' + name + ' for people who are actually trying',
+      audience: {
+        age: '20–35',
+        who: fill(f.who),
+        interests: [name + ' basics', name + ' tools and gear', name + ' results and case studies', 'common ' + name + ' mistakes', name + ' shortcuts'],
+        pains: f.pains.map(fill),
+        desires: f.desires.map(fill),
+        objections: f.objections.map(fill)
+      },
+      pillars: f.pillars.map((p) => ({ name: p[0], pct: p[1], why: p[2] })),
+      ideas: f.ideas.map(fill),
+      offers: f.offers.map((o) => ({
+        name: fill(o[0]), type: o[1], price: o[2], gate: o[3], promise: fill(o[4]), deliver: fill(o[5])
+      })),
+      hashtags: {
+        broad: ['#' + tag, '#reels', '#explorepage', '#instagood'],
+        mid: ['#' + tag + 'tips', '#' + tag + 'forbeginners', '#' + tag + 'daily', '#' + tag + 'community', '#learn' + tag, '#' + tag + 'india'],
+        niche: ['#' + tag + 'beginner', '#' + tag + 'hacks', '#' + tag + 'journey', '#' + tag + 'guide', '#' + tag + 'basics', '#daily' + tag, '#' + tag + 'coach', '#' + tag + '2026']
+      },
+      visual: f.visual,
+      brands: f.brands.map(fill),
+      proof: f.proof.map(fill)
+    };
+  }
+
+  /* What did we match this profile to, and how? Used by the UI to be honest
+     about whether someone got a preset or a generated plan. */
+  G.nicheMatch = function (profile) {
+    profile = profile || G.store.profile || {};
+    if (profile.nicheKey && G.NICHES[profile.nicheKey]) {
+      return { kind: 'preset', key: profile.nicheKey, label: G.NICHES[profile.nicheKey].label };
+    }
+    const typed = (profile.customNiche || '').trim();
+    if (!typed) return { kind: 'preset', key: 'fitness', label: G.NICHES.fitness.label };
+
+    const hit = G.resolveNiche(typed);
+    if (hit) {
+      return { kind: 'matched', key: hit.key, label: G.NICHES[hit.key].label, typed: typed };
+    }
+    const fam = G.classifyFamily(typed);
+    return { kind: 'family', key: fam, label: G.FAMILIES[fam].label, typed: typed };
+  };
+
   G.niche = function (profile) {
     profile = profile || G.store.profile || {};
-    const base = G.NICHES[profile.nicheKey];
-    if (base) return base;
+    const m = G.nicheMatch(profile);
 
-    const name = (profile.customNiche || 'your niche').trim();
-    const tag = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 14) || 'niche';
-    const fill = (s) => String(s).replace(/\{NICHE\}/g, name).replace(/\{TAG\}/g, tag);
-    const walk = (v) => Array.isArray(v) ? v.map(walk)
-      : (v && typeof v === 'object') ? Object.keys(v).reduce((o, k) => (o[k] = walk(v[k]), o), {})
-        : (typeof v === 'string' ? fill(v) : v);
-
-    const out = walk(G.GENERIC);
-    out.label = name.replace(/^\w/, (c) => c.toUpperCase());
-    out.short = out.label;
-    out.custom = true;
-    return out;
+    if (m.kind === 'family') {
+      return fromFamily(m.key, (profile.customNiche || 'your niche').trim());
+    }
+    const base = G.NICHES[m.key];
+    if (m.kind === 'matched') {
+      /* Keep the preset's intelligence, but wear the name they actually typed —
+         including a handful of ideas phrased in their exact words, so someone
+         who typed "crochet" is not handed only woodworking topics. */
+      const out = Object.assign({}, base);
+      out.label = m.typed.replace(/^\w/, (c) => c.toUpperCase());
+      out.short = out.label;
+      out.matchedFrom = base.label;
+      const fam = G.FAMILIES[G.classifyFamily(m.typed)];
+      const own = fam.ideas.slice(0, 4).map((s) => s.replace(/\{NICHE\}/g, m.typed));
+      out.ideas = own.concat(base.ideas);
+      return out;
+    }
+    return base;
   };
 
-  /* Human label for the current niche */
   G.nicheName = function (profile) {
     profile = profile || G.store.profile || {};
-    return G.NICHES[profile.nicheKey]
-      ? G.NICHES[profile.nicheKey].label
-      : (profile.customNiche || 'Your niche');
+    if (profile.nicheKey && G.NICHES[profile.nicheKey]) return G.NICHES[profile.nicheKey].label;
+    return (profile.customNiche || 'Your niche').replace(/^\w/, (c) => c.toUpperCase());
   };
 })(window.IGOS);
 
@@ -1481,6 +3016,177 @@ window.IGOS = window.IGOS || {};
       sharesPerPost: f * t.er * 0.09,
       reelViewsTarget: E.reachPerPost(p, f, 1).reel
     };
+  };
+})(window.IGOS);
+
+</script>
+<script>
+/* src/engine/chart.js */
+/* ================= GROWTH OS · chart component =================
+   One line/area renderer for every chart in the app.
+
+   The old per-view canvas code sized itself from `clientWidth` at render
+   time, before layout had settled — the bitmap ended up narrower than the
+   element and the browser stretched it, which is why axis labels looked
+   smeared. This measures the parent's content box, re-measures on resize,
+   and repaints from stored state.
+============================================================== */
+(function (G) {
+  'use strict';
+  const C = G.chart = {};
+
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  C.SERIES = () => [css('--s1'), css('--s2'), css('--s3')];
+
+  /* opts: { series:[{name,color,dashed,area,points:[{x,y}]}], xMax, xLabel, yFormat, tipX } */
+  C.line = function (canvas, opts) {
+    if (!canvas) return;
+    const wrap = canvas.parentElement;
+    let state = null;
+
+    function draw() {
+      /* Measure the box we actually occupy, not a guess. */
+      const box = wrap.getBoundingClientRect();
+      const cssW = Math.max(240, Math.round(box.width));
+      const cssH = opts.height || 240;
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+      canvas.style.width = cssW + 'px';
+      canvas.style.height = cssH + 'px';
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      const all = opts.series.reduce((a, s) => a.concat(s.points), []);
+      const maxY = Math.max(1, all.reduce((m, p) => Math.max(m, p.y), 0)) * 1.08;
+      const maxX = opts.xMax || Math.max(1, all.reduce((m, p) => Math.max(m, p.x), 0));
+
+      const pad = { l: 56, r: 18, t: 14, b: 28 };
+      const X = (x) => pad.l + (x / maxX) * (cssW - pad.l - pad.r);
+      const Y = (y) => cssH - pad.b - (y / maxY) * (cssH - pad.t - pad.b);
+
+      const fmt = opts.yFormat || G.fmt;
+      const inkMuted = css('--tx-3');
+
+      /* recessive grid */
+      ctx.strokeStyle = css('--grid');
+      ctx.lineWidth = 1;
+      ctx.font = '11px ' + css('--mono');
+      ctx.fillStyle = inkMuted;
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i <= 4; i++) {
+        const v = (maxY / 4) * i;
+        const y = Math.round(Y(v)) + 0.5;
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(cssW - pad.r, y); ctx.stroke();
+        ctx.textAlign = 'right';
+        ctx.fillText(fmt(v), pad.l - 10, y);
+      }
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const step = Math.max(1, Math.round(maxX / 6));
+      for (let x = 0; x <= maxX; x += step) {
+        ctx.fillText((opts.xLabel || 'M') + x, X(x), cssH - pad.b + 9);
+      }
+
+      /* series */
+      opts.series.forEach((s) => {
+        if (!s.points.length) return;
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 2;
+        ctx.setLineDash(s.dashed ? [5, 4] : []);
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        s.points.forEach((p, i) => { i ? ctx.lineTo(X(p.x), Y(p.y)) : ctx.moveTo(X(p.x), Y(p.y)); });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (s.area) {
+          ctx.beginPath();
+          s.points.forEach((p, i) => { i ? ctx.lineTo(X(p.x), Y(p.y)) : ctx.moveTo(X(p.x), Y(p.y)); });
+          ctx.lineTo(X(s.points[s.points.length - 1].x), Y(0));
+          ctx.lineTo(X(s.points[0].x), Y(0));
+          ctx.closePath();
+          ctx.globalAlpha = 0.10;
+          ctx.fillStyle = s.color;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        /* endpoint marker, ringed against the surface so overlaps stay readable */
+        const last = s.points[s.points.length - 1];
+        ctx.beginPath();
+        ctx.arc(X(last.x), Y(last.y), 4.5, 0, 7);
+        ctx.fillStyle = s.color; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = css('--surface'); ctx.stroke();
+      });
+
+      state = { cssW, cssH, X, Y, maxX, pad };
+    }
+
+    /* ---- hover: crosshair + tooltip ---- */
+    let tip = wrap.querySelector('.chart-tip');
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.className = 'chart-tip hidden';
+      wrap.appendChild(tip);
+    }
+
+    function nearest(mx) {
+      if (!state) return null;
+      const xVal = ((mx - state.pad.l) / (state.cssW - state.pad.l - state.pad.r)) * state.maxX;
+      let best = null;
+      opts.series.forEach((s) => {
+        s.points.forEach((p) => {
+          const d = Math.abs(p.x - xVal);
+          if (!best || d < best.d) best = { d: d, x: p.x };
+        });
+      });
+      return best;
+    }
+
+    canvas.onmousemove = function (e) {
+      if (!state) return;
+      const r = canvas.getBoundingClientRect();
+      const mx = e.clientX - r.left;
+      const near = nearest(mx);
+      if (!near || near.d > state.maxX * 0.12) { tip.classList.add('hidden'); return; }
+
+      const rows = opts.series.map((s) => {
+        const pt = s.points.reduce((a, p) =>
+          (!a || Math.abs(p.x - near.x) < Math.abs(a.x - near.x)) ? p : a, null);
+        if (!pt || Math.abs(pt.x - near.x) > 0.5) return '';
+        return '<div class="ct-row"><i class="ct-dot" style="background:' + s.color + '"></i>' +
+          G.esc(s.name) + '<span class="ct-v">' + (opts.yFormat || G.comma)(pt.y) + '</span></div>';
+      }).filter(Boolean).join('');
+
+      tip.innerHTML = '<div class="ct-x">' + G.esc((opts.tipX || ((v) => 'Month ' + v))(near.x)) + '</div>' + rows;
+      tip.style.left = state.X(near.x) + 'px';
+      tip.style.top = (state.pad.t + 8) + 'px';
+      tip.classList.remove('hidden');
+    };
+    canvas.onmouseleave = function () { tip.classList.add('hidden'); };
+
+    draw();
+    /* Repaint when the layout actually changes — this is what stops the stretch. */
+    if (window.ResizeObserver) {
+      if (canvas._ro) canvas._ro.disconnect();
+      canvas._ro = new ResizeObserver(() => draw());
+      canvas._ro.observe(wrap);
+    }
+    return draw;
+  };
+
+  C.legend = function (series) {
+    return '<div class="legend">' + series.map((s) =>
+      '<span><i style="background:' + s.color + (s.dashed ? ';opacity:.65' : '') + '"></i>' +
+      G.esc(s.name) + '</span>').join('') + '</div>';
   };
 })(window.IGOS);
 
@@ -3535,11 +5241,8 @@ window.IGOS = window.IGOS || {};
           : `<div class="callout ok"><b>Capacity check:</b> ${Math.round(ch.hoursPerWeek)} hours a week fits inside the ${p.hours} you have. No excuse available.</div>`))}
         </div>
 
-        ${G.card('Pace — required vs actual', '<canvas id="spChart" height="230"></canvas>' +
-          '<div class="split muted" style="margin-top:10px;gap:16px">' +
-          '<span style="color:#7c5cff">■</span> required pace' +
-          '<span style="color:#ffb347">■</span> what this plan expects to deliver' +
-          '<span style="color:#2fd08a">■</span> your actual count</div>')}
+        ${G.card('Pace — required vs actual',
+          '<div class="chart-wrap"><canvas id="spChart"></canvas></div><div id="spLegend"></div>')}
 
         ${G.card('Log today', `
           <div class="form-row">
@@ -3624,61 +5327,32 @@ window.IGOS = window.IGOS || {};
       };
 
       /* ---- pace chart ---- */
-      const cv = G.$('#spChart');
-      if (!cv) return;
-      const dpr = window.devicePixelRatio || 1;
-      const w = cv.clientWidth || 700, h = 230;
-      cv.width = w * dpr; cv.height = h * dpr;
-      cv.style.width = '100%'; cv.style.height = h + 'px';
-      const ctx = cv.getContext('2d');
-      ctx.scale(dpr, dpr);
-
-      const s = E.sprint(p, c.target, c.days, c.perDay);
-      const end = c.startFollowers + c.target;
+      const S = G.chart.SERIES();
+      const sp = E.sprint(p, c.target, c.days, c.perDay);
       const logDates = Object.keys(c.log).sort();
-      const actual = logDates.map((d) => ({
-        x: G.clamp(Math.round((new Date(d) - new Date(c.start)) / 864e5), 0, c.days),
-        y: c.log[d]
-      }));
-      /* The expected-value line can sit well above the target — scale for it,
-         otherwise it is drawn off the top of the canvas and just disappears. */
-      const expectedEnd = c.startFollowers + s.chosen.expected;
-      const maxY = Math.max(end, expectedEnd, actual.reduce((m, a) => Math.max(m, a.y), 0)) * 1.05;
-      const pad = { l: 54, r: 14, t: 14, b: 26 };
-      const X = (d) => pad.l + (d / c.days) * (w - pad.l - pad.r);
-      const Y = (v) => h - pad.b - (v / maxY) * (h - pad.t - pad.b);
 
-      ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = '#242836'; ctx.fillStyle = '#6f7791';
-      ctx.font = '10px ui-monospace, monospace'; ctx.lineWidth = 1;
-      for (let i = 0; i <= 4; i++) {
-        const v = (maxY / 4) * i, y = Y(v);
-        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
-        ctx.fillText(G.fmt(v), 6, y + 3);
-      }
-      for (let d = 0; d <= c.days; d += Math.max(1, Math.round(c.days / 6))) {
-        ctx.fillText('D' + d, X(d) - 6, h - 8);
+      const series = [
+        { name: 'Required pace', color: S[0], dashed: true, points: [
+          { x: 0, y: c.startFollowers }, { x: c.days, y: c.startFollowers + c.target }] },
+        { name: 'What this plan expects', color: S[2], points: [
+          { x: 0, y: c.startFollowers }, { x: c.days, y: c.startFollowers + sp.chosen.expected }] }
+      ];
+      if (logDates.length) {
+        series.push({
+          name: 'Your actual count', color: S[1], area: true,
+          points: logDates.map((d) => ({
+            x: G.clamp(Math.round((new Date(d) - new Date(c.start)) / 864e5), 0, c.days),
+            y: c.log[d]
+          }))
+        });
       }
 
-      ctx.strokeStyle = '#7c5cff'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
-      ctx.beginPath(); ctx.moveTo(X(0), Y(c.startFollowers)); ctx.lineTo(X(c.days), Y(end)); ctx.stroke();
-      ctx.setLineDash([]);
-
-      /* expected-value line: what this plan realistically delivers */
-      ctx.strokeStyle = 'rgba(255,179,71,.75)'; ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(X(0), Y(c.startFollowers));
-      ctx.lineTo(X(c.days), Y(c.startFollowers + s.chosen.expected));
-      ctx.stroke();
-
-      if (actual.length) {
-        ctx.strokeStyle = '#2fd08a'; ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        actual.forEach((a, i) => { i ? ctx.lineTo(X(a.x), Y(a.y)) : ctx.moveTo(X(a.x), Y(a.y)); });
-        ctx.stroke();
-        ctx.fillStyle = '#2fd08a';
-        actual.forEach((a) => { ctx.beginPath(); ctx.arc(X(a.x), Y(a.y), 3.2, 0, 7); ctx.fill(); });
-      }
+      G.chart.line(G.$('#spChart'), {
+        series: series, height: 250, xMax: c.days, xLabel: 'D',
+        yFormat: G.fmt, tipX: (v) => 'Day ' + Math.round(v)
+      });
+      const slg = G.$('#spLegend');
+      if (slg) slg.innerHTML = G.chart.legend(series);
     }
   };
 
@@ -3920,11 +5594,8 @@ window.IGOS = window.IGOS || {};
 
         <div class="callout ${tone === 'ok' ? 'ok' : tone === 'hot' ? 'warn' : ''}"><b>Board verdict:</b> ${G.esc(diagnosis)}</div>
 
-        ${G.card('Growth — actual vs projected', '<canvas id="chart" height="240"></canvas>' +
-        '<div class="split muted" style="margin-top:10px;gap:16px">' +
-        '<span style="color:#7c5cff">■</span> projected (base case)' +
-        '<span style="color:#2fd08a">■</span> actual logged' +
-        '</div>')}
+        ${G.card('Growth — actual vs projected',
+          '<div class="chart-wrap"><canvas id="chart"></canvas></div><div id="chartLegend"></div>')}
 
         ${G.card('Log this week', `
           <div class="log-row" style="margin-bottom:14px">
@@ -3970,59 +5641,33 @@ window.IGOS = window.IGOS || {};
       });
 
       /* ---- chart ---- */
-      const cv = G.$('#chart');
-      if (!cv) return;
-      const dpr = window.devicePixelRatio || 1;
-      const w = cv.clientWidth || 700, h = 240;
-      cv.width = w * dpr; cv.height = h * dpr;
-      cv.style.width = '100%'; cv.style.height = h + 'px';
-      const c = cv.getContext('2d');
-      c.scale(dpr, dpr);
-
+      const S = G.chart.SERIES();
       const proj = E.project(p, 6, 'base');
-      const start = Number(p.followers) || 0;
-      const projPts = [start].concat(proj.map((m) => m.end));
+      const projected = [{ x: 0, y: Number(p.followers) || 0 }]
+        .concat(proj.map((m, i) => ({ x: i + 1, y: m.end })));
 
-      const logs = (G.store.logs || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
-      const t0 = logs.length ? new Date(logs[0].date) : null;
-      const actPts = logs.map((l) => ({
+      const sorted = (G.store.logs || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
+      const t0 = sorted.length ? new Date(sorted[0].date) : null;
+      const actual = sorted.map((l) => ({
         x: (new Date(l.date) - t0) / (30.4 * 864e5),
         y: l.followers
       }));
 
-      const maxY = Math.max.apply(null, projPts.concat(actPts.map((a) => a.y), [10]));
-      const maxX = Math.max(6, actPts.length ? actPts[actPts.length - 1].x : 0);
-      const pad = { l: 52, r: 14, t: 14, b: 26 };
-      const X = (m) => pad.l + (m / maxX) * (w - pad.l - pad.r);
-      const Y = (v) => h - pad.b - (v / maxY) * (h - pad.t - pad.b);
+      const series = [
+        { name: 'Projected (base case)', color: S[0], area: true, dashed: true, points: projected }
+      ];
+      if (actual.length) series.push({ name: 'Actual logged', color: S[1], points: actual });
 
-      c.clearRect(0, 0, w, h);
-      c.strokeStyle = '#242836'; c.fillStyle = '#6f7791';
-      c.font = '10px ui-monospace, monospace'; c.lineWidth = 1;
-      for (let i = 0; i <= 4; i++) {
-        const v = (maxY / 4) * i, y = Y(v);
-        c.beginPath(); c.moveTo(pad.l, y); c.lineTo(w - pad.r, y); c.stroke();
-        c.fillText(G.fmt(v), 6, y + 3);
-      }
-      for (let m = 0; m <= Math.ceil(maxX); m++) {
-        c.fillText('M' + m, X(m) - 6, h - 8);
-      }
-
-      /* projected */
-      c.strokeStyle = '#7c5cff'; c.lineWidth = 2; c.beginPath();
-      projPts.forEach((v, i) => { i ? c.lineTo(X(i), Y(v)) : c.moveTo(X(i), Y(v)); });
-      c.stroke();
-      c.fillStyle = 'rgba(124,92,255,.10)';
-      c.lineTo(X(projPts.length - 1), Y(0)); c.lineTo(X(0), Y(0)); c.closePath(); c.fill();
-
-      /* actual */
-      if (actPts.length) {
-        c.strokeStyle = '#2fd08a'; c.lineWidth = 2.5; c.beginPath();
-        actPts.forEach((pt, i) => { i ? c.lineTo(X(pt.x), Y(pt.y)) : c.moveTo(X(pt.x), Y(pt.y)); });
-        c.stroke();
-        c.fillStyle = '#2fd08a';
-        actPts.forEach((pt) => { c.beginPath(); c.arc(X(pt.x), Y(pt.y), 3.2, 0, 7); c.fill(); });
-      }
+      G.chart.line(G.$('#chart'), {
+        series: series,
+        height: 250,
+        xMax: 6,
+        xLabel: 'M',
+        yFormat: G.fmt,
+        tipX: (v) => 'Month ' + Math.round(v)
+      });
+      const lg = G.$('#chartLegend');
+      if (lg) lg.innerHTML = G.chart.legend(series);
     }
   };
 })(window.IGOS);
@@ -4038,27 +5683,61 @@ window.IGOS = window.IGOS || {};
   /* ---------------- onboarding ---------------- */
   const wz = { step: 1, max: 4, niche: null, goal: 'both' };
 
-  function buildNicheGrid() {
+  const CAT_ORDER = ['Health & Body', 'Money', 'Tech', 'Knowledge', 'Creative', 'Lifestyle', 'Entertainment'];
+
+  function buildNicheGrid(filter) {
     const grid = G.$('#nicheGrid');
-    grid.innerHTML = Object.keys(G.NICHES).map((k) => {
+    const q = (filter || '').trim().toLowerCase();
+    const keys = Object.keys(G.NICHES).filter((k) => {
+      if (!q) return true;
       const n = G.NICHES[k];
-      return `<button class="niche-chip" data-niche="${k}">
-        <b>${G.esc(n.short)}</b><small>${G.esc(n.label)}</small></button>`;
-    }).join('');
+      return (k + ' ' + n.label + ' ' + n.short + ' ' + n.aliases + ' ' + n.category).toLowerCase().indexOf(q) > -1;
+    });
+
+    if (!keys.length) {
+      grid.innerHTML = '<p class="muted" style="grid-column:1/-1">No preset matches that. Type it in the box below instead — ' +
+        'the app builds a full plan for any niche, listed or not.</p>';
+      return;
+    }
+
+    const byCat = {};
+    keys.forEach((k) => { (byCat[G.NICHES[k].category] = byCat[G.NICHES[k].category] || []).push(k); });
+
+    grid.innerHTML = CAT_ORDER.filter((c) => byCat[c]).map((cat) =>
+      `<div class="niche-cat">${G.esc(cat)}</div>` +
+      byCat[cat].map((k) => {
+        const n = G.NICHES[k];
+        return `<button class="niche-chip ${wz.niche === k ? 'selected' : ''}" data-niche="${k}">
+          <b>${G.esc(n.short)}</b><small>${G.esc(n.label)}</small></button>`;
+      }).join('')
+    ).join('');
+
     G.$$('.niche-chip').forEach((b) => {
       b.onclick = function () {
         G.$$('.niche-chip').forEach((x) => x.classList.remove('selected'));
         b.classList.add('selected');
         wz.niche = b.getAttribute('data-niche');
         G.$('#customNiche').value = '';
+        showResolve('');
       };
     });
-    G.$('#customNiche').oninput = function () {
-      if (this.value.trim()) {
-        G.$$('.niche-chip').forEach((x) => x.classList.remove('selected'));
-        wz.niche = null;
-      }
-    };
+  }
+
+  /* Be honest about what a typed niche resolved to, before they commit to it. */
+  function showResolve(text) {
+    const box = G.$('#nicheResolve');
+    const t = (text || '').trim();
+    if (!t) { box.classList.add('hidden'); return; }
+    const m = G.nicheMatch({ customNiche: t });
+    box.classList.remove('hidden');
+    if (m.kind === 'matched') {
+      box.innerHTML = '<b>Matched.</b> You will get the full <b>' + G.esc(m.label) +
+        '</b> playbook — offers, pricing and hashtags built for it — with topics phrased as “' + G.esc(t) + '”.';
+    } else {
+      box.innerHTML = '<b>Building it from the ' + G.esc(G.FAMILIES[m.key].label.toLowerCase()) +
+        ' template.</b> No preset covers “' + G.esc(t) + '” exactly, so every department is generated for it: ' +
+        'pillars, offers, pricing, calendar and scripts.';
+    }
   }
 
   function dots() {
@@ -4120,8 +5799,16 @@ window.IGOS = window.IGOS || {};
   }
 
   function initOnboarding() {
-    buildNicheGrid();
+    buildNicheGrid('');
     showStep(1);
+    G.$('#nicheSearch').oninput = function () { buildNicheGrid(this.value); };
+    G.$('#customNiche').oninput = function () {
+      if (this.value.trim()) {
+        G.$$('.niche-chip').forEach((x) => x.classList.remove('selected'));
+        wz.niche = null;
+      }
+      showResolve(this.value);
+    };
     G.$('#followers').oninput = tierPreview;
     tierPreview();
     G.$('#currency').onchange = function () {
@@ -4307,11 +5994,134 @@ window.IGOS = window.IGOS || {};
     G.download('instagram-business-plan.md', L.join('\n'), 'text/markdown');
   }
 
+  /* ---------------- inputs drawer ----------------
+     Every number in the app derives from these, so being able to change one
+     and watch all seven departments re-plan is the point of the whole thing. */
+  function openDrawer() {
+    const p = G.store.profile;
+    const d = G.$('#drawer');
+    const nicheOpts = Object.keys(G.NICHES).map((k) =>
+      `<option value="${k}" ${p.nicheKey === k ? 'selected' : ''}>${G.esc(G.NICHES[k].label)}</option>`).join('');
+
+    d.innerHTML = `
+      <h3>Edit inputs</h3>
+      <p class="muted">Change anything. Every department re-plans against the new numbers.</p>
+      <label class="field"><span>Preset niche</span>
+        <select id="dNiche"><option value="">— use my own wording —</option>${nicheOpts}</select></label>
+      <label class="field"><span>Or your own niche</span>
+        <input id="dCustom" type="text" value="${G.esc(p.customNiche || '')}" placeholder="anything at all"></label>
+      <div id="dResolve" class="resolve-note hidden" style="margin-bottom:14px"></div>
+      <div class="grid-2">
+        <label class="field"><span>Followers</span><input id="dFollowers" type="number" min="0" value="${p.followers}"></label>
+        <label class="field"><span>Hours per week</span><input id="dHours" type="number" min="1" max="80" value="${p.hours}"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Follower target (6 mo)</span><input id="dFTarget" type="number" min="0" value="${p.followerTarget}"></label>
+        <label class="field"><span>Revenue target (${G.curSym()}/mo)</span><input id="dRTarget" type="number" min="0" value="${Math.round(G.fromBase(p.revTarget))}"></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Budget (${G.curSym()}/mo)</span><input id="dBudget" type="number" min="0" value="${Math.round(G.fromBase(p.budget))}"></label>
+        <label class="field"><span>Goal</span>
+          <select id="dGoal">
+            <option value="followers" ${p.goal === 'followers' ? 'selected' : ''}>Followers</option>
+            <option value="money" ${p.goal === 'money' ? 'selected' : ''}>Money</option>
+            <option value="both" ${p.goal === 'both' ? 'selected' : ''}>Both</option>
+          </select></label>
+      </div>
+      <div class="grid-2">
+        <label class="field"><span>Market</span>
+          <select id="dMarket">
+            <option value="IN" ${p.market === 'IN' ? 'selected' : ''}>India</option>
+            <option value="US" ${p.market === 'US' ? 'selected' : ''}>US / Western</option>
+            <option value="GLOBAL" ${p.market === 'GLOBAL' ? 'selected' : ''}>Global</option>
+          </select></label>
+        <label class="field"><span>Currency</span>
+          <select id="dCurrency">
+            <option value="INR" ${p.currency === 'INR' ? 'selected' : ''}>₹ INR</option>
+            <option value="USD" ${p.currency === 'USD' ? 'selected' : ''}>$ USD</option>
+          </select></label>
+      </div>
+      <div class="drawer-foot">
+        <button id="dApply" class="btn primary" style="flex:1">Apply &amp; re-plan</button>
+        <button id="dClose" class="btn">Cancel</button>
+      </div>`;
+
+    d.classList.remove('hidden');
+    G.$('#drawerBack').classList.remove('hidden');
+
+    const resolve = function () {
+      const box = G.$('#dResolve');
+      const txt = G.$('#dCustom').value.trim();
+      if (!txt || G.$('#dNiche').value) { box.classList.add('hidden'); return; }
+      const m = G.nicheMatch({ customNiche: txt });
+      box.classList.remove('hidden');
+      box.innerHTML = m.kind === 'matched'
+        ? '<b>Matched to ' + G.esc(m.label) + '.</b> Full preset playbook, phrased as “' + G.esc(txt) + '”.'
+        : '<b>Generated from the ' + G.esc(G.FAMILIES[m.key].label.toLowerCase()) + ' template</b> for “' + G.esc(txt) + '”.';
+    };
+    G.$('#dCustom').oninput = resolve;
+    G.$('#dNiche').onchange = function () { if (this.value) G.$('#dCustom').value = ''; resolve(); };
+    resolve();
+
+    G.$('#dClose').onclick = closeDrawer;
+    G.$('#drawerBack').onclick = closeDrawer;
+    G.$('#dApply').onclick = function () {
+      const cur = G.$('#dCurrency').value;
+      const key = G.$('#dNiche').value;
+      const custom = G.$('#dCustom').value.trim();
+      Object.assign(G.store.profile, {
+        nicheKey: key || null,
+        customNiche: key ? '' : custom,
+        followers: Math.max(0, Number(G.$('#dFollowers').value) || 0),
+        hours: G.clamp(Number(G.$('#dHours').value) || 10, 1, 80),
+        followerTarget: Math.max(0, Number(G.$('#dFTarget').value) || 0),
+        revTarget: Math.max(0, Math.round(G.toBase(Number(G.$('#dRTarget').value) || 0, cur))),
+        budget: Math.max(0, Math.round(G.toBase(Number(G.$('#dBudget').value) || 0, cur))),
+        goal: G.$('#dGoal').value,
+        market: G.$('#dMarket').value,
+        currency: cur
+      });
+      if (!key && !custom) G.store.profile.nicheKey = 'fitness';
+      G.store.scriptTopic = null;
+      G.save();
+      closeDrawer();
+      G.render();
+      G.toast('Re-planned against the new inputs');
+    };
+  }
+
+  function closeDrawer() {
+    G.$('#drawer').classList.add('hidden');
+    G.$('#drawerBack').classList.add('hidden');
+  }
+
+  /* ---------------- theme ---------------- */
+  function applyTheme() {
+    const t = G.store.theme;
+    if (t) document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  function cycleTheme() {
+    const order = [null, 'light', 'dark'];
+    const i = order.indexOf(G.store.theme || null);
+    G.store.theme = order[(i + 1) % order.length];
+    G.save();
+    applyTheme();
+    G.toast('Theme: ' + (G.store.theme || 'system'));
+    G.render();
+  }
+
   /* ---------------- boot ---------------- */
   function boot() {
     G.load();
     G.$$('.nav-item').forEach((b) => { b.onclick = function () { G.go(b.dataset.view); }; });
     G.$('#btnExport').onclick = exportPlan;
+    G.$('#btnInputs').onclick = openDrawer;
+    G.$('#btnTheme').onclick = cycleTheme;
+    applyTheme();
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDrawer();
+    });
     G.$('#btnReset').onclick = function () {
       if (!confirm('Reset the company? Your profile, pipeline, scripts, ideas and logs will be deleted.')) return;
       G.wipe();

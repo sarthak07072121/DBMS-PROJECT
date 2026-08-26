@@ -14,6 +14,8 @@
     fitness: {
       label: 'Fitness & Body Transformation',
       short: 'Fitness',
+      category: 'Health & Body',
+      aliases: 'gym, workout, weight loss, fat loss, bodybuilding, muscle, calisthenics, personal trainer, home workout, abs, strength, crossfit, running, marathon',
       reach: 1.30, cpm: 1.0, buyRate: 1.05,
       positioning: 'the no-nonsense coach for people who have failed diets before',
       audience: {
@@ -60,6 +62,8 @@
     finance: {
       label: 'Personal Finance & Investing',
       short: 'Finance',
+      category: 'Money',
+      aliases: 'money, investing, stock, stocks, stock market, share market, mutual funds, sip, crypto, bitcoin, trading, tax, savings, budgeting, wealth, insurance, credit card, personal finance, financial freedom',
       reach: 1.15, cpm: 1.9, buyRate: 1.25,
       positioning: 'the person who explains money the way a friend would, not a bank would',
       audience: {
@@ -106,6 +110,8 @@
     tech: {
       label: 'Tech, AI & Digital Tools',
       short: 'Tech / AI',
+      category: 'Tech',
+      aliases: 'ai, artificial intelligence, chatgpt, software, saas, coding, programming, automation, no code, gadgets, apps, productivity tools, prompt engineering, developer',
       reach: 1.35, cpm: 1.7, buyRate: 1.15,
       positioning: 'the person who finds the tool 6 months before everyone else and shows the workflow',
       audience: {
@@ -152,6 +158,8 @@
     business: {
       label: 'Business, Freelancing & Entrepreneurship',
       short: 'Business',
+      category: 'Money',
+      aliases: 'business, entrepreneur, startup, freelance, freelancing, agency, clients, marketing agency, consulting, side hustle, ecommerce, dropshipping, smma, solopreneur',
       reach: 1.10, cpm: 1.8, buyRate: 1.3,
       positioning: 'the operator who shows the actual mechanics, not motivational quotes',
       audience: {
@@ -198,6 +206,8 @@
     food: {
       label: 'Food, Recipes & Cooking',
       short: 'Food',
+      category: 'Lifestyle',
+      aliases: 'food, cooking, recipes, chef, baking, cakes, restaurant, street food, meal prep, vegan, vegetarian, healthy eating, kitchen, home cook, nutrition recipes',
       reach: 1.55, cpm: 0.9, buyRate: 0.8,
       positioning: 'the cook who makes restaurant results possible in a normal kitchen',
       audience: {
@@ -244,6 +254,8 @@
     fashion: {
       label: 'Fashion, Style & Grooming',
       short: 'Fashion',
+      category: 'Lifestyle',
+      aliases: 'fashion, style, outfit, ootd, clothing, streetwear, grooming, menswear, womenswear, thrift, shoes, sneakers, accessories, styling, wardrobe',
       reach: 1.40, cpm: 1.3, buyRate: 0.95,
       positioning: 'the stylist for normal bodies and normal budgets, not runway fantasy',
       audience: {
@@ -290,6 +302,8 @@
     education: {
       label: 'Study, Exams & Career Skills',
       short: 'Education',
+      category: 'Knowledge',
+      aliases: 'study, exam, upsc, jee, neet, cat, gate, student, school, college, placement, resume, interview, career prep, notes, competitive exam, coaching',
       reach: 1.20, cpm: 1.2, buyRate: 1.2,
       positioning: 'the senior who already cracked it and gives the shortcut nobody else shares',
       audience: {
@@ -336,6 +350,8 @@
     selfimprovement: {
       label: 'Self-Improvement & Mindset',
       short: 'Self-Improvement',
+      category: 'Knowledge',
+      aliases: 'self improvement, motivation, discipline, mindset, habits, productivity, focus, confidence, personal growth, stoicism, morning routine, self help, journaling',
       reach: 1.45, cpm: 1.0, buyRate: 1.0,
       positioning: 'the person who replaces vague motivation with systems that survive a bad week',
       audience: {
@@ -377,81 +393,1017 @@
       visual: 'Cinematic b-roll (walking, desk, gym, city), slow push-ins, muted colour grade, voiceover-first with subtitles, one sentence on screen at a time, silence used deliberately before the key line.',
       brands: ['habit & meditation apps', 'books/audiobooks', 'coffee & supplements', 'journals', 'courses'],
       proof: ['your own documented change', 'client transformations', 'consistency streak on the page itself']
+    },
+
+    beauty: {
+      label: 'Beauty & Skincare',
+      short: 'Beauty',
+      category: 'Lifestyle',
+      aliases: 'beauty, skincare, makeup, cosmetics, haircare, nails, acne, glow, grwm, dermatology, self care, salon, hair, skin',
+      reach: 1.45, cpm: 1.6, buyRate: 0.9,
+      positioning: 'the one who reads the ingredient list so nobody has to waste money on marketing',
+      audience: {
+        age: '18–34', who: 'students and working women, first-time skincare buyers, acne sufferers',
+        interests: ['skincare routines', 'affordable dupes', 'makeup tutorials', 'ingredient science', 'hair care'],
+        pains: ['spent thousands on products that did nothing', 'acne that never fully clears', 'no idea which ingredients clash', 'routines built for skin types that are not theirs', 'makeup that looks wrong in daylight'],
+        desires: ['clear skin without a 12-step routine', 'looking effortless', 'buying right the first time', 'confidence without makeup'],
+        objections: ['my skin is too sensitive', 'that brand is not available here', 'I do not have time for a routine']
+      },
+      pillars: [
+        { name: 'Ingredient education', pct: 30, why: 'The differentiator in a niche full of unexplained recommendations.' },
+        { name: 'Routines & tutorials', pct: 25, why: 'Saves engine — people bookmark what they intend to copy.' },
+        { name: 'Dupes & budget picks', pct: 20, why: 'Price is the hook. "Under ₹500 that beats the ₹3,000" travels.' },
+        { name: 'Before / after', pct: 15, why: 'Proof sells the products and the consultations both.' },
+        { name: 'Myth-busting', pct: 10, why: 'Correcting bad beauty advice is fast authority.' }
+      ],
+      ideas: [
+        'the 4-step routine that actually clears acne', 'ingredients you must never layer together',
+        'the ₹300 product that outperforms the ₹3,000 one', 'why your sunscreen is pilling',
+        'reading a skincare label in 60 seconds', 'a full routine for oily skin in Indian humidity',
+        'the makeup base that survives 12 hours', 'what dermatologists actually recommend vs what ads say',
+        '30 days of one active — honest before and after', 'the hair fall fix nobody sells you',
+        'drugstore dupes for the products on everyone\'s shelf', 'the order to apply everything, finally explained'
+      ],
+      offers: [
+        { name: 'Free skin-type quiz + routine PDF', type: 'Lead magnet', price: 0, gate: 0, promise: 'Segments your audience by skin type, which makes every future offer relevant.', deliver: 'Quiz + 3 routine PDFs' },
+        { name: 'Routine builder ebook', type: 'Digital product', price: 499, gate: 800, promise: 'Impulse-priced, solves the single most common question you get.', deliver: 'PDF with routines by skin type and budget' },
+        { name: 'Affiliate storefront', type: 'Affiliate', price: 0, gate: 500, promise: 'You are already driving purchases — get paid for them from day one.', deliver: 'Curated links, refreshed monthly' },
+        { name: '1:1 skin consultation', type: 'Productised service', price: 2500, gate: 4000, promise: 'High margin, no inventory. Frame as education, never as medical advice.', deliver: '30-min call + written routine plan' },
+        { name: 'Brand deals — skincare & cosmetics', type: 'Sponsorship', price: 0, gate: 6000, promise: 'Beauty brands buy at small sizes. Protect trust by refusing what you would not use.', deliver: 'Reel + stories + code' }
+      ],
+      hashtags: {
+        broad: ['#skincare', '#beauty', '#makeup', '#glowup'],
+        mid: ['#skincareroutine', '#acnetreatment', '#skincaretips', '#makeuptutorial', '#indianskincare', '#haircare'],
+        niche: ['#skincareindia', '#acnejourney', '#oilyskinroutine', '#budgetskincare', '#ingredientfocused', '#skincareforbeginners', '#indianbeauty', '#sunscreendaily']
+      },
+      visual: 'Soft natural window light, close-up skin texture shots, clean flat-lays on a single-colour surface, on-screen ingredient names, honest unfiltered before/after in the same lighting and angle.',
+      brands: ['skincare brands', 'cosmetics', 'haircare', 'derma clinics'],
+      proof: ['your own unfiltered progress', 'reader results you can repost', 'ingredient sources you cite']
+    },
+
+    travel: {
+      label: 'Travel & Places',
+      short: 'Travel',
+      category: 'Lifestyle',
+      aliases: 'travel, trip, tourism, backpacking, solo travel, hotels, flights, itinerary, vanlife, road trip, budget travel, destinations, hiking, adventure',
+      reach: 1.50, cpm: 1.3, buyRate: 0.85,
+      positioning: 'the one who makes a trip bookable instead of merely beautiful',
+      audience: {
+        age: '20–38', who: 'first-time travellers, budget backpackers, couples planning a trip, remote workers',
+        interests: ['itineraries', 'cheap flights', 'hidden spots', 'solo travel safety', 'stay recommendations'],
+        pains: ['beautiful reels with no useful information', 'no idea what a trip actually costs', 'planning takes longer than the trip', 'tourist traps and overpriced stays', 'travelling solo feels unsafe'],
+        desires: ['a trip that fits their budget', 'places without the crowd', 'a plan they can copy exactly', 'the confidence to go alone'],
+        objections: ['I cannot afford it', 'I do not have leave', 'it is not safe for me']
+      },
+      pillars: [
+        { name: 'Copyable itineraries', pct: 30, why: 'Saves engine. A dreamy shot gets a like; an itinerary gets bookmarked.' },
+        { name: 'Real costs', pct: 25, why: 'Nobody publishes honest budgets. Doing it makes you the trusted source.' },
+        { name: 'Hidden spots', pct: 20, why: 'Discovery drives shares and tags.' },
+        { name: 'Logistics & hacks', pct: 15, why: 'Visa, transport, booking timing — the boring stuff people desperately need.' },
+        { name: 'Story & atmosphere', pct: 10, why: 'This is what makes the account feel like a person, not a listing site.' }
+      ],
+      ideas: [
+        '3 days in this city for under ₹8,000, itemised', 'the booking window that halves flight prices',
+        'places locals go instead of the famous spot', 'what a week here really costs, receipt by receipt',
+        'the packing list after 30 trips', 'solo travel safety rules that actually matter',
+        'the visa process, step by step, no agent', 'how to find stays that are not on the booking apps',
+        'the mistake that cost me a whole day at the airport', 'best time of year for this place and why',
+        'a complete copy-paste itinerary for first-timers', 'transport from the airport without getting scammed'
+      ],
+      offers: [
+        { name: 'Free 3-day itinerary PDF', type: 'Lead magnet', price: 0, gate: 0, promise: 'Travel audiences trade an email for a plan instantly.', deliver: 'PDF itinerary + budget sheet' },
+        { name: 'Full itinerary pack', type: 'Digital product', price: 799, gate: 1500, promise: 'You already did the research for your own trip. Sell the artefact.', deliver: 'Day-by-day plan, maps, bookings, budgets' },
+        { name: 'Affiliate bookings', type: 'Affiliate', price: 0, gate: 500, promise: 'Hotels and gear pay commission on trips you are already inspiring.', deliver: 'Tracked booking and gear links' },
+        { name: 'Trip planning call', type: 'Productised service', price: 3000, gate: 5000, promise: 'One hour of your knowledge is worth more than a hundred saves.', deliver: '45-min call + custom plan doc' },
+        { name: 'Hosted group trip', type: 'High ticket', price: 45000, gate: 20000, promise: 'The endgame in travel. Ten people is a real income and a permanent community.', deliver: 'Small-group trip you host and organise' }
+      ],
+      hashtags: {
+        broad: ['#travel', '#wanderlust', '#travelgram', '#explore'],
+        mid: ['#budgettravel', '#solotravel', '#travelitinerary', '#traveltips', '#indiatravel', '#backpacking'],
+        niche: ['#budgettravelindia', '#solotravelindia', '#itineraryplanner', '#hiddengems', '#offbeattravel', '#travelonabudget', '#weekendgetaway', '#travelhacks']
+      },
+      visual: 'Wide establishing shot in frame one, movement in every clip, on-screen price and place name at all times, golden-hour grade kept consistent, no drone shot longer than two seconds without information on screen.',
+      brands: ['tourism boards', 'hotels & stays', 'luggage & gear', 'travel insurance & forex'],
+      proof: ['receipts and real costs', 'unedited footage of the actual stay', 'follower trips you inspired']
+    },
+
+    photography: {
+      label: 'Photography & Videography',
+      short: 'Photography',
+      category: 'Creative',
+      aliases: 'photography, photographer, camera, lens, dslr, mirrorless, editing, lightroom, portrait, wedding photography, videography, filmmaking, cinematography, mobile photography',
+      reach: 1.20, cpm: 1.0, buyRate: 1.15,
+      positioning: 'the one who proves the gear mattered less than the decision',
+      audience: {
+        age: '18–35', who: 'hobbyists with a first camera, phone shooters, aspiring wedding and product shooters',
+        interests: ['composition', 'editing presets', 'gear comparisons', 'lighting', 'client work'],
+        pains: ['photos look flat compared to what they saw', 'bought expensive gear and improved nothing', 'editing takes hours and still looks off', 'no idea how to price client work', 'cannot get past friends-and-family clients'],
+        desires: ['a recognisable personal style', 'paid client work', 'shots that look professional', 'confidence in manual mode'],
+        objections: ['my camera is not good enough', 'I only have a phone', 'the market is saturated']
+      },
+      pillars: [
+        { name: 'Before / after edits', pct: 30, why: 'The single highest-retention format in this niche — the reveal does the work.' },
+        { name: 'Technique breakdowns', pct: 25, why: 'Composition and light are what people actually lack.' },
+        { name: 'Gear reality checks', pct: 20, why: 'High search demand and it positions you as honest rather than sponsored.' },
+        { name: 'Client & business', pct: 15, why: 'Where the money is, and where the audience quietly wants to go.' },
+        { name: 'Behind the shoot', pct: 10, why: 'Process content builds the trust that books jobs.' }
+      ],
+      ideas: [
+        'the same photo with a ₹80,000 camera and a phone', 'one edit that fixes 90% of flat photos',
+        'the light you already have at home, used properly', 'composition rules ranked by how much they matter',
+        'my full Lightroom edit in 60 seconds', 'what I charge and how I got there',
+        'posing people who hate being photographed', 'the settings I use in every low light situation',
+        'a full wedding shoot, start to delivery', 'phone camera settings people never turn on',
+        'building a portfolio with no clients yet', 'the gear I regret buying'
+      ],
+      offers: [
+        { name: 'Free preset pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'The single most requested thing in this niche. Trade it for an email.', deliver: '5 presets + install guide' },
+        { name: 'Preset / LUT pack', type: 'Digital product', price: 999, gate: 1000, promise: 'Zero marginal cost, permanent income, and it spreads your look.', deliver: '20 presets + video walkthrough' },
+        { name: 'Portfolio review', type: 'Productised service', price: 2500, gate: 3000, promise: 'One call, one recording, immediate value.', deliver: '45-min review + written notes' },
+        { name: 'Shoot workshop', type: 'High ticket', price: 12000, gate: 8000, promise: 'Small in-person groups price high and generate a month of content.', deliver: 'Full-day hands-on workshop, 8 seats' },
+        { name: 'Client photography work', type: 'Service', price: 35000, gate: 2000, promise: 'The account is a portfolio and a lead source. Book the actual work.', deliver: 'Event, wedding or product shoot' }
+      ],
+      hashtags: {
+        broad: ['#photography', '#photographer', '#photooftheday', '#camera'],
+        mid: ['#portraitphotography', '#lightroomediting', '#photographytips', '#mobilephotography', '#weddingphotography', '#videography'],
+        niche: ['#photographyindia', '#beforeandafteredit', '#lightroompreset', '#naturallightportrait', '#photographybeginner', '#indianweddingphotographer', '#phonephotographytips', '#cinematiclook']
+      },
+      visual: 'Split-screen before/after with a hard wipe, the final image held on screen for two full seconds, screen recordings of the edit at 2x, your hands and the camera in frame, muted grade so the photos are the brightest thing on screen.',
+      brands: ['camera & lens brands', 'editing software', 'memory & storage', 'lighting gear'],
+      proof: ['your actual portfolio', 'client galleries', 'raw-to-final comparisons']
+    },
+
+    art: {
+      label: 'Art & Illustration',
+      short: 'Art',
+      category: 'Creative',
+      aliases: 'art, drawing, painting, sketch, illustration, digital art, procreate, artist, doodle, calligraphy, anime art, portrait drawing, watercolour, crafts art',
+      reach: 1.45, cpm: 0.8, buyRate: 0.9,
+      positioning: 'the artist who shows the ugly middle stage, not just the finished piece',
+      audience: {
+        age: '15–30', who: 'self-taught artists, students, hobbyists, aspiring freelance illustrators',
+        interests: ['drawing tutorials', 'art supplies', 'digital tools', 'style development', 'commissions'],
+        pains: ['art looks wrong and they cannot say why', 'no consistent style', 'comparison with artists who started earlier', 'no idea how to price commissions', 'motivation dies mid-piece'],
+        desires: ['a style people recognise', 'getting paid to draw', 'visible improvement', 'finishing what they start'],
+        objections: ['I do not have a tablet', 'I cannot draw from imagination', 'nobody would pay for mine']
+      },
+      pillars: [
+        { name: 'Process & timelapse', pct: 30, why: 'Watching something appear is the most hypnotic format on the platform.' },
+        { name: 'Technique fixes', pct: 25, why: 'Naming the specific error is what turns viewers into followers.' },
+        { name: 'Supplies & tools', pct: 15, why: 'High search demand and easy affiliate revenue.' },
+        { name: 'Progress & story', pct: 20, why: 'A year-of-progress post is the most shared thing in this niche.' },
+        { name: 'Art business', pct: 10, why: 'Moves an audience of hobbyists toward paying you.' }
+      ],
+      ideas: [
+        'the one fix that makes faces stop looking wrong', 'a full piece start to finish in 45 seconds',
+        'cheap supplies that beat the expensive ones', 'how I found my style — the honest version',
+        'drawing the same thing 1 year apart', 'the colour rule that changed my work',
+        'procreate settings I wish I knew on day one', 'how I price commissions',
+        'fixing a piece I nearly threw away', 'anatomy shortcuts that actually hold up',
+        'shading explained without theory', 'what I draw when I have no ideas'
+      ],
+      offers: [
+        { name: 'Free brush / practice pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'Artists collect tools. This is the fastest opt-in in the niche.', deliver: 'Brush set + practice sheet PDF' },
+        { name: 'Brush pack / procreate set', type: 'Digital product', price: 399, gate: 1000, promise: 'Impulse price, infinite supply, spreads your look through other people\'s work.', deliver: 'Brushes, palettes, install guide' },
+        { name: 'Commissions', type: 'Service', price: 3500, gate: 1000, promise: 'The most direct income in art. Open a limited slot count so it stays scarce.', deliver: 'Custom portrait or illustration' },
+        { name: 'Beginner drawing course', type: 'Digital product', price: 2499, gate: 5000, promise: 'Your process is the product. Record it once, sell it forever.', deliver: '10 lessons + practice files' },
+        { name: 'Prints & merch', type: 'Physical product', price: 799, gate: 10000, promise: 'Only once demand is proven — inventory is where artists lose money.', deliver: 'Print-on-demand, no upfront stock' }
+      ],
+      hashtags: {
+        broad: ['#art', '#drawing', '#artist', '#illustration'],
+        mid: ['#digitalart', '#procreate', '#sketchbook', '#arttutorial', '#artistsoninstagram', '#painting'],
+        niche: ['#artprocess', '#drawingtips', '#procreateart', '#artprogress', '#selftaughtartist', '#indianartist', '#characterdesign', '#artcommissions']
+      },
+      visual: 'Overhead fixed camera, timelapse with the reveal held at the end, hands and tool visible, paper or canvas filling the frame, quiet audio so the pencil or brush is audible.',
+      brands: ['art supplies', 'tablets & styluses', 'creative software', 'print services'],
+      proof: ['your progress over years', 'commission gallery', 'client and buyer reactions']
+    },
+
+    music: {
+      label: 'Music & Production',
+      short: 'Music',
+      category: 'Creative',
+      aliases: 'music, singing, guitar, piano, producer, music production, beats, fl studio, ableton, mixing, mastering, songwriting, rap, instrument, band, dj',
+      reach: 1.35, cpm: 0.9, buyRate: 1.0,
+      positioning: 'the one who shows the ten seconds where a track actually becomes good',
+      audience: {
+        age: '16–32', who: 'bedroom producers, self-taught instrumentalists, singers, aspiring artists',
+        interests: ['production tutorials', 'gear and plugins', 'theory made simple', 'covers', 'release strategy'],
+        pains: ['tracks sound amateur next to released music', 'finishing nothing', 'theory feels like homework', 'no idea how to get heard', 'mixing that never sits right'],
+        desires: ['a release they are proud of', 'their sound recognised', 'playing without thinking', 'an audience that listens'],
+        objections: ['I do not have the gear', 'I never learned theory', 'the market is impossible']
+      },
+      pillars: [
+        { name: 'Before / after production', pct: 30, why: 'The A/B is instantly understandable and endlessly rewatchable.' },
+        { name: 'Technique in 30 seconds', pct: 25, why: 'One trick, demonstrated, beats any explanation.' },
+        { name: 'Theory made practical', pct: 20, why: 'Turns the boring thing into the useful thing.' },
+        { name: 'Performance & covers', pct: 15, why: 'Reach — people share music they enjoy, not music they learn from.' },
+        { name: 'Artist business', pct: 10, why: 'Release, distribution and money. Nobody teaches this well.' }
+      ],
+      ideas: [
+        'the one plugin move that makes vocals sit', 'this chord progression is in half the songs you love',
+        'a beat from nothing in 60 seconds', 'why your mix sounds muddy — and the fix',
+        'the cheapest setup that sounds professional', 'how I finish tracks instead of abandoning them',
+        'theory you can use tonight, no notation', 'the difference between mixing and mastering, demonstrated',
+        'turning a voice memo into a finished song', 'how streaming payouts actually work',
+        'the reference track method', 'recording vocals in an untreated room'
+      ],
+      offers: [
+        { name: 'Free sample / preset pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'Producers download packs reflexively. Fastest list build in the niche.', deliver: '20 samples + 5 presets' },
+        { name: 'Sample pack / preset bank', type: 'Digital product', price: 799, gate: 1500, promise: 'Made once, sold forever, and it puts your sound in other people\'s tracks.', deliver: 'Full pack with stems and presets' },
+        { name: 'Mixing / mastering service', type: 'Service', price: 4000, gate: 2000, promise: 'Steady income from an audience that already trusts your ears.', deliver: 'One track mixed and mastered, 2 revisions' },
+        { name: '1:1 production coaching', type: 'High ticket', price: 15000, gate: 6000, promise: 'Small number of serious students, deep results, strong testimonials.', deliver: '6 sessions with project feedback' },
+        { name: 'Brand deals — plugins & gear', type: 'Sponsorship', price: 0, gate: 12000, promise: 'Plugin companies pay well and repeat at every release.', deliver: 'Demo reel + discount code' }
+      ],
+      hashtags: {
+        broad: ['#music', '#producer', '#musician', '#singer'],
+        mid: ['#musicproduction', '#beatmaker', '#homestudio', '#mixingandmastering', '#songwriting', '#guitarist'],
+        niche: ['#bedroomproducer', '#flstudio', '#abletonlive', '#musicproductiontips', '#vocalmixing', '#indianmusician', '#independentartist', '#musictheorytips']
+      },
+      visual: 'Screen recording of the DAW with the waveform visible, A/B toggle shown on screen, close-ups of hands on the instrument or controller, audio never compressed under music — the sound is the content.',
+      brands: ['plugin & software companies', 'audio interfaces & mics', 'instruments', 'distribution platforms'],
+      proof: ['your released tracks and streams', 'client mixes A/B', 'student results']
+    },
+
+    gaming: {
+      label: 'Gaming & Esports',
+      short: 'Gaming',
+      category: 'Entertainment',
+      aliases: 'gaming, gamer, esports, bgmi, pubg, valorant, free fire, minecraft, gta, cod, streaming, twitch, gameplay, mobile gaming, pc build',
+      reach: 1.55, cpm: 1.1, buyRate: 0.6,
+      positioning: 'the one whose clips teach a skill instead of only showing off',
+      audience: {
+        age: '14–28', who: 'mobile and PC gamers, aspiring streamers, competitive players',
+        interests: ['gameplay clips', 'settings and sensitivity', 'patch meta', 'setups and builds', 'streamer culture'],
+        pains: ['stuck at the same rank for months', 'settings copied from pros that feel wrong', 'no idea how to start streaming to nobody', 'device or PC that cannot keep up', 'tilt after losses'],
+        desires: ['ranking up visibly', 'clips their friends share', 'a following from playing', 'reaction speed and aim'],
+        objections: ['my device is weak', 'I do not have time to grind', 'I am too old to start']
+      },
+      pillars: [
+        { name: 'Skill breakdowns', pct: 30, why: 'A clip that teaches gets saved. A clip that flexes gets scrolled.' },
+        { name: 'Highlight clips', pct: 25, why: 'Raw reach. The share driver of the whole niche.' },
+        { name: 'Settings & setup', pct: 20, why: 'Enormous search demand and it repeats with every patch.' },
+        { name: 'Meta & news', pct: 15, why: 'Free distribution from attention you did not have to create.' },
+        { name: 'Personality & story', pct: 10, why: 'Gaming audiences follow people, not gameplay.' }
+      ],
+      ideas: [
+        'the sensitivity setting that fixed my aim', 'this rotation wins you the endgame every time',
+        'settings for low-end devices that actually help', 'why you keep losing the 1v1 — frame by frame',
+        'the drill that took me up two ranks', 'best loadout after this patch, ranked',
+        'a full match with my thinking narrated', 'the mistake 90% of players make in the first minute',
+        'my setup and what it actually cost', 'how to start streaming when nobody is watching',
+        'reaction time training that is not a myth', 'what pros do differently in the same situation'
+      ],
+      offers: [
+        { name: 'Free settings + sensitivity guide', type: 'Lead magnet', price: 0, gate: 0, promise: 'The most-asked question in gaming, packaged.', deliver: 'PDF settings guide by device' },
+        { name: 'Coaching session', type: 'Productised service', price: 999, gate: 3000, promise: 'Ranked players pay to rank up. Screen-share is the whole delivery.', deliver: '1-hour VOD review + drills' },
+        { name: 'Discord community', type: 'Subscription', price: 199, gate: 5000, promise: 'Recurring revenue and a squad that shows up to every stream.', deliver: 'Private server, scrims, coaching nights' },
+        { name: 'Merch drop', type: 'Physical product', price: 899, gate: 25000, promise: 'Gaming audiences buy identity, not utility. Only once the community exists.', deliver: 'Limited print-on-demand run' },
+        { name: 'Brand deals — games & peripherals', type: 'Sponsorship', price: 0, gate: 15000, promise: 'The main revenue line in gaming. Needs scale before it pays properly.', deliver: 'Sponsored gameplay + code' }
+      ],
+      hashtags: {
+        broad: ['#gaming', '#gamer', '#esports', '#gameplay'],
+        mid: ['#bgmi', '#valorant', '#mobilegaming', '#gamingclips', '#gamingsetup', '#streamer'],
+        niche: ['#bgmitips', '#valoranttips', '#gamingindia', '#ranktips', '#gamingmontage', '#lowendpc', '#sensitivitysettings', '#indiangamer']
+      },
+      visual: 'Screen capture at full framerate, kill or key moment in frame one, facecam small in the corner, on-screen callouts pointing at the exact input, punchy sound design, cuts on every action.',
+      brands: ['game publishers', 'peripherals & phones', 'energy drinks', 'gaming chairs & PCs'],
+      proof: ['your rank and stats', 'clip results', 'students who ranked up']
+    },
+
+    parenting: {
+      label: 'Parenting & Family',
+      short: 'Parenting',
+      category: 'Lifestyle',
+      aliases: 'parenting, mom, dad, baby, toddler, kids, newborn, pregnancy, motherhood, fatherhood, child development, family, momlife, parenting tips',
+      reach: 1.40, cpm: 1.3, buyRate: 1.05,
+      positioning: 'the parent who says the quiet part out loud and then offers something that works',
+      audience: {
+        age: '25–42', who: 'new parents, parents of toddlers, working mothers, expecting couples',
+        interests: ['sleep and feeding', 'child development', 'activities', 'discipline without shouting', 'mum guilt'],
+        pains: ['no sleep and no help', 'guilt about every decision', 'contradictory advice from family and internet', 'screen time battles', 'losing their own identity'],
+        desires: ['a child who sleeps', 'calm mornings', 'confidence in their own decisions', 'time that is theirs'],
+        objections: ['every child is different', 'that will not work with mine', 'I do not have the time or support']
+      },
+      pillars: [
+        { name: 'Practical solutions', pct: 30, why: 'Exhausted parents save what solves tonight, not what inspires.' },
+        { name: 'Relatable truth', pct: 25, why: 'The highest-share format here — parents send these to each other constantly.' },
+        { name: 'Development & science', pct: 20, why: 'Authority. It is what separates you from a diary account.' },
+        { name: 'Activities & routines', pct: 15, why: 'Screenshot-able, repeatable, endlessly reusable.' },
+        { name: 'Parent wellbeing', pct: 10, why: 'The most under-served topic in the niche, and the most emotionally loyal.' }
+      ],
+      ideas: [
+        'the bedtime routine that finally worked', 'what to say instead of shouting',
+        'fussy eater fixes that are not bribery', '10 minutes of this replaces an hour of screen time',
+        'the developmental reason behind the tantrum', 'what nobody tells you about the first 6 weeks',
+        'activities with things already in your house', 'the morning routine that stopped the chaos',
+        'how to handle unsolicited advice from family', 'sleep regressions, explained and survived',
+        'the thing I got wrong as a first-time parent', 'dividing the invisible work fairly'
+      ],
+      offers: [
+        { name: 'Free routine / sleep guide', type: 'Lead magnet', price: 0, gate: 0, promise: 'Solves the single most desperate problem your audience has.', deliver: 'PDF routine by age' },
+        { name: 'Activity pack / printables', type: 'Digital product', price: 399, gate: 1000, promise: 'Low price, instant download, bought at 11pm by an exhausted parent.', deliver: 'Printables, activity cards, schedules' },
+        { name: 'Sleep or feeding consult', type: 'Productised service', price: 3000, gate: 4000, promise: 'Parents pay real money for sleep. Stay within your qualifications.', deliver: '45-min call + written plan + follow-up' },
+        { name: 'Parenting course', type: 'Digital product', price: 4999, gate: 10000, promise: 'Record once. This audience buys when the pain peaks, which is constantly.', deliver: '8 modules + printables + community' },
+        { name: 'Brand deals — baby & family', type: 'Sponsorship', price: 0, gate: 8000, promise: 'Strong category with high trust requirements — never take what you would not use.', deliver: 'Integrated reel + stories' }
+      ],
+      hashtags: {
+        broad: ['#parenting', '#momlife', '#family', '#baby'],
+        mid: ['#toddlerlife', '#newmom', '#parentingtips', '#momsofinstagram', '#gentleparenting', '#babysleep'],
+        niche: ['#indianmom', '#toddleractivities', '#parentinghacks', '#sleeptraining', '#firsttimemom', '#momguilt', '#positiveparenting', '#workingmom']
+      },
+      visual: 'Real home settings, no staging, natural light, child faces optional — hands and backs of heads work fine, on-screen text carrying the whole message for mute viewing at 2am, warm soft grade.',
+      brands: ['baby care & food', 'toys & learning', 'strollers & gear', 'family services'],
+      proof: ['your own children\'s progress', 'parent messages you can repost', 'qualifications if you have them']
+    },
+
+    relationships: {
+      label: 'Relationships & Dating',
+      short: 'Relationships',
+      category: 'Knowledge',
+      aliases: 'relationships, dating, love, marriage, couple, breakup, attachment, communication, situationship, red flags, boundaries, romance, dating advice',
+      reach: 1.55, cpm: 0.9, buyRate: 0.95,
+      positioning: 'the one who explains the pattern instead of taking sides',
+      audience: {
+        age: '20–38', who: 'single people dating, couples in friction, people recovering from a breakup',
+        interests: ['communication', 'attachment styles', 'red flags', 'breakup recovery', 'long-term compatibility'],
+        pains: ['the same fight on repeat', 'attracting the same wrong person', 'not being able to say what they mean', 'anxiety between texts', 'staying too long in the wrong thing'],
+        desires: ['being understood', 'a relationship that feels calm', 'walking away without guilt', 'trusting their own judgement'],
+        objections: ['my situation is different', 'they will never change', 'this is just pop psychology']
+      },
+      pillars: [
+        { name: 'Patterns explained', pct: 30, why: 'Naming a pattern someone is living inside is the strongest hook in this niche.' },
+        { name: 'Scripts & what to say', pct: 25, why: 'Concrete words to use. This is what gets saved and used the same night.' },
+        { name: 'Hard truths', pct: 20, why: 'Highest share rate — people send these instead of saying it themselves.' },
+        { name: 'Story & example', pct: 15, why: 'Makes the abstract land.' },
+        { name: 'Self-work', pct: 10, why: 'Moves the audience from blaming to acting, which is where your offer lives.' }
+      ],
+      ideas: [
+        'what to say instead of "you never listen"', 'the four behaviours that predict a breakup',
+        'why you keep choosing the same person in different bodies', 'attachment styles in 45 seconds, no jargon',
+        'the difference between a boundary and an ultimatum', 'how to have the conversation you keep avoiding',
+        'green flags nobody talks about', 'texting anxiety and what it is actually telling you',
+        'repairing after a fight, step by step', 'when leaving is the healthy choice',
+        'the questions to ask before getting serious', 'rebuilding trust after it broke'
+      ],
+      offers: [
+        { name: 'Free conversation scripts', type: 'Lead magnet', price: 0, gate: 0, promise: 'Exact words for the hardest conversations. Extremely high opt-in.', deliver: 'PDF of 10 scripts' },
+        { name: 'Workbook / guide', type: 'Digital product', price: 699, gate: 1500, promise: 'Emotional timing sells. People buy at 1am after a fight.', deliver: 'Workbook + exercises + audio' },
+        { name: '1:1 coaching session', type: 'Productised service', price: 3500, gate: 4000, promise: 'High willingness to pay. Be explicit that coaching is not therapy.', deliver: '60-min call + action plan' },
+        { name: 'Couples course', type: 'Digital product', price: 5999, gate: 12000, promise: 'Two buyers, one purchase. Highest-value product in the niche.', deliver: '6 modules + exercises for two' },
+        { name: 'Membership community', type: 'Subscription', price: 599, gate: 15000, promise: 'Recurring, and the community does much of the support work itself.', deliver: 'Group calls + private space' }
+      ],
+      hashtags: {
+        broad: ['#relationships', '#love', '#dating', '#couples'],
+        mid: ['#relationshipadvice', '#datingtips', '#attachmentstyles', '#healthyrelationships', '#breakuprecovery', '#communication'],
+        niche: ['#relationshipcoach', '#datingadviceforwomen', '#anxiousattachment', '#redflagsindating', '#relationshiptips', '#couplegoalsreal', '#selfworthfirst', '#boundariesmatter']
+      },
+      visual: 'Direct-to-camera at eye level, one idea per video, plain background so nothing competes with the face, subtitles always, calm pacing — urgency undermines the authority this niche needs.',
+      brands: ['dating apps', 'therapy & wellness platforms', 'books', 'journals'],
+      proof: ['client outcomes with permission', 'your credentials', 'follower messages describing change']
+    },
+
+    mentalhealth: {
+      label: 'Mental Health & Emotional Wellbeing',
+      short: 'Mental Health',
+      category: 'Knowledge',
+      aliases: 'mental health, anxiety, depression, therapy, burnout, stress, trauma, healing, emotional health, overthinking, self care mental, psychology, mindfulness',
+      reach: 1.40, cpm: 0.9, buyRate: 0.9,
+      positioning: 'the one who explains what is happening in the body, not just what to feel',
+      audience: {
+        age: '18–35', who: 'students and young professionals under pressure, people in therapy or considering it',
+        interests: ['anxiety tools', 'burnout', 'nervous system', 'therapy explained', 'boundaries'],
+        pains: ['overthinking that will not stop', 'exhausted but cannot rest', 'shame about needing help', 'coping strategies that stopped working', 'no affordable access to therapy'],
+        desires: ['a quieter mind', 'understanding why they react that way', 'functioning again', 'not feeling broken'],
+        objections: ['therapy is too expensive', 'nothing works for me', 'I should be able to handle this alone']
+      },
+      pillars: [
+        { name: 'Explain the mechanism', pct: 30, why: 'Understanding why the body does this is itself relieving — and it is your authority.' },
+        { name: 'Tools you can use now', pct: 25, why: 'One technique, demonstrated, usable in the next five minutes.' },
+        { name: 'Validation', pct: 20, why: 'Highest share rate. People send these instead of explaining themselves.' },
+        { name: 'Myth correction', pct: 15, why: 'This niche is full of harmful oversimplification. Correcting it earns trust fast.' },
+        { name: 'Personal story', pct: 10, why: 'Removes the distance. Share what is healed, not what is raw.' }
+      ],
+      ideas: [
+        'what is actually happening in your body during a panic response', 'the 90-second rule for an emotion',
+        'why you are tired after doing nothing', 'grounding that works in public without anyone noticing',
+        'burnout is not laziness — here is the difference', 'how to ask for help without over-explaining',
+        'the difference between rest and distraction', 'what therapy actually looks like in session one',
+        'overthinking at night — the practical fix', 'boundaries when saying no feels impossible',
+        'the coping habit that stopped working and why', 'what to say to someone struggling'
+      ],
+      offers: [
+        { name: 'Free coping toolkit', type: 'Lead magnet', price: 0, gate: 0, promise: 'Immediate relief in exchange for an email. Highest opt-in in the niche.', deliver: 'PDF of techniques + audio exercise' },
+        { name: 'Workbook / journal', type: 'Digital product', price: 599, gate: 2000, promise: 'Low price, real utility, no clinical claims required.', deliver: 'Printable workbook + prompts' },
+        { name: 'Group workshop', type: 'Productised service', price: 999, gate: 5000, promise: 'Scales without inventory and builds community at the same time.', deliver: '90-min live session + recording' },
+        { name: 'Therapy / coaching practice', type: 'High ticket', price: 15000, gate: 3000, promise: 'If you are qualified, the account is the best client pipeline you will ever build.', deliver: 'Package of sessions' },
+        { name: 'Membership', type: 'Subscription', price: 499, gate: 15000, promise: 'Consistent support, recurring revenue, lower emotional load than 1:1.', deliver: 'Monthly calls + private community' }
+      ],
+      hashtags: {
+        broad: ['#mentalhealth', '#anxiety', '#wellbeing', '#selfcare'],
+        mid: ['#mentalhealthawareness', '#anxietyrelief', '#burnoutrecovery', '#therapytools', '#mindfulness', '#emotionalhealth'],
+        niche: ['#anxietytips', '#nervoussystemregulation', '#mentalhealthindia', '#therapyexplained', '#overthinkinghelp', '#groundingtechniques', '#burnoutprevention', '#healingjourney']
+      },
+      visual: 'Calm and slow. Soft light, muted palette, no jump cuts, direct address or gentle b-roll, subtitles always, silence used deliberately. Anything frantic contradicts the message.',
+      brands: ['therapy platforms', 'meditation apps', 'journals & books', 'wellness products'],
+      proof: ['your qualifications, stated plainly', 'follower messages with permission', 'sources you cite']
+    },
+
+    pets: {
+      label: 'Pets & Animal Care',
+      short: 'Pets',
+      category: 'Lifestyle',
+      aliases: 'pets, dog, cat, puppy, kitten, pet care, dog training, veterinary, animals, pet food, rescue, dog grooming',
+      reach: 1.60, cpm: 1.0, buyRate: 0.7,
+      positioning: 'the one whose cute clips quietly teach owners something they were getting wrong',
+      audience: {
+        age: '18–40', who: 'first-time dog and cat owners, rescuers, people about to get a pet',
+        interests: ['training', 'nutrition', 'health signs', 'breed information', 'enrichment'],
+        pains: ['destructive behaviour they cannot stop', 'conflicting training advice', 'expensive vet surprises', 'not knowing what is normal', 'guilt about leaving the pet alone'],
+        desires: ['a calm well-behaved pet', 'a longer healthier life for them', 'understanding what the animal is saying', 'confidence as an owner'],
+        objections: ['my dog is too old to train', 'that breed is different', 'I do not have time for training']
+      },
+      pillars: [
+        { name: 'Training that works', pct: 30, why: 'Cute gets reach; training gets follows. Pair them in the same video.' },
+        { name: 'Health & warning signs', pct: 25, why: 'Fear-of-missing-something drives saves and shares to other owners.' },
+        { name: 'Cute + informative', pct: 20, why: 'The reach engine. Never post cute without one line of value.' },
+        { name: 'Cost & products', pct: 15, why: 'High affiliate potential and genuinely useful.' },
+        { name: 'Rescue & story', pct: 10, why: 'The emotional core that turns viewers into a community.' }
+      ],
+      ideas: [
+        'the recall command that actually holds outdoors', 'signs your pet is in pain that owners miss',
+        'stop the leash pulling in one week', 'what this behaviour is actually telling you',
+        'the ₹200 enrichment that ends destructive chewing', 'human foods that are quietly dangerous',
+        'how much a dog really costs per month, itemised', 'separation anxiety, fixed properly',
+        'first 48 hours with a rescue', 'grooming at home without the fight',
+        'the vet visit checklist nobody gives you', 'why your cat does that, explained'
+      ],
+      offers: [
+        { name: 'Free new-owner checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'Captures people at the exact moment they get a pet and need everything.', deliver: 'PDF checklist + first-week schedule' },
+        { name: 'Training guide', type: 'Digital product', price: 599, gate: 1500, promise: 'Solves the behaviour problem that made them follow you.', deliver: 'PDF + demonstration videos' },
+        { name: 'Affiliate product picks', type: 'Affiliate', price: 0, gate: 500, promise: 'Owners buy constantly. You are already recommending — get paid.', deliver: 'Curated gear and food links' },
+        { name: '1:1 behaviour consult', type: 'Productised service', price: 2500, gate: 5000, promise: 'Owners at their wits\' end pay quickly. Stay inside your competence.', deliver: '45-min video consult + plan' },
+        { name: 'Brand deals — pet food & products', type: 'Sponsorship', price: 0, gate: 10000, promise: 'Loyal category with repeat contracts, and audiences hold you to high standards.', deliver: 'Integrated reel + code' }
+      ],
+      hashtags: {
+        broad: ['#dog', '#cat', '#pets', '#petsofinstagram'],
+        mid: ['#dogtraining', '#puppytraining', '#petcare', '#dogsofinstagram', '#catsofinstagram', '#rescuedog'],
+        niche: ['#dogtrainingtips', '#indiandogs', '#petcaretips', '#puppyparenting', '#dogbehaviour', '#indiestreetdogs', '#catbehaviour', '#petnutrition']
+      },
+      visual: 'Get the camera down to animal eye level, natural light, capture real behaviour rather than staged tricks, on-screen text explaining what is happening, keep clips under 3 seconds each.',
+      brands: ['pet food', 'toys & accessories', 'vet & insurance services', 'grooming products'],
+      proof: ['your own animal\'s progress over time', 'client dogs before and after', 'credentials if you have them']
+    },
+
+    homedecor: {
+      label: 'Home Decor & Interiors',
+      short: 'Home Decor',
+      category: 'Lifestyle',
+      aliases: 'home decor, interior design, interiors, home makeover, furniture, room makeover, apartment, rental decor, organisation, home styling, house tour, small space',
+      reach: 1.45, cpm: 1.4, buyRate: 0.9,
+      positioning: 'the one who makes a rented, ordinary space look intentional on a real budget',
+      audience: {
+        age: '24–42', who: 'renters, first-home buyers, newly married couples, small-space dwellers',
+        interests: ['budget makeovers', 'small space solutions', 'organisation', 'furniture sourcing', 'colour and light'],
+        pains: ['a space that feels cramped and dark', 'cannot make permanent changes in a rental', 'everything inspiring is unaffordable', 'clutter that returns within a week', 'no idea where to start'],
+        desires: ['a home that feels calm', 'a space people compliment', 'more usable room without moving', 'doing it without a designer'],
+        objections: ['I am renting', 'my space is too small', 'that costs more than my whole budget']
+      },
+      pillars: [
+        { name: 'Before / after', pct: 30, why: 'The single most watched format in interiors. Lead with the after.' },
+        { name: 'Budget sourcing', pct: 25, why: 'Where to buy it and what it cost is the information nobody gives.' },
+        { name: 'Small-space fixes', pct: 20, why: 'Most of your audience lives in less space than they want.' },
+        { name: 'Renter-safe hacks', pct: 15, why: 'Enormous under-served audience — everything else assumes ownership.' },
+        { name: 'Design principles', pct: 10, why: 'Teaches the why, which is what makes people trust you with a paid project.' }
+      ],
+      ideas: [
+        'this room transformed for under ₹15,000, itemised', 'the lighting change that made the room feel twice as big',
+        'renter-safe upgrades with zero drilling', 'the 3 mistakes making your space feel cramped',
+        'where I actually buy furniture that looks expensive', 'a small bedroom, completely reorganised',
+        'the colour rule that fixes a dull room', 'kitchen storage that survived six months',
+        'styling a shelf so it does not look cluttered', 'a full home tour with prices on screen',
+        'what designers do first in any room', 'the ₹500 change with the biggest impact'
+      ],
+      offers: [
+        { name: 'Free room-planning checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'Catches people at the start of a project, before they spend anything.', deliver: 'Checklist + budget template' },
+        { name: 'Source list / mood board pack', type: 'Digital product', price: 799, gate: 2000, promise: 'Your sourcing knowledge is the product people actually want.', deliver: 'Source list, boards, palettes' },
+        { name: 'Affiliate storefront', type: 'Affiliate', price: 0, gate: 1000, promise: 'Every "where is that from" comment is unclaimed commission.', deliver: 'Curated shoppable links' },
+        { name: 'E-design consultation', type: 'Productised service', price: 6000, gate: 5000, promise: 'Remote design has no travel cost and scales far past local clients.', deliver: 'Layout, mood board, shopping list' },
+        { name: 'Full design project', type: 'High ticket', price: 60000, gate: 8000, promise: 'The account is a portfolio. Two projects a month is a full income.', deliver: 'End-to-end room or home design' }
+      ],
+      hashtags: {
+        broad: ['#homedecor', '#interiordesign', '#home', '#decor'],
+        mid: ['#smallspaces', '#budgetdecor', '#rentalfriendly', '#roommakeover', '#homestyling', '#interiors'],
+        niche: ['#indianhomedecor', '#budgethomedecor', '#rentalapartment', '#smallapartmentdesign', '#homeorganisation', '#beforeandafterhome', '#indianinteriors', '#diyhomedecor']
+      },
+      visual: 'Same camera position for before and after, hard cut between them, wide shots that show the whole room, natural daylight, prices on screen for every item, one warm consistent grade across the entire grid.',
+      brands: ['furniture & home stores', 'paint brands', 'appliances', 'e-commerce marketplaces'],
+      proof: ['your own space over time', 'client project photos', 'itemised real budgets']
+    },
+    diy: {
+      label: 'DIY, Crafts & Making',
+      short: 'DIY',
+      category: 'Creative',
+      aliases: 'diy, craft, crafts, handmade, woodworking, resin, knitting, crochet, sewing, repair, restoration, upcycle, maker, 3d printing, home improvement',
+      reach: 1.55, cpm: 1.0, buyRate: 0.8,
+      positioning: 'the one who makes a thing look genuinely achievable with what people already own',
+      audience: {
+        age: '20–45', who: 'weekend hobbyists, people furnishing a first home, small handmade sellers',
+        interests: ['step-by-step builds', 'tool basics', 'upcycling', 'selling handmade', 'cheap materials'],
+        pains: ['tutorials that skip the hard step', 'projects abandoned halfway', 'expensive tools for one job', 'results that look obviously homemade', 'no space to work'],
+        desires: ['making something people admire', 'saving money by doing it themselves', 'a side income from making', 'a skill that is theirs'],
+        objections: ['I do not have those tools', 'I have no space', 'mine would never look like that']
+      },
+      pillars: [
+        { name: 'Full builds', pct: 30, why: 'Start-to-finish satisfies completely and gets watched twice.' },
+        { name: 'Skill in 30 seconds', pct: 25, why: 'One technique, isolated. This is what gets saved.' },
+        { name: 'Tools & materials', pct: 20, why: 'High search intent and natural affiliate revenue.' },
+        { name: 'Fails & fixes', pct: 15, why: 'Showing the failure is what makes people believe they can try.' },
+        { name: 'Selling handmade', pct: 10, why: 'Moves hobbyists toward the offer you actually sell.' }
+      ],
+      ideas: [
+        'this build cost ₹800 and looks like ₹8,000', 'the joint that stops everything wobbling',
+        'tools worth buying vs tools to borrow', 'turning something broken into something better',
+        'the finish that separates homemade from handmade', 'a full project with only hand tools',
+        'the mistake that ruins resin every time', 'how I price what I make',
+        'workspace setup in a rented flat', 'materials from the hardware shop you are ignoring',
+        'restoring a piece nobody wanted', 'the beginner project that teaches five skills'
+      ],
+      offers: [
+        { name: 'Free project plan', type: 'Lead magnet', price: 0, gate: 0, promise: 'A plan with measurements is worth an email to anyone who wants to build it.', deliver: 'PDF plan + cut list + materials' },
+        { name: 'Plan / pattern pack', type: 'Digital product', price: 499, gate: 1500, promise: 'You already made the thing. The plan costs nothing more to sell.', deliver: 'Plans, patterns, cut lists' },
+        { name: 'Affiliate tool picks', type: 'Affiliate', price: 0, gate: 500, promise: 'Every build is a tool recommendation. Get paid for it.', deliver: 'Curated tool and material links' },
+        { name: 'Sell what you make', type: 'Physical product', price: 2500, gate: 3000, promise: 'The most direct revenue. Make to order so inventory never traps your cash.', deliver: 'Made-to-order pieces, limited slots' },
+        { name: 'Workshop / class', type: 'High ticket', price: 6000, gate: 8000, promise: 'In-person or live online, both price far above a PDF.', deliver: 'Hands-on session, small group' }
+      ],
+      hashtags: {
+        broad: ['#diy', '#handmade', '#craft', '#maker'],
+        mid: ['#woodworking', '#diyprojects', '#upcycle', '#craftideas', '#homeimprovement', '#diyhome'],
+        niche: ['#diyindia', '#beginnerwoodworking', '#handmadeindia', '#diyfurniture', '#resinart', '#smallspaceworkshop', '#craftbusiness', '#toolsforbeginners']
+      },
+      visual: 'Overhead and over-shoulder alternating, the finished object in frame one, satisfying process sound kept loud, measurements on screen, hard cuts between stages, no step skipped silently.',
+      brands: ['tool brands', 'hardware & materials', 'craft suppliers', 'home improvement retailers'],
+      proof: ['the finished pieces', 'customer orders shipped', 'your workspace over time']
+    },
+
+    realestate: {
+      label: 'Real Estate & Property',
+      short: 'Real Estate',
+      category: 'Money',
+      aliases: 'real estate, property, realtor, housing, rent, buying a home, apartment, flat, land, home loan, mortgage, investment property, broker, builder',
+      reach: 1.05, cpm: 1.8, buyRate: 1.2,
+      positioning: 'the one who shows the numbers a broker would rather you did not calculate',
+      audience: {
+        age: '28–48', who: 'first-time buyers, renters weighing a purchase, small property investors, NRIs',
+        interests: ['property tours', 'loan and EMI maths', 'locality comparisons', 'rental yield', 'legal checks'],
+        pains: ['no idea if a price is fair', 'loan maths they cannot verify', 'fear of legal and title problems', 'brokers with hidden incentives', 'buying at the wrong time'],
+        desires: ['owning without being cheated', 'a property that appreciates', 'rental income', 'clarity before committing decades'],
+        objections: ['prices are too high right now', 'renting is smarter', 'I do not have the down payment']
+      },
+      pillars: [
+        { name: 'Numbers & maths', pct: 30, why: 'EMI, yield and true cost. The most valuable and least published content in the niche.' },
+        { name: 'Property tours', pct: 25, why: 'Reach engine. Always put the price on screen or the tour is entertainment.' },
+        { name: 'Legal & process', pct: 20, why: 'Fear-driven saves. Buyers are terrified of what they do not know.' },
+        { name: 'Locality intelligence', pct: 15, why: 'Hyper-local knowledge is your unfair advantage over national accounts.' },
+        { name: 'Deals & case studies', pct: 10, why: 'Proof that you know what you are talking about — and it generates leads.' }
+      ],
+      ideas: [
+        'the true cost of a ₹50 lakh flat over 20 years', 'rent vs buy, with the actual numbers',
+        'this locality in 90 seconds — price, commute, schools', 'the documents to check before paying anything',
+        'why the carpet-area difference matters more than the price', 'rental yield ranked across the city',
+        'a full tour with the real asking price on screen', 'the negotiation that saved ₹4 lakh',
+        'home loan mistakes that cost lakhs in interest', 'what builders do not put in the brochure',
+        'the ₹0 checks you can do yourself before a site visit', 'how much down payment you actually need'
+      ],
+      offers: [
+        { name: 'Free buyer checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'Captures serious buyers at the research stage, months before they transact.', deliver: 'Legal + inspection checklist PDF' },
+        { name: 'EMI & yield calculator pack', type: 'Digital product', price: 999, gate: 2000, promise: 'Cheap, useful, and it filters your list down to real buyers.', deliver: 'Sheets + walkthrough video' },
+        { name: 'Buyer consultation', type: 'Productised service', price: 5000, gate: 3000, promise: 'One call at a decision worth lakhs is trivially easy to justify.', deliver: '60-min call + shortlist review' },
+        { name: 'Brokerage / advisory', type: 'High ticket', price: 150000, gate: 2000, promise: 'One closed transaction dwarfs every other revenue line here.', deliver: 'End-to-end representation on a purchase' },
+        { name: 'Developer partnerships', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Pays extremely well. Disclose it every time or you lose the trust that earns it.', deliver: 'Project feature + tour + leads' }
+      ],
+      hashtags: {
+        broad: ['#realestate', '#property', '#home', '#investment'],
+        mid: ['#propertyinvestment', '#homebuying', '#realestatetips', '#housetour', '#homeloan', '#rentalproperty'],
+        niche: ['#realestateindia', '#propertyindia', '#firsttimehomebuyer', '#emicalculator', '#rentvsbuy', '#realestateinvesting', '#propertytour', '#homeloantips']
+      },
+      visual: 'Steady walking tour shots, price and carpet area permanently on screen, wide angle without distortion, natural light, calculations shown as clean full-screen graphics, credible pacing over hype.',
+      brands: ['developers', 'home loan providers', 'furnishing brands', 'legal & valuation services'],
+      proof: ['transactions you closed', 'client testimonials', 'your licence and track record']
+    },
+
+    automotive: {
+      label: 'Cars, Bikes & Automotive',
+      short: 'Automotive',
+      category: 'Entertainment',
+      aliases: 'cars, car, bike, motorcycle, automotive, auto, driving, ev, electric vehicle, car review, modification, road test, mechanic, car care, scooter',
+      reach: 1.40, cpm: 1.4, buyRate: 0.8,
+      positioning: 'the one who tells you what to buy for your actual budget and use, not what is exciting',
+      audience: {
+        age: '20–40', who: 'first-time buyers, enthusiasts, commuters comparing options, EV-curious',
+        interests: ['reviews and comparisons', 'ownership costs', 'modifications', 'maintenance', 'new launches'],
+        pains: ['reviews that never mention running costs', 'dealer pressure and hidden charges', 'no idea what a used vehicle is worth', 'service centre overcharging', 'choosing between two similar options'],
+        desires: ['buying the right one first time', 'lower running costs', 'a vehicle that holds value', 'confidence at the service centre'],
+        objections: ['it is out of my budget', 'resale is bad on that one', 'EV charging is not practical for me']
+      },
+      pillars: [
+        { name: 'Honest reviews', pct: 30, why: 'The whole niche is sponsored. Being unsponsored is the position.' },
+        { name: 'Ownership cost maths', pct: 25, why: 'Nobody publishes 5-year cost. Doing it makes you the reference.' },
+        { name: 'Comparisons', pct: 20, why: 'Highest search intent — people compare exactly two options before buying.' },
+        { name: 'Maintenance & care', pct: 15, why: 'Evergreen saves and it keeps existing owners following you.' },
+        { name: 'Drives & culture', pct: 10, why: 'Reach and personality. Where the enthusiasm lives.' }
+      ],
+      ideas: [
+        'the 5-year cost of owning this, itemised', 'these two cars, same budget — which one and why',
+        'the hidden charges on your on-road price', 'what to check before buying used',
+        'EV vs petrol with the real maths for your commute', 'service centre upsells to refuse',
+        'the mileage figure nobody actually gets', 'modifications worth doing and ones that kill resale',
+        'a full honest review with the flaws first', 'what ₹8 lakh actually buys you right now',
+        'monsoon and summer care that prevents big bills', 'why the resale on this one is so poor'
+      ],
+      offers: [
+        { name: 'Free buying checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'People about to spend lakhs will absolutely give you an email.', deliver: 'PDF checklist + cost calculator' },
+        { name: 'Ownership cost calculator', type: 'Digital product', price: 499, gate: 2000, promise: 'Simple tool, real utility, filters serious buyers.', deliver: 'Sheet + guide' },
+        { name: 'Buying consultation', type: 'Productised service', price: 2500, gate: 5000, promise: 'One call before a lakhs-level purchase pays for itself instantly.', deliver: '45-min call + shortlist + negotiation notes' },
+        { name: 'Affiliate & dealer referrals', type: 'Affiliate', price: 0, gate: 3000, promise: 'Accessories, insurance and dealer referrals all pay. Disclose every one.', deliver: 'Tracked links and referrals' },
+        { name: 'Brand deals — manufacturers & accessories', type: 'Sponsorship', price: 0, gate: 20000, promise: 'The dominant revenue line, but it is exactly what erodes the trust you built.', deliver: 'Review + drive feature' }
+      ],
+      hashtags: {
+        broad: ['#cars', '#bikes', '#automotive', '#car'],
+        mid: ['#carreview', '#bikelife', '#electricvehicle', '#carsofinstagram', '#automobile', '#motorcycle'],
+        niche: ['#carsindia', '#bikesindia', '#carbuyingtips', '#evindia', '#usedcartips', '#carmaintenance', '#carcomparison', '#ownershipcost']
+      },
+      visual: 'Rolling shots and static walkarounds, engine and exhaust audio kept prominent, price and variant permanently on screen, one honest flaw shown on camera every review, cool neutral grade.',
+      brands: ['manufacturers', 'accessories & tyres', 'insurance', 'car care products'],
+      proof: ['long-term ownership of what you review', 'real bills and service invoices', 'disclosed sponsorships']
+    },
+
+    sports: {
+      label: 'Sports & Athletic Skill',
+      short: 'Sports',
+      category: 'Health & Body',
+      aliases: 'sports, football, soccer, cricket, basketball, badminton, tennis, athlete, coaching, skills, training drills, boxing, mma, swimming, athletics',
+      reach: 1.45, cpm: 1.2, buyRate: 0.8,
+      positioning: 'the coach who breaks a skill down slowly enough that it is actually copyable',
+      audience: {
+        age: '14–30', who: 'school and club players, weekend amateurs, aspiring competitive athletes',
+        interests: ['skill drills', 'match analysis', 'conditioning', 'gear', 'pro technique'],
+        pains: ['plateaued despite practising', 'no coach or structured plan', 'injuries that keep returning', 'not being selected', 'technique copied wrong from clips'],
+        desires: ['a skill that works under pressure', 'selection', 'moving like the players they watch', 'staying injury-free'],
+        objections: ['I have no proper facility', 'I started too late', 'I do not have anyone to train with']
+      },
+      pillars: [
+        { name: 'Drills to copy', pct: 30, why: 'Copyable is the whole promise. Solo drills perform best — most viewers train alone.' },
+        { name: 'Technique breakdown', pct: 25, why: 'Slow motion plus annotation is the format that builds authority fastest.' },
+        { name: 'Conditioning & injury', pct: 20, why: 'The part that quietly decides careers and that nobody covers well.' },
+        { name: 'Match analysis', pct: 15, why: 'Rides existing attention around games people already watched.' },
+        { name: 'Journey & mindset', pct: 10, why: 'Turns a drill account into someone people follow.' }
+      ],
+      ideas: [
+        'the drill that fixed my first touch in two weeks', 'this technique in slow motion, annotated',
+        'training alone with no equipment', 'the warm-up that prevented my recurring injury',
+        'why your shot lacks power — it is not your arm', 'what the pro does differently in the same moment',
+        'a full solo session you can copy today', 'the footwork nobody teaches beginners',
+        'conditioning for people with 20 minutes', 'gear that matters and gear that does not',
+        'the mental routine before a match', 'getting selected: what coaches actually watch for'
+      ],
+      offers: [
+        { name: 'Free drill pack', type: 'Lead magnet', price: 0, gate: 0, promise: 'A week of solo drills for an email. Very high opt-in with young athletes.', deliver: 'PDF + demo videos' },
+        { name: 'Training program', type: 'Digital product', price: 999, gate: 2000, promise: 'Structure is what they lack. Sell the plan, not the motivation.', deliver: '8-week program with video library' },
+        { name: 'Video technique analysis', type: 'Productised service', price: 1500, gate: 4000, promise: 'They send a clip, you annotate it. Fully asynchronous and scalable.', deliver: 'Annotated video breakdown + drills' },
+        { name: '1:1 or small-group coaching', type: 'High ticket', price: 12000, gate: 5000, promise: 'In person or online, this is where the real income sits.', deliver: 'Monthly coaching block' },
+        { name: 'Brand deals — sportswear & gear', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Good category, and product seeding starts far earlier than cash deals.', deliver: 'Training reel + code' }
+      ],
+      hashtags: {
+        broad: ['#sports', '#football', '#cricket', '#athlete'],
+        mid: ['#footballskills', '#crickettraining', '#basketballtraining', '#sportstraining', '#athletetraining', '#drills'],
+        niche: ['#footballdrills', '#cricketcoaching', '#solotraining', '#skilldevelopment', '#sportsindia', '#injuryprevention', '#youthathlete', '#techniquebreakdown']
+      },
+      visual: 'Shoot from the angle that shows the mechanic, slow motion on the key frame, annotation arrows and freeze frames, real pitch or court sound, repeat the movement three times before explaining it.',
+      brands: ['sportswear & footwear', 'equipment', 'sports nutrition', 'academies & leagues'],
+      proof: ['your own playing level', 'athletes you have coached', 'before/after technique clips']
+    },
+
+    comedy: {
+      label: 'Comedy & Entertainment',
+      short: 'Comedy',
+      category: 'Entertainment',
+      aliases: 'comedy, funny, memes, skits, standup, humour, humor, entertainment, satire, parody, relatable, sketch, prank, roast',
+      reach: 1.70, cpm: 0.9, buyRate: 0.5,
+      positioning: 'the one whose jokes are about a life the audience is actually living',
+      audience: {
+        age: '16–35', who: 'a broad general audience, students, young professionals who share content in group chats',
+        interests: ['relatable situations', 'observational humour', 'trends and formats', 'characters', 'topical jokes'],
+        pains: ['a boring feed', 'a day that needs breaking up', 'situations they cannot say out loud themselves'],
+        desires: ['a genuine laugh', 'something to send to friends', 'feeling seen in a ridiculous moment'],
+        objections: ['seen this format already', 'it went on too long']
+      },
+      pillars: [
+        { name: 'Relatable situations', pct: 35, why: 'Recognition is the share trigger. "This is literally you" is the entire business.' },
+        { name: 'Characters', pct: 20, why: 'A recurring character is the only durable asset in comedy — it makes people follow, not just laugh.' },
+        { name: 'Trend formats', pct: 20, why: 'Free distribution. Take the format, change the content.' },
+        { name: 'Topical & observational', pct: 15, why: 'Timely reach, but it dates fast — never build the whole account on it.' },
+        { name: 'Behind the scenes', pct: 10, why: 'Turns a joke account into a person people follow.' }
+      ],
+      ideas: [
+        'the group chat when someone suggests splitting the bill', 'every Indian parent on a phone call',
+        'the meeting that should have been an email, dramatised', 'types of people in every gym',
+        'when the WiFi goes down at the worst moment', 'the friend who is always "5 minutes away"',
+        'first day at work vs six months in', 'how everyone acts during a power cut',
+        'the interview question everyone lies about', 'ordering food with an indecisive group',
+        'the relative who asks about marriage at every function', 'monday morning versus friday evening, same person'
+      ],
+      offers: [
+        { name: 'Brand collaborations', type: 'Sponsorship', price: 0, gate: 10000, promise: 'The main revenue line in comedy, and it comes earlier here than in most niches.', deliver: 'Branded skit with product woven in' },
+        { name: 'Merch', type: 'Physical product', price: 799, gate: 30000, promise: 'Catchphrases become merch. Only once a phrase has genuinely stuck.', deliver: 'Print-on-demand tees and prints' },
+        { name: 'Live shows & tickets', type: 'High ticket', price: 499, gate: 25000, promise: 'The highest-margin path for comedy, and the audience is already yours.', deliver: 'Ticketed live performance' },
+        { name: 'Content writing for brands', type: 'Service', price: 25000, gate: 5000, promise: 'Brands pay for the skill, not just the audience. Works far below 10K followers.', deliver: 'Scripted content for a brand\'s channels' },
+        { name: 'Paid community / extras', type: 'Subscription', price: 199, gate: 50000, promise: 'Only for a deeply attached audience — comedy fans follow widely and commit rarely.', deliver: 'Unreleased sketches, early access' }
+      ],
+      hashtags: {
+        broad: ['#comedy', '#funny', '#memes', '#relatable'],
+        mid: ['#comedyreels', '#indiancomedy', '#skits', '#funnyvideos', '#standupcomedy', '#humour'],
+        niche: ['#relatablecontent', '#desicomedy', '#officehumour', '#collegelifehumour', '#indianparents', '#sketchcomedy', '#comedyindia', '#dailyrelatable']
+      },
+      visual: 'Punchline in the first three seconds, hard cuts with no dead air, one costume or prop per character so switches read instantly, clear audio above everything, captions for mute viewing, under 30 seconds.',
+      brands: ['consumer apps', 'FMCG', 'telecom & fintech', 'entertainment platforms'],
+      proof: ['share counts', 'recurring character recognition', 'brand work you have done']
+    },
+
+    spirituality: {
+      label: 'Spirituality & Astrology',
+      short: 'Spirituality',
+      category: 'Knowledge',
+      aliases: 'spirituality, astrology, tarot, meditation, manifestation, horoscope, zodiac, numerology, vedic, chakra, energy, mindfulness spiritual, healing spiritual, law of attraction',
+      reach: 1.50, cpm: 0.8, buyRate: 1.0,
+      positioning: 'the one who offers a practice, not a prediction',
+      audience: {
+        age: '20–40', who: 'people in transition — new job, breakup, move, loss — seeking meaning and structure',
+        interests: ['daily practice', 'astrology readings', 'meditation', 'manifestation', 'symbolism'],
+        pains: ['feeling directionless', 'anxiety about the future', 'practices started and abandoned', 'scepticism from people around them', 'overwhelmed by conflicting systems'],
+        desires: ['calm and clarity', 'a sense of direction', 'a daily practice that sticks', 'trusting their intuition'],
+        objections: ['I do not believe in this', 'I do not have time to meditate', 'it feels self-indulgent']
+      },
+      pillars: [
+        { name: 'Daily practice', pct: 30, why: 'A practice they can do tonight beats a philosophy they cannot use.' },
+        { name: 'Readings & interpretation', pct: 25, why: 'The reach engine. Collective readings pull enormous non-follower traffic.' },
+        { name: 'Explain the system', pct: 20, why: 'Teaching the framework builds credibility beyond prediction.' },
+        { name: 'Reflection & story', pct: 15, why: 'The emotional core that turns viewers into a community.' },
+        { name: 'Grounded scepticism', pct: 10, why: 'Acknowledging limits is what makes the rest believable.' }
+      ],
+      ideas: [
+        'the 5-minute practice for a chaotic morning', 'your chart\'s first house, explained simply',
+        'what this card actually means in context', 'manifestation without the magical thinking',
+        'a breathing practice that works in public', 'the difference between intuition and anxiety',
+        'reading for the collective this week', 'grounding when everything feels unstable',
+        'the ritual I do before any big decision', 'what the moon phase practically means for planning',
+        'starting a practice when you are sceptical', 'journalling prompts for a hard week'
+      ],
+      offers: [
+        { name: 'Free practice guide', type: 'Lead magnet', price: 0, gate: 0, promise: 'A gentle, immediately usable practice in exchange for an email.', deliver: 'PDF + guided audio' },
+        { name: 'Guided audio / meditation pack', type: 'Digital product', price: 499, gate: 1500, promise: 'Recorded once, delivered forever, and it becomes part of their routine.', deliver: 'Audio set + practice calendar' },
+        { name: '1:1 reading or session', type: 'Productised service', price: 2500, gate: 2000, promise: 'The core income here, and it starts working at a very small size.', deliver: '45-min personal session + recording' },
+        { name: 'Course or cohort', type: 'High ticket', price: 8000, gate: 10000, promise: 'Teach the system instead of only performing it — far more scalable.', deliver: '4-week live course + materials' },
+        { name: 'Membership circle', type: 'Subscription', price: 399, gate: 12000, promise: 'Recurring revenue and a community that sustains itself between your posts.', deliver: 'Monthly circle, readings, practice space' }
+      ],
+      hashtags: {
+        broad: ['#spirituality', '#astrology', '#meditation', '#mindfulness'],
+        mid: ['#tarotreading', '#manifestation', '#zodiacsigns', '#spiritualjourney', '#dailypractice', '#numerology'],
+        niche: ['#vedicastrology', '#tarotcommunity', '#meditationpractice', '#spiritualindia', '#moonphases', '#journalprompts', '#innerwork', '#astrologyreadings']
+      },
+      visual: 'Warm low light, candle and natural textures, slow deliberate movement, handwriting and physical objects on camera, calm voice with space between sentences, no urgency and no countdown timers.',
+      brands: ['wellness products', 'meditation apps', 'books & decks', 'retreats'],
+      proof: ['client sessions with permission', 'your own documented practice', 'how long you have studied']
+    },
+
+    books: {
+      label: 'Books & Reading',
+      short: 'Books',
+      category: 'Knowledge',
+      aliases: 'books, reading, bookstagram, literature, novels, book review, book recommendations, authors, writing, poetry, fiction, non fiction, reader',
+      reach: 1.25, cpm: 0.7, buyRate: 0.7,
+      positioning: 'the one whose recommendation is worth more than a rating out of five',
+      audience: {
+        age: '18–40', who: 'readers rebuilding a habit, students, people who want to read more but do not',
+        interests: ['recommendations', 'summaries and ideas', 'reading habits', 'author deep-dives', 'aesthetic shelves'],
+        pains: ['a reading slump that will not break', 'buying books they never finish', 'no idea what to read next', 'no time to read', 'forgetting everything they read'],
+        desires: ['finishing books again', 'a shelf that means something', 'ideas they can actually use', 'being someone who reads'],
+        objections: ['I have no time', 'I cannot focus on a book anymore', 'books are expensive']
+      },
+      pillars: [
+        { name: 'Recommendations with a reason', pct: 30, why: '"Read this if you feel X" outperforms any list of titles.' },
+        { name: 'Ideas from the book', pct: 25, why: 'Deliver the value, not the summary. This is what gets saved.' },
+        { name: 'Reading habit', pct: 20, why: 'The real problem your audience has is not what to read, it is reading at all.' },
+        { name: 'Aesthetic & shelf', pct: 15, why: 'The reach engine of bookstagram. Beautiful, but it does not build authority alone.' },
+        { name: 'Author & industry', pct: 10, why: 'Depth that separates you from an account posting covers.' }
+      ],
+      ideas: [
+        'read this if you are in a slump', 'the one idea from this book worth the whole read',
+        'how I went from 2 books a year to 30', 'books that are actually short — start here',
+        'the note system that made me remember what I read', 'a book for each mood, ranked',
+        'why you keep abandoning books at page 40', 'the classic that is genuinely worth it',
+        'building a shelf on a student budget', 'fiction that changed how I think',
+        'reading when you have 15 minutes a day', 'the book everyone recommends that I disagree with'
+      ],
+      offers: [
+        { name: 'Free reading list / tracker', type: 'Lead magnet', price: 0, gate: 0, promise: 'Readers love a system. The tracker is the easiest opt-in in the niche.', deliver: 'Notion tracker + curated list' },
+        { name: 'Reading guide / notes pack', type: 'Digital product', price: 399, gate: 2000, promise: 'Low price, real utility, and it suits a student wallet.', deliver: 'Summaries, notes template, curated lists' },
+        { name: 'Affiliate book links', type: 'Affiliate', price: 0, gate: 500, promise: 'You are already driving purchases. Small commissions, but constant.', deliver: 'Tracked links to every recommendation' },
+        { name: 'Book club membership', type: 'Subscription', price: 299, gate: 8000, promise: 'Recurring revenue and the community carries most of the activity.', deliver: 'Monthly pick, discussion, live call' },
+        { name: 'Publisher partnerships', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Modest fees, but early copies and access cost publishers nothing.', deliver: 'Featured review + giveaway' }
+      ],
+      hashtags: {
+        broad: ['#books', '#reading', '#bookstagram', '#booklover'],
+        mid: ['#bookrecommendations', '#bookreview', '#currentlyreading', '#booksofinstagram', '#readingchallenge', '#bookshelf'],
+        niche: ['#bookstagramindia', '#readingslump', '#booksummary', '#indianauthors', '#readmorebooks', '#bookrecsforyou', '#annualreadingchallenge', '#readinghabit']
+      },
+      visual: 'Natural light on the physical book, hands turning pages, one quote on screen at a time held long enough to read, warm paper-toned grade, quiet audio, no rushed cuts — the pace should feel like reading.',
+      brands: ['publishers', 'e-readers & audiobooks', 'stationery', 'bookstores'],
+      proof: ['your genuine reading record', 'annotated copies', 'follower reading streaks']
+    },
+
+    language: {
+      label: 'Language Learning',
+      short: 'Language',
+      category: 'Knowledge',
+      aliases: 'language, english, spoken english, ielts, french, spanish, german, japanese, korean, language learning, grammar, vocabulary, accent, fluency, translation',
+      reach: 1.30, cpm: 1.1, buyRate: 1.2,
+      positioning: 'the one who gets people speaking badly on day one instead of studying silently for a year',
+      audience: {
+        age: '16–35', who: 'job seekers needing English, exam candidates, hobby learners, people relocating',
+        interests: ['everyday phrases', 'pronunciation', 'grammar shortcuts', 'exam prep', 'immersion methods'],
+        pains: ['understand it but cannot speak it', 'embarrassed by mistakes in front of others', 'years of study with no fluency', 'grammar rules that never transfer to conversation', 'no one to practise with'],
+        desires: ['speaking without translating in their head', 'a job that requires the language', 'sounding natural', 'confidence in a room'],
+        objections: ['I am too old to learn', 'I have no one to practise with', 'my accent is too strong']
+      },
+      pillars: [
+        { name: 'Use it today', pct: 30, why: 'One phrase, used in a real situation. Immediately valuable, endlessly repeatable.' },
+        { name: 'Common mistakes', pct: 25, why: 'Recognition drives shares — every learner makes the same errors.' },
+        { name: 'Pronunciation', pct: 20, why: 'The most requested and hardest to self-diagnose. Video is the perfect medium.' },
+        { name: 'Method & habit', pct: 15, why: 'How to learn beats what to learn, and it sells your program.' },
+        { name: 'Culture & context', pct: 10, why: 'Why a phrase lands or does not — the part textbooks never explain.' }
+      ],
+      ideas: [
+        'say this instead — it sounds natural', 'the mistake almost every learner makes with this word',
+        'the 10 phrases that cover most conversations', 'pronunciation fix in 20 seconds',
+        'how to think in the language instead of translating', 'grammar rule you can ignore entirely',
+        'a real conversation broken down line by line', 'what to say when you do not understand',
+        'the 15-minute daily routine that got me fluent', 'formal vs casual — when to use which',
+        'the exam mistake that costs the most marks', 'practising alone when you have no partner'
+      ],
+      offers: [
+        { name: 'Free phrase pack + audio', type: 'Lead magnet', price: 0, gate: 0, promise: 'Instantly usable, and audio makes it feel like a real product.', deliver: '50 phrases + native audio' },
+        { name: 'Course / phrasebook', type: 'Digital product', price: 1499, gate: 2000, promise: 'Language learners buy readily — the pain is career-shaped, not hobby-shaped.', deliver: 'Video lessons + audio + workbook' },
+        { name: 'Speaking practice sessions', type: 'Productised service', price: 1200, gate: 3000, promise: 'The one thing they cannot get free anywhere. Recurring by nature.', deliver: '45-min 1:1 conversation + corrections' },
+        { name: 'Exam prep intensive', type: 'High ticket', price: 12000, gate: 8000, promise: 'Deadline-driven and high-stakes — the strongest willingness to pay in this niche.', deliver: '6-week batch with mocks and feedback' },
+        { name: 'Brand deals — edtech & apps', type: 'Sponsorship', price: 0, gate: 15000, promise: 'Language apps spend heavily, but never promote one that competes with your own course.', deliver: 'Integrated lesson + code' }
+      ],
+      hashtags: {
+        broad: ['#language', '#english', '#learning', '#languagelearning'],
+        mid: ['#spokenenglish', '#englishspeaking', '#ielts', '#vocabulary', '#pronunciation', '#learnenglish'],
+        niche: ['#englishspeakingpractice', '#spokenenglishindia', '#ieltspreparation', '#englishgrammartips', '#dailyvocabulary', '#languagelearningtips', '#speakfluently', '#accenttraining']
+      },
+      visual: 'Text on screen for every single phrase, clear front-facing audio, mouth visible for pronunciation shots, slow repetition twice, colour-coded correct versus incorrect, no background music under speech.',
+      brands: ['edtech & language apps', 'test prep', 'study abroad services', 'headphones'],
+      proof: ['learner audio before and after', 'exam scores achieved', 'your own qualifications']
+    },
+
+    career: {
+      label: 'Career & Corporate Life',
+      short: 'Career',
+      category: 'Money',
+      aliases: 'career, job, corporate, linkedin, resume, interview, salary, promotion, workplace, hr, recruiter, job search, office, professional, negotiation',
+      reach: 1.15, cpm: 1.5, buyRate: 1.3,
+      positioning: 'the one who says what actually happens inside the hiring room',
+      audience: {
+        age: '22–40', who: 'job seekers, early-career professionals, people stuck at one level, career switchers',
+        interests: ['resume and LinkedIn', 'interviews', 'salary negotiation', 'promotions', 'office politics'],
+        pains: ['applications that vanish without a reply', 'underpaid and unsure how to ask', 'passed over for promotion repeatedly', 'no idea how decisions are really made', 'stuck in a role with no growth'],
+        desires: ['a better offer', 'being paid what they are worth', 'a title that opens doors', 'work that is not draining'],
+        objections: ['my industry does not work that way', 'I do not have the right degree', 'negotiating will cost me the offer']
+      },
+      pillars: [
+        { name: 'Insider mechanics', pct: 30, why: 'What actually happens behind the process. The highest-value content you can publish.' },
+        { name: 'Scripts & templates', pct: 25, why: 'Exact words for the email, the negotiation, the review. Saved and used immediately.' },
+        { name: 'Resume & profile', pct: 20, why: 'Enormous search volume and the easiest thing to convert into a paid review.' },
+        { name: 'Career strategy', pct: 15, why: 'Long-horizon thinking that separates you from tip accounts.' },
+        { name: 'Workplace reality', pct: 10, why: 'Relatable reach that brings in people who were not searching for advice.' }
+      ],
+      ideas: [
+        'what recruiters do in the first 7 seconds of your resume', 'the exact words to negotiate salary',
+        'why your applications get no reply', 'answer "tell me about yourself" in 60 seconds',
+        'the LinkedIn headline that gets recruiters messaging you', 'how promotion decisions are actually made',
+        'the email that gets your manager to act', 'switching industries without starting from zero',
+        'what to say when asked your expected salary', 'red flags in an interview — from the candidate\'s side',
+        'the performance review prep nobody does', 'building a case for a raise with evidence'
+      ],
+      offers: [
+        { name: 'Free resume template + checklist', type: 'Lead magnet', price: 0, gate: 0, promise: 'The single most requested thing in this niche. Enormous opt-in rate.', deliver: 'ATS-safe template + checklist' },
+        { name: 'Interview / negotiation toolkit', type: 'Digital product', price: 1299, gate: 1000, promise: 'A ₹1,299 product that adds lakhs to a salary is an easy decision.', deliver: 'Scripts, frameworks, question bank' },
+        { name: 'Resume review + mock interview', type: 'Productised service', price: 3500, gate: 2000, promise: 'High willingness to pay, no delivery overhead, immediate testimonials.', deliver: 'Line-by-line review + 45-min mock' },
+        { name: 'Career coaching package', type: 'High ticket', price: 25000, gate: 6000, promise: 'A handful of clients is a full income, and the results are dramatic and quotable.', deliver: '6 sessions across 3 months' },
+        { name: 'Corporate workshops', type: 'High ticket', price: 60000, gate: 10000, promise: 'Companies have budgets individuals do not. One booking beats a month of products.', deliver: 'Half-day workshop for a company team' }
+      ],
+      hashtags: {
+        broad: ['#career', '#job', '#work', '#professional'],
+        mid: ['#careeradvice', '#jobsearch', '#resumetips', '#interviewtips', '#linkedintips', '#salarynegotiation'],
+        niche: ['#careeradviceindia', '#jobsearchtips', '#atsresume', '#interviewpreparation', '#careergrowth', '#workplacetips', '#promotiontips', '#careerswitch']
+      },
+      visual: 'Clean and professional without being corporate-stock. Screen recordings of real documents with names blurred, side-by-side before/after of a resume line, calm confident delivery, restrained neutral palette.',
+      brands: ['job platforms', 'edtech & certifications', 'resume tools', 'corporate SaaS'],
+      proof: ['offers your clients received', 'your own hiring or recruiting experience', 'salary increases with numbers']
+    },
+
+    wellness: {
+      label: 'Wellness, Yoga & Holistic Health',
+      short: 'Wellness',
+      category: 'Health & Body',
+      aliases: 'wellness, yoga, holistic health, ayurveda, nutrition, sleep, gut health, hormones, pilates, stretching, breathwork, women health, detox, immunity',
+      reach: 1.35, cpm: 1.2, buyRate: 1.1,
+      positioning: 'the one who separates what is evidence-backed from what is merely ancient or merely trendy',
+      audience: {
+        age: '24–45', who: 'people with desk-job bodies, women tracking hormonal health, anyone recovering from burnout',
+        interests: ['mobility and yoga', 'sleep', 'gut and hormone health', 'nutrition basics', 'stress'],
+        pains: ['constantly tired despite sleeping', 'back and neck pain from sitting', 'bloating and digestion nobody explains', 'wellness advice that contradicts itself', 'no time for a two-hour routine'],
+        desires: ['energy through the whole day', 'a body that does not hurt', 'sleeping properly', 'feeling in control of their health'],
+        objections: ['I have no time', 'I am not flexible', 'that sounds like pseudoscience']
+      },
+      pillars: [
+        { name: 'Do it with me', pct: 30, why: 'Follow-along content gets saved and repeated — repetition is retention.' },
+        { name: 'Explain the mechanism', pct: 25, why: 'Why the body does this. It is what separates you from wellness noise.' },
+        { name: 'Evidence vs myth', pct: 20, why: 'This niche is drowning in claims. Sorting them is the position.' },
+        { name: 'Routines for real lives', pct: 15, why: 'Ten minutes at a desk beats a perfect routine nobody does.' },
+        { name: 'Personal practice', pct: 10, why: 'Consistency shown over months is the proof.' }
+      ],
+      ideas: [
+        '5 minutes that undo eight hours of sitting', 'why you are tired after a full night of sleep',
+        'the stretch order that finally fixed my lower back', 'gut health without buying a single supplement',
+        'what actually helps bloating, and what does not', 'a 10-minute morning routine at your desk',
+        'the sleep change with the biggest measurable effect', 'ayurveda claims: what holds up and what does not',
+        'breathwork you can do in a meeting', 'hormonal health basics nobody explained',
+        'building flexibility when you are not flexible', 'the supplement tier list — evidence ranked'
+      ],
+      offers: [
+        { name: 'Free 7-day routine', type: 'Lead magnet', price: 0, gate: 0, promise: 'A week of ten-minute sessions is an easy yes for a tired audience.', deliver: 'PDF + follow-along videos' },
+        { name: 'Program / guide', type: 'Digital product', price: 999, gate: 1500, promise: 'Structure sells. They do not need more information, they need a sequence.', deliver: '4-week program with video library' },
+        { name: '1:1 sessions', type: 'Productised service', price: 2500, gate: 3000, promise: 'Online sessions have no room hire and no travel — margin is close to total.', deliver: 'Live 1:1 class or consultation' },
+        { name: 'Group programme / retreat', type: 'High ticket', price: 18000, gate: 8000, promise: 'Cohorts and retreats price high and produce your best testimonials.', deliver: 'Multi-week cohort or weekend retreat' },
+        { name: 'Brand deals — wellness products', type: 'Sponsorship', price: 0, gate: 10000, promise: 'Lucrative but the category is full of unsupported claims. Refuse those.', deliver: 'Integrated routine reel' }
+      ],
+      hashtags: {
+        broad: ['#wellness', '#yoga', '#health', '#selfcare'],
+        mid: ['#yogapractice', '#mobility', '#guthealth', '#sleephygiene', '#holistichealth', '#stretching'],
+        niche: ['#deskstretches', '#yogaforbeginners', '#guthealthtips', '#ayurvedadaily', '#wellnessindia', '#morningmobility', '#hormonehealth', '#breathworkpractice']
+      },
+      visual: 'Full body in frame with room to move, natural light, plain uncluttered floor space, real-time demonstration rather than sped-up, on-screen timers and counts, calm audio with the voice clearly above any music.',
+      brands: ['wellness & supplements', 'yoga and activewear', 'sleep products', 'health platforms'],
+      proof: ['your own practice over years', 'student progress', 'qualifications and sources cited']
+    },
+
+    dance: {
+      label: 'Dance & Choreography',
+      short: 'Dance',
+      category: 'Creative',
+      aliases: 'dance, dancer, choreography, hiphop, bollywood dance, classical dance, kathak, bharatanatyam, contemporary, dance tutorial, dance cover, freestyle, ballet, salsa',
+      reach: 1.55, cpm: 0.9, buyRate: 0.85,
+      positioning: 'the one who breaks a routine down slowly enough that beginners actually finish it',
+      audience: {
+        age: '14–32', who: 'self-taught dancers, students, wedding performers, class-goers',
+        interests: ['tutorials', 'choreography', 'trending routines', 'technique', 'performances'],
+        pains: ['can copy steps but look stiff', 'tutorials too fast to follow', 'no studio or space at home', 'self-conscious about being watched', 'no foundation, only copied routines'],
+        desires: ['moving like it is effortless', 'performing without freezing', 'a routine ready for the wedding', 'confidence in their body'],
+        objections: ['I have no rhythm', 'I have no space', 'I started too late']
+      },
+      pillars: [
+        { name: 'Slow tutorials', pct: 30, why: 'Break it to counts. This is the format that turns viewers into followers.' },
+        { name: 'Performance clips', pct: 25, why: 'Reach engine. People share dance they enjoy watching.' },
+        { name: 'Technique & basics', pct: 20, why: 'Body isolation, posture, musicality — what makes copied steps look real.' },
+        { name: 'Trend routines', pct: 15, why: 'Free distribution when the audio is already moving.' },
+        { name: 'Journey & practice', pct: 10, why: 'Progress content is the most motivating thing in this niche.' }
+      ],
+      ideas: [
+        'this routine broken into 8 counts, slowly', 'the reason your moves look stiff',
+        'body isolation drill for absolute beginners', 'a wedding routine anyone can learn in a week',
+        'dancing in a small room without breaking anything', 'musicality: hitting the beat instead of chasing it',
+        'the warm-up that prevents dance injuries', 'a year of practice, first day to now',
+        'freestyle when your mind goes blank', 'the classical basic that improves every style',
+        'front and back angles of the same routine', 'how to practise without a mirror'
+      ],
+      offers: [
+        { name: 'Free beginner routine', type: 'Lead magnet', price: 0, gate: 0, promise: 'One complete learnable routine builds enormous goodwill fast.', deliver: 'Tutorial series + practice track' },
+        { name: 'Choreography / tutorial pack', type: 'Digital product', price: 799, gate: 2000, promise: 'Filmed once, sold forever, and every buyer performs your work publicly.', deliver: 'Multi-angle tutorials + counts' },
+        { name: 'Online classes', type: 'Productised service', price: 1500, gate: 3000, promise: 'Live classes scale past any studio\'s floor space.', deliver: 'Weekly live class + recording' },
+        { name: 'Wedding choreography', type: 'High ticket', price: 35000, gate: 3000, promise: 'The highest-paying work in dance, and the account is the portfolio that books it.', deliver: 'Full sangeet choreography and rehearsals' },
+        { name: 'Workshops', type: 'High ticket', price: 12000, gate: 10000, promise: 'City workshops sell out from a modest following and generate a month of content.', deliver: 'In-person workshop, limited seats' }
+      ],
+      hashtags: {
+        broad: ['#dance', '#dancer', '#choreography', '#dancevideo'],
+        mid: ['#dancetutorial', '#hiphopdance', '#bollywooddance', '#dancecover', '#dancersofinstagram', '#contemporarydance'],
+        niche: ['#dancetutorialforbeginners', '#weddingchoreography', '#sangeetdance', '#danceindia', '#slowtutorial', '#bodyisolation', '#freestyledance', '#classicaldanceindia']
+      },
+      visual: 'Full body always in frame with headroom, fixed camera at chest height, mirror and front angle side by side, counts on screen, slow version before full speed, audio unclipped and beat-synced cuts.',
+      brands: ['activewear & shoes', 'music platforms', 'dance academies', 'event companies'],
+      proof: ['your performances', 'students performing your choreography', 'progress over time']
     }
-  };
-
-  /* ---------- generic fallback for any custom niche ---------- */
-  G.GENERIC = {
-    label: 'Custom niche',
-    short: 'Custom',
-    reach: 1.15, cpm: 1.2, buyRate: 1.0,
-    positioning: 'the clearest, most practical voice in {NICHE} for beginners',
-    audience: {
-      age: '20–35', who: 'beginners and intermediates actively searching for {NICHE} help',
-      interests: ['{NICHE} basics', '{NICHE} tools and gear', 'results and case studies', 'common mistakes', 'shortcuts'],
-      pains: ['too much contradictory {NICHE} advice online', 'no step-by-step path from zero', 'tried and quit before seeing results', 'cannot tell good {NICHE} advice from bad', 'no time to figure it out alone'],
-      desires: ['a visible result within 30 days', 'a plan they can follow without thinking', 'to be respected for their {NICHE} skill', 'to save money and time'],
-      objections: ['it will not work for my situation', 'I do not have the money/gear/time', 'I have tried something like this before']
-    },
-    pillars: [
-      { name: 'Beginner how-to', pct: 30, why: 'Biggest addressable audience — most people in any niche are beginners.' },
-      { name: 'Myth-busting', pct: 25, why: 'Correcting a belief is the fastest way to earn authority.' },
-      { name: 'Proof & results', pct: 20, why: 'What converts followers into buyers.' },
-      { name: 'Trend & reaction', pct: 15, why: 'Free reach from demand you did not have to create.' },
-      { name: 'Personal story', pct: 10, why: 'Makes you a person, not an account.' }
-    ],
-    ideas: [
-      'the beginner mistakes everyone makes in {NICHE}', 'what I wish I knew before starting {NICHE}',
-      'the 5 things that gave me 80% of my {NICHE} results', 'a complete beginner roadmap for {NICHE}',
-      '{NICHE} on a budget — what to buy and what to skip', 'the fastest way to get your first result in {NICHE}',
-      'the biggest myth in {NICHE}, debunked', 'my exact {NICHE} routine, unedited',
-      '30 days of {NICHE} — honest results', 'the tools I actually use for {NICHE}',
-      'how to fix the most common {NICHE} problem', '{NICHE} in 60 seconds for complete beginners',
-      'why most people quit {NICHE} in week 2', 'the free resources that beat paid {NICHE} courses',
-      'answering the questions I get most about {NICHE}', 'a day in my life doing {NICHE}'
-    ],
-    offers: [
-      { name: 'Free starter guide ({NICHE})', type: 'Lead magnet', price: 0, gate: 0, promise: 'Every business starts by turning attention into an owned list.', deliver: '1-page PDF checklist + quick-start steps' },
-      { name: 'Beginner ebook / template pack', type: 'Digital product', price: 599, gate: 500, promise: 'Prove willingness to pay before you build anything bigger.', deliver: 'PDF guide + templates' },
-      { name: 'Personalised plan / audit', type: 'Productised service', price: 2999, gate: 1500, promise: 'Highest revenue per follower at a small account size.', deliver: 'Intake form + custom plan + 1 revision' },
-      { name: '1:1 coaching / done-for-you', type: 'High ticket', price: 15000, gate: 5000, promise: 'The offer that makes this a real business, not a side hustle.', deliver: 'Multi-week engagement with weekly calls' },
-      { name: 'Brand partnerships', type: 'Sponsorship', price: 0, gate: 8000, promise: 'Comes last. Sponsor money is rented; product money is owned.', deliver: '1 integrated reel + stories + usage rights' }
-    ],
-    hashtags: {
-      broad: ['#{TAG}', '#reels', '#explorepage', '#viral', '#instagood'],
-      mid: ['#{TAG}tips', '#{TAG}forbeginners', '#{TAG}life', '#{TAG}daily', '#{TAG}community', '#learn{TAG}', '#{TAG}india'],
-      niche: ['#{TAG}beginner', '#{TAG}hacks', '#{TAG}coach', '#{TAG}journey', '#{TAG}2026', '#{TAG}guide', '#{TAG}basics', '#daily{TAG}']
-    },
-    visual: 'Bright, high-contrast footage; the payoff visible in frame one; large readable captions; consistent 3-colour palette across every post so the grid reads as one brand.',
-    brands: ['tools & gear in {NICHE}', 'apps & software', 'courses & edtech', 'e-commerce brands'],
-    proof: ['your own documented results', 'follower wins you can repost', 'process transparency', 'consistency over time']
-  };
-
-  /* Resolve the niche object for a profile, filling {NICHE}/{TAG} tokens. */
-  G.niche = function (profile) {
-    profile = profile || G.store.profile || {};
-    const base = G.NICHES[profile.nicheKey];
-    if (base) return base;
-
-    const name = (profile.customNiche || 'your niche').trim();
-    const tag = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 14) || 'niche';
-    const fill = (s) => String(s).replace(/\{NICHE\}/g, name).replace(/\{TAG\}/g, tag);
-    const walk = (v) => Array.isArray(v) ? v.map(walk)
-      : (v && typeof v === 'object') ? Object.keys(v).reduce((o, k) => (o[k] = walk(v[k]), o), {})
-        : (typeof v === 'string' ? fill(v) : v);
-
-    const out = walk(G.GENERIC);
-    out.label = name.replace(/^\w/, (c) => c.toUpperCase());
-    out.short = out.label;
-    out.custom = true;
-    return out;
-  };
-
-  /* Human label for the current niche */
-  G.nicheName = function (profile) {
-    profile = profile || G.store.profile || {};
-    return G.NICHES[profile.nicheKey]
-      ? G.NICHES[profile.nicheKey].label
-      : (profile.customNiche || 'Your niche');
   };
 })(window.IGOS);

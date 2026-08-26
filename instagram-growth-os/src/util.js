@@ -98,6 +98,7 @@ window.IGOS = window.IGOS || {};
     profile: null,
     seed: 20260818,
     view: 'ceo',
+    theme: null,      // null = follow the system
     tasks: {},        // { 'YYYY-MM-DD': { taskId: true } }
     pipeline: [],     // kanban cards
     logs: [],         // weekly metric snapshots

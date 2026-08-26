@@ -62,11 +62,8 @@
 
         <div class="callout ${tone === 'ok' ? 'ok' : tone === 'hot' ? 'warn' : ''}"><b>Board verdict:</b> ${G.esc(diagnosis)}</div>
 
-        ${G.card('Growth — actual vs projected', '<canvas id="chart" height="240"></canvas>' +
-        '<div class="split muted" style="margin-top:10px;gap:16px">' +
-        '<span style="color:#7c5cff">■</span> projected (base case)' +
-        '<span style="color:#2fd08a">■</span> actual logged' +
-        '</div>')}
+        ${G.card('Growth — actual vs projected',
+          '<div class="chart-wrap"><canvas id="chart"></canvas></div><div id="chartLegend"></div>')}
 
         ${G.card('Log this week', `
           <div class="log-row" style="margin-bottom:14px">
@@ -112,59 +109,33 @@
       });
 
       /* ---- chart ---- */
-      const cv = G.$('#chart');
-      if (!cv) return;
-      const dpr = window.devicePixelRatio || 1;
-      const w = cv.clientWidth || 700, h = 240;
-      cv.width = w * dpr; cv.height = h * dpr;
-      cv.style.width = '100%'; cv.style.height = h + 'px';
-      const c = cv.getContext('2d');
-      c.scale(dpr, dpr);
-
+      const S = G.chart.SERIES();
       const proj = E.project(p, 6, 'base');
-      const start = Number(p.followers) || 0;
-      const projPts = [start].concat(proj.map((m) => m.end));
+      const projected = [{ x: 0, y: Number(p.followers) || 0 }]
+        .concat(proj.map((m, i) => ({ x: i + 1, y: m.end })));
 
-      const logs = (G.store.logs || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
-      const t0 = logs.length ? new Date(logs[0].date) : null;
-      const actPts = logs.map((l) => ({
+      const sorted = (G.store.logs || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
+      const t0 = sorted.length ? new Date(sorted[0].date) : null;
+      const actual = sorted.map((l) => ({
         x: (new Date(l.date) - t0) / (30.4 * 864e5),
         y: l.followers
       }));
 
-      const maxY = Math.max.apply(null, projPts.concat(actPts.map((a) => a.y), [10]));
-      const maxX = Math.max(6, actPts.length ? actPts[actPts.length - 1].x : 0);
-      const pad = { l: 52, r: 14, t: 14, b: 26 };
-      const X = (m) => pad.l + (m / maxX) * (w - pad.l - pad.r);
-      const Y = (v) => h - pad.b - (v / maxY) * (h - pad.t - pad.b);
+      const series = [
+        { name: 'Projected (base case)', color: S[0], area: true, dashed: true, points: projected }
+      ];
+      if (actual.length) series.push({ name: 'Actual logged', color: S[1], points: actual });
 
-      c.clearRect(0, 0, w, h);
-      c.strokeStyle = '#242836'; c.fillStyle = '#6f7791';
-      c.font = '10px ui-monospace, monospace'; c.lineWidth = 1;
-      for (let i = 0; i <= 4; i++) {
-        const v = (maxY / 4) * i, y = Y(v);
-        c.beginPath(); c.moveTo(pad.l, y); c.lineTo(w - pad.r, y); c.stroke();
-        c.fillText(G.fmt(v), 6, y + 3);
-      }
-      for (let m = 0; m <= Math.ceil(maxX); m++) {
-        c.fillText('M' + m, X(m) - 6, h - 8);
-      }
-
-      /* projected */
-      c.strokeStyle = '#7c5cff'; c.lineWidth = 2; c.beginPath();
-      projPts.forEach((v, i) => { i ? c.lineTo(X(i), Y(v)) : c.moveTo(X(i), Y(v)); });
-      c.stroke();
-      c.fillStyle = 'rgba(124,92,255,.10)';
-      c.lineTo(X(projPts.length - 1), Y(0)); c.lineTo(X(0), Y(0)); c.closePath(); c.fill();
-
-      /* actual */
-      if (actPts.length) {
-        c.strokeStyle = '#2fd08a'; c.lineWidth = 2.5; c.beginPath();
-        actPts.forEach((pt, i) => { i ? c.lineTo(X(pt.x), Y(pt.y)) : c.moveTo(X(pt.x), Y(pt.y)); });
-        c.stroke();
-        c.fillStyle = '#2fd08a';
-        actPts.forEach((pt) => { c.beginPath(); c.arc(X(pt.x), Y(pt.y), 3.2, 0, 7); c.fill(); });
-      }
+      G.chart.line(G.$('#chart'), {
+        series: series,
+        height: 250,
+        xMax: 6,
+        xLabel: 'M',
+        yFormat: G.fmt,
+        tipX: (v) => 'Month ' + Math.round(v)
+      });
+      const lg = G.$('#chartLegend');
+      if (lg) lg.innerHTML = G.chart.legend(series);
     }
   };
 })(window.IGOS);

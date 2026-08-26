@@ -128,11 +128,8 @@
           : `<div class="callout ok"><b>Capacity check:</b> ${Math.round(ch.hoursPerWeek)} hours a week fits inside the ${p.hours} you have. No excuse available.</div>`))}
         </div>
 
-        ${G.card('Pace — required vs actual', '<canvas id="spChart" height="230"></canvas>' +
-          '<div class="split muted" style="margin-top:10px;gap:16px">' +
-          '<span style="color:#7c5cff">■</span> required pace' +
-          '<span style="color:#ffb347">■</span> what this plan expects to deliver' +
-          '<span style="color:#2fd08a">■</span> your actual count</div>')}
+        ${G.card('Pace — required vs actual',
+          '<div class="chart-wrap"><canvas id="spChart"></canvas></div><div id="spLegend"></div>')}
 
         ${G.card('Log today', `
           <div class="form-row">
@@ -217,61 +214,32 @@
       };
 
       /* ---- pace chart ---- */
-      const cv = G.$('#spChart');
-      if (!cv) return;
-      const dpr = window.devicePixelRatio || 1;
-      const w = cv.clientWidth || 700, h = 230;
-      cv.width = w * dpr; cv.height = h * dpr;
-      cv.style.width = '100%'; cv.style.height = h + 'px';
-      const ctx = cv.getContext('2d');
-      ctx.scale(dpr, dpr);
-
-      const s = E.sprint(p, c.target, c.days, c.perDay);
-      const end = c.startFollowers + c.target;
+      const S = G.chart.SERIES();
+      const sp = E.sprint(p, c.target, c.days, c.perDay);
       const logDates = Object.keys(c.log).sort();
-      const actual = logDates.map((d) => ({
-        x: G.clamp(Math.round((new Date(d) - new Date(c.start)) / 864e5), 0, c.days),
-        y: c.log[d]
-      }));
-      /* The expected-value line can sit well above the target — scale for it,
-         otherwise it is drawn off the top of the canvas and just disappears. */
-      const expectedEnd = c.startFollowers + s.chosen.expected;
-      const maxY = Math.max(end, expectedEnd, actual.reduce((m, a) => Math.max(m, a.y), 0)) * 1.05;
-      const pad = { l: 54, r: 14, t: 14, b: 26 };
-      const X = (d) => pad.l + (d / c.days) * (w - pad.l - pad.r);
-      const Y = (v) => h - pad.b - (v / maxY) * (h - pad.t - pad.b);
 
-      ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = '#242836'; ctx.fillStyle = '#6f7791';
-      ctx.font = '10px ui-monospace, monospace'; ctx.lineWidth = 1;
-      for (let i = 0; i <= 4; i++) {
-        const v = (maxY / 4) * i, y = Y(v);
-        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
-        ctx.fillText(G.fmt(v), 6, y + 3);
-      }
-      for (let d = 0; d <= c.days; d += Math.max(1, Math.round(c.days / 6))) {
-        ctx.fillText('D' + d, X(d) - 6, h - 8);
+      const series = [
+        { name: 'Required pace', color: S[0], dashed: true, points: [
+          { x: 0, y: c.startFollowers }, { x: c.days, y: c.startFollowers + c.target }] },
+        { name: 'What this plan expects', color: S[2], points: [
+          { x: 0, y: c.startFollowers }, { x: c.days, y: c.startFollowers + sp.chosen.expected }] }
+      ];
+      if (logDates.length) {
+        series.push({
+          name: 'Your actual count', color: S[1], area: true,
+          points: logDates.map((d) => ({
+            x: G.clamp(Math.round((new Date(d) - new Date(c.start)) / 864e5), 0, c.days),
+            y: c.log[d]
+          }))
+        });
       }
 
-      ctx.strokeStyle = '#7c5cff'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
-      ctx.beginPath(); ctx.moveTo(X(0), Y(c.startFollowers)); ctx.lineTo(X(c.days), Y(end)); ctx.stroke();
-      ctx.setLineDash([]);
-
-      /* expected-value line: what this plan realistically delivers */
-      ctx.strokeStyle = 'rgba(255,179,71,.75)'; ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(X(0), Y(c.startFollowers));
-      ctx.lineTo(X(c.days), Y(c.startFollowers + s.chosen.expected));
-      ctx.stroke();
-
-      if (actual.length) {
-        ctx.strokeStyle = '#2fd08a'; ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        actual.forEach((a, i) => { i ? ctx.lineTo(X(a.x), Y(a.y)) : ctx.moveTo(X(a.x), Y(a.y)); });
-        ctx.stroke();
-        ctx.fillStyle = '#2fd08a';
-        actual.forEach((a) => { ctx.beginPath(); ctx.arc(X(a.x), Y(a.y), 3.2, 0, 7); ctx.fill(); });
-      }
+      G.chart.line(G.$('#spChart'), {
+        series: series, height: 250, xMax: c.days, xLabel: 'D',
+        yFormat: G.fmt, tipX: (v) => 'Day ' + Math.round(v)
+      });
+      const slg = G.$('#spLegend');
+      if (slg) slg.innerHTML = G.chart.legend(series);
     }
   };
 

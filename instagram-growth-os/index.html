@@ -22,11 +22,16 @@
       <div class="wz-step" data-step="1">
         <h2>1 · What is your niche?</h2>
         <p class="muted">Pick the closest preset, or type your own. Everything downstream — offers, hooks, pricing, calendar — is derived from this.</p>
+        <label class="field">
+          <span>Search 30 built-in niches</span>
+          <input id="nicheSearch" type="text" placeholder="fitness, money, cooking, art, gaming…" autocomplete="off">
+        </label>
         <div id="nicheGrid" class="niche-grid"></div>
         <label class="field">
-          <span>Or describe it in your own words</span>
-          <input id="customNiche" type="text" placeholder="e.g. budget travel for Indian college students">
+          <span>Not listed? Describe it in your own words — anything works</span>
+          <input id="customNiche" type="text" placeholder="e.g. urban gardening for small balconies">
         </label>
+        <div id="nicheResolve" class="resolve-note hidden"></div>
         <label class="field">
           <span>Instagram handle <em>(optional)</em></span>
           <input id="handle" type="text" placeholder="@yourhandle">
@@ -109,18 +114,26 @@
       <button class="nav-item" data-view="tracker"><i>📈</i> Board Report</button>
     </nav>
     <div class="side-foot">
-      <button id="btnExport" class="btn ghost sm">Export plan</button>
+      <button id="btnInputs" class="btn sm">Edit inputs</button>
+      <div class="split" style="gap:6px">
+        <button id="btnTheme" class="btn ghost sm" style="flex:1">Theme</button>
+        <button id="btnExport" class="btn ghost sm" style="flex:1">Export</button>
+      </div>
       <button id="btnReset" class="btn ghost sm danger">Reset company</button>
     </div>
   </aside>
   <main id="main"></main>
 </div>
 
+<div id="drawerBack" class="drawer-back hidden"></div>
+<aside id="drawer" class="drawer hidden"></aside>
 <div id="toast" class="toast hidden"></div>
 
 <script src="src/util.js"></script>
 <script src="src/data/niches.js"></script>
+<script src="src/data/families.js"></script>
 <script src="src/engine/growth.js"></script>
+<script src="src/engine/chart.js"></script>
 <script src="src/engine/content.js"></script>
 <script src="src/engine/scripts.js"></script>
 <script src="src/engine/ideas.js"></script>
