@@ -6,6 +6,28 @@ into a complete operating plan run by seven departments, with the maths behind e
 Not a checklist of generic creator advice. Every figure on every screen is computed from a
 stated model, and every assumption is a named constant you can argue with and change.
 
+## Put it online
+
+`node build.js` writes **`public/`** — a complete static site (page, manifest, icons,
+link-preview image). No backend, no build step at the host, no database: everything a
+visitor does is stored in their own browser. Any static host serves it for free.
+
+**Fastest — drag and drop (2 minutes, no account needed to try):**
+drop the `public/` folder onto [app.netlify.com/drop](https://app.netlify.com/drop) or
+[pages.cloudflare.com](https://pages.cloudflare.com). You get a public URL immediately.
+Claim it with a free account to keep it and to set a custom name.
+
+**GitHub Pages (recommended if the repo is already yours):**
+`.github/workflows/pages.yml` builds and publishes `public/` on every push to `main`.
+One-time setup: repo **Settings → Pages → Source: GitHub Actions**. The site lands at
+`https://<username>.github.io/<repo>/`.
+
+**Your own domain:** all three hosts take a custom domain for free — point a CNAME at the
+host and add the domain in its dashboard.
+
+Then put the link in your Instagram bio. The link preview (title, description and the
+`og.png` card) is already set up, so it renders properly when anyone shares it.
+
 ## Run it
 
 No build step, no dependencies, no server required.
@@ -99,6 +121,8 @@ convenient, not a live rate, and tool prices reflect Indian pricing.
 
 ```
 instagram-growth-os/
+├── build.js                    # → dist/ (artifact fragment) and public/ (the website)
+├── public/                     # the deployable static site
 ├── index.html                  # shell + onboarding wizard
 ├── assets/app.css              # design system
 └── src/

@@ -377,6 +377,12 @@ canvas{max-width:100%;display:block}
   .log-row button,.form-row button{grid-column:1/-1}
   .kanban{grid-template-columns:1fr 1fr}
   h1{font-size:23px}
+  /* Full-screen wizard on a phone: the step scrolls inside, the Back/Next bar
+     stays pinned. Otherwise 30 niches push the button below the fold. */
+  .modal{padding:0;place-items:stretch;overflow:hidden}
+  .modal-card{border-radius:0;border:none;height:100dvh;display:flex;flex-direction:column}
+  .wizard{flex:1;overflow-y:auto;min-height:0}
+  .modal-foot{position:sticky;bottom:0}
   .niche-grid{max-height:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

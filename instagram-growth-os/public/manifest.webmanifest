@@ -1,0 +1,29 @@
+{
+  "name": "Growth OS — run your Instagram like a business",
+  "short_name": "Growth OS",
+  "description": "Free. Tell it your niche, your follower count and your goal, and it builds the whole operating plan: strategy, a 28-day content calendar, scripts, a scored idea engine and honest growth maths. Works for any niche. Nothing to install, nothing to sign up for.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#f4f7fb",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
