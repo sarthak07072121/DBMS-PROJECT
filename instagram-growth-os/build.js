@@ -127,9 +127,25 @@ fs.writeFileSync(path.join(pub, 'icon.svg'),
 </svg>`);
 
 fs.writeFileSync(path.join(pub, 'robots.txt'), 'User-agent: *\nAllow: /\n');
+
+/* Netlify / Cloudflare Pages read this. The page is one big self-contained file
+   that changes every deploy, so it revalidates while the assets cache. */
+fs.writeFileSync(path.join(pub, '_headers'),
+`/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/og.png
+  Cache-Control: public, max-age=604800
+/icon-512.png
+  Cache-Control: public, max-age=604800
+/icon-180.png
+  Cache-Control: public, max-age=604800
+`);
 fs.writeFileSync(path.join(pub, '.nojekyll'), '');
 
 const kb = (p) => (fs.statSync(p).size / 1024).toFixed(1) + ' KB';
 console.log('dist/growth-os.html  ' + kb(path.join(root, 'dist/growth-os.html')) + '  (artifact fragment)');
 console.log('public/index.html    ' + kb(path.join(pub, 'index.html')) + '  (standalone site)');
-console.log('public/              + manifest, icon.svg, robots.txt, .nojekyll');
+console.log('public/              + manifest, icons, og.png, robots.txt, _headers, .nojekyll');
