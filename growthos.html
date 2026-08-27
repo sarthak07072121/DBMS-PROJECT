@@ -159,9 +159,12 @@ select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:36px
 .choice:hover{transform:translateY(-2px);box-shadow:var(--sh-2);border-color:var(--acc-line)}
 .choice.selected{border-color:var(--acc);background:var(--acc-dim);box-shadow:var(--ring)}
 .choice.selected b{color:var(--acc)}
-.tier-preview{background:var(--acc-dim);border:1px solid var(--acc-line);border-radius:var(--r);
+/* Neutral surface on purpose: this box can carry a bad diagnosis, so the
+   semantic colour belongs on the pills inside it, not on the panel. */
+.tier-preview{background:var(--inset);border:1px solid var(--line);border-radius:var(--r);
   padding:13px 15px;margin-bottom:16px;font-size:13px;color:var(--tx-2)}
-.tier-preview b{color:var(--acc)}
+.tier-preview b{color:var(--tx)}
+.tier-preview .split{gap:7px}
 
 /* ---------- shell ---------- */
 #app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh}
@@ -255,7 +258,7 @@ p{color:var(--tx-2)}
 .section>.muted{margin-bottom:15px}
 
 /* ---------- KPI ---------- */
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:14px;margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(164px,1fr));gap:13px;margin-bottom:20px}
 .kpi{background:var(--raised);border:1px solid var(--line);border-radius:var(--r-lg);
   padding:16px 18px 18px;position:relative;overflow:hidden;box-shadow:var(--sh-1);
   display:flex;flex-direction:column;
@@ -514,12 +517,22 @@ canvas{max-width:100%;display:block}
       </div>
 
       <div class="wz-step hidden" data-step="2">
-        <h2>2 · What is your current follower count?</h2>
-        <p class="muted">Be honest. The whole plan changes at 1K, 10K and 50K — those are the real business milestones.</p>
-        <label class="field">
-          <span>Followers today</span>
-          <input id="followers" type="number" min="0" value="0" placeholder="0">
-        </label>
+        <h2>2 · Your account, as it performs today</h2>
+        <p class="muted">Two numbers from Instagram Insights. Together they tell us whether your problem is
+        distribution, conversion or volume — and every projection in the app is calibrated to them.</p>
+        <div class="grid-2">
+          <label class="field">
+            <span>Followers today</span>
+            <input id="followers" type="number" min="0" value="0" placeholder="0">
+          </label>
+          <label class="field">
+            <span>Average reach per reel <em>(last 5–10)</em></span>
+            <input id="avgReach" type="number" min="0" value="0" placeholder="0">
+          </label>
+        </div>
+        <p class="muted" style="margin:-6px 0 14px;font-size:12px">
+          Instagram → any reel → View insights → <b>Views</b> (older apps call it Accounts reached).
+          Don't know it? Leave 0 and we'll estimate from your size.</p>
         <div id="tierPreview" class="tier-preview"></div>
         <label class="field">
           <span>Currency for every financial number in this app</span>
@@ -549,16 +562,13 @@ canvas{max-width:100%;display:block}
         <p class="muted">A business plan that ignores your real capacity is a fantasy. This sizes the whole operation.</p>
         <div class="grid-2">
           <label class="field"><span>Hours per week you can put in</span><input id="hours" type="number" min="1" max="80" value="10"></label>
-          <label class="field"><span>Monthly budget for tools/ads/help (<b class="cur-sym">₹</b>)</span><input id="budget" type="number" min="0" value="3000"></label>
-        </div>
-        <div class="grid-2">
           <label class="field"><span>Will you show your face on camera?</span>
             <select id="face"><option value="yes">Yes — personal brand</option><option value="no">No — faceless / B-roll & voiceover</option></select>
           </label>
-          <label class="field"><span>Primary audience market</span>
-            <select id="market"><option value="IN">India</option><option value="US">US / Western</option><option value="GLOBAL">Global mix</option></select>
-          </label>
         </div>
+        <label class="field"><span>Primary audience market</span>
+          <select id="market"><option value="IN">India</option><option value="US">US / Western</option><option value="GLOBAL">Global mix</option></select>
+        </label>
       </div>
     </div>
     <div class="modal-foot">
@@ -1459,15 +1469,101 @@ window.IGOS = window.IGOS || {};
   E.NONFOLLOWER = { reel: 0.78, carousel: 0.55, static: 0.35 };
   E.FOLLOW_RATE = { reel: 0.0140, carousel: 0.0260, static: 0.0120 };
 
+  /* ---------------- account calibration ----------------
+     A reel's reach splits into two parts: the followers it shows to (warm)
+     and the strangers Instagram pushes it to (cold). Followers are a given;
+     cold reach is the part your content actually earns. So when the operator
+     tells us their real average reach, we back out their true cold reach and
+     scale the whole model by how far it sits from what an account their size
+     would normally get. Every projection downstream is then their account's,
+     not a generic one. Left blank, the factor is 1 and nothing changes. */
+
+  E.WARM_SHARE = 0.85;          // share of followers a reel typically reaches
+
+  E.modelledCold = function (p, followers) {
+    const n = G.niche(p);
+    const t = E.tier(followers);
+    return t.cold * n.reach * (E.MARKET[p.market] || 1);
+  };
+
+  E.reachFactor = function (p) {
+    const actual = Math.max(0, Number(p.avgReach) || 0);
+    if (!actual) return 1;
+    const f = Math.max(0, Number(p.followers) || 0);
+    const modelled = E.modelledCold(p, f);
+    if (modelled <= 0) return 1;
+    /* Floor the derived cold reach rather than letting it hit zero: an account
+       reaching only its own followers is badly stuck, not literally invisible. */
+    const actualCold = Math.max(actual - f * E.WARM_SHARE, modelled * 0.12);
+    return G.clamp(actualCold / modelled, 0.2, 5);
+  };
+
   E.reachPerPost = function (p, followers, quality) {
     const n = G.niche(p);
     const t = E.tier(followers);
     const q = quality == null ? 1 : quality;
-    const cold = t.cold * n.reach * (E.MARKET[p.market] || 1) * q;
+    const cold = t.cold * n.reach * (E.MARKET[p.market] || 1) * q * E.reachFactor(p);
     return {
-      reel: cold + followers * 0.85,
+      reel: cold + followers * E.WARM_SHARE,
       carousel: cold * 0.40 + followers * 0.55,
       static: cold * 0.15 + followers * 0.45
+    };
+  };
+
+  /* The account diagnosis the CEO view and onboarding both read from. */
+  E.BANDS = [
+    { max: 0.9,      key: 'stuck',   tone: 'hot',  label: 'Closed loop',
+      what: 'You are almost entirely talking to people who already follow you.',
+      why: 'Reach below your own follower count means Instagram is not pushing your posts past your existing audience — nearly always a hook and retention problem, not a posting-frequency problem.',
+      fix: 'Stop making new topics. Take your three best-performing posts, rewrite only the first three seconds, and republish them. Watch retention at 3s: below 60% nothing else you change matters.' },
+    { max: 2.0,      key: 'warm',    tone: 'warn', label: 'Leaking out',
+      what: 'Some cold reach, but not enough to compound.',
+      why: 'Your content travels a little past your followers and then stops. Usually the hook earns the click but the payoff arrives too late to hold a stranger.',
+      fix: 'Front-load the payoff. Give the single most useful line away in the first five seconds instead of saving it for the end, and cut every post by 20% without removing information.' },
+    { max: 5.0,      key: 'healthy', tone: 'ok',   label: 'Compounding',
+      what: 'Strangers outnumber followers in your reach. This is the healthy band.',
+      why: 'Instagram is actively testing your posts on cold audiences and they are passing. At this ratio, growth is a volume question rather than a quality question.',
+      fix: 'Do not redesign anything. Increase output on the exact format that is working and make sure every post has a deliberate next step — this is when reach converts cheapest.' },
+    { max: Infinity, key: 'viral',   tone: 'ok',   label: 'Breakout distribution',
+      what: 'Your reach is many times your follower count.',
+      why: 'You have distribution most accounts never get. The risk now is that reach arrives and leaves without becoming anything you own.',
+      fix: 'Capture it. Every post needs a reason to follow and a route off-platform, and your offer should be live now — this level of reach is rarely permanent.' }
+  ];
+
+  E.diagnose = function (p) {
+    const followers = Math.max(0, Number(p.followers) || 0);
+    const actual = Math.max(0, Number(p.avgReach) || 0);
+    const modelledReel = E.modelledCold(p, followers) + followers * E.WARM_SHARE;
+
+    if (!actual) {
+      return {
+        known: false,
+        expected: Math.round(modelledReel),
+        ratio: followers ? modelledReel / followers : 0,
+        note: 'No reach data yet, so every number below is modelled from your size, niche and market. Add your average reel reach in the CEO settings and the whole plan re-calibrates to your actual account.'
+      };
+    }
+
+    const ratio = followers ? actual / followers : 0;
+    const cold = Math.max(0, actual - followers * E.WARM_SHARE);
+    const band = E.BANDS.find((b) => ratio < b.max) || E.BANDS[E.BANDS.length - 1];
+    const factor = E.reachFactor(p);
+    const vsPeers = modelledReel > 0 ? actual / modelledReel : 1;
+
+    return {
+      known: true,
+      actual: actual,
+      expected: Math.round(modelledReel),
+      ratio: ratio,
+      cold: Math.round(cold),
+      nonFollowerShare: actual > 0 ? cold / actual : 0,
+      factor: factor,
+      vsPeers: vsPeers,
+      band: band,
+      /* Which of the three constraints is actually binding right now. */
+      constraint: ratio < 0.9 ? 'distribution'
+        : ratio < 2.0 ? 'retention'
+          : 'volume'
     };
   };
 
@@ -2596,8 +2692,12 @@ window.IGOS = window.IGOS || {};
          decoration: followers and reach come straight off the base case. */
       const followerCurve = [p.followers].concat(proj.base.map((r) => r.end));
       const reachCurve = proj.base.map((r) => r.reach);
+      const dx = E.diagnose(p);
       const kpis = [
         G.kpi('Followers today', G.comma(p.followers), t.label),
+        dx.known
+          ? G.kpi('Reach per reel', G.fmt(dx.actual), dx.ratio.toFixed(1) + '× followers · ' + G.pct(dx.nonFollowerShare, 0) + ' strangers', dx.band.tone)
+          : G.kpi('Reach per reel', G.fmt(dx.expected), 'estimated — add your real number', 'warn'),
         G.kpi('6-month projection', G.fmt(gs.projected6m), 'base case, ' + cap.totalWeek + ' posts/week',
           gs.onTrackFollowers ? 'ok' : 'warn', followerCurve),
         G.kpi('Monthly reach capacity', G.fmt(now.reach), cap.totalMonth + ' posts/month', '', reachCurve),
@@ -2705,8 +2805,10 @@ window.IGOS = window.IGOS || {};
         next ? `<b>Next milestone.</b> ${G.comma(Math.max(0, next.min - p.followers))} followers to reach ${G.esc(next.label)}, which unlocks
                 ${E.offers(p).filter((o) => o.gate > p.followers && o.gate <= next.min).map((o) => G.esc(o.name)).join(', ') || 'higher pricing and brand deals'}.`
           : '<b>Next milestone.</b> You are past follower milestones — the constraint is now product and team, not reach.',
-        `<b>Capital.</b> ${p.budget > 0 ? G.money(p.budget) + '/month is allocated. ' : 'You have no budget allocated, so time is your only capital. '}
-         ${p.budget >= 5000 ? 'The highest-return line is an editor — it buys back the hours that cap your output.' : 'Spend nothing on ads until one organic post beats 3x your average reach. Boosting weak content just buys a bigger audience for a bad post.'}`,
+        `<b>Capital.</b> Your ${cap.hours} hours a week are the capital — this business is funded in time, not money.
+         Spend nothing on ads until one organic post beats 3× your average reach; boosting weak content only buys a
+         bigger audience for a bad post. The first rupee that is worth spending buys an editor, because that is the
+         one purchase that returns hours.`,
         `<b>The one number.</b> ${p.goal === 'money'
           ? 'Qualified DM conversations per week. Everything else is vanity until this is above ' + Math.ceil(re.leadsNeeded / 4.33) + '.'
           : 'Non-follower reach share per reel. Below 60% you are talking to yourself; above 75% you are compounding.'}`,
@@ -2722,6 +2824,69 @@ window.IGOS = window.IGOS || {};
         ['Burnout', '<span class="pill warn">Medium</span>', 'Total stop', 'Hard cap at ' + cap.hours + ' hrs/week. One full rest day. Outsource editing first.']
       ]);
 
+      /* ---- account diagnosis ----
+         Read from the operator's own reach number rather than the model, so
+         the first thing the CEO page says is about their page specifically. */
+      const d = E.diagnose(p);
+      const inputs = `
+        <div class="card tight" style="margin-top:14px">
+          <div class="card-head" style="margin-bottom:10px">
+            <h3>Account inputs</h3>
+            <span class="muted" style="font-size:12px">Update these whenever your numbers move — everything re-plans.</span>
+          </div>
+          <div class="form-row" style="margin-bottom:0">
+            <label class="field" style="margin:0"><span>Followers</span>
+              <input id="acFollowers" type="number" min="0" value="${p.followers}"></label>
+            <label class="field" style="margin:0"><span>Avg reach / reel</span>
+              <input id="acReach" type="number" min="0" value="${p.avgReach || 0}" placeholder="0"></label>
+            <label class="field" style="margin:0"><span>Hours per week</span>
+              <input id="acHours" type="number" min="1" max="80" value="${p.hours}"></label>
+            <label class="field" style="margin:0"><span>Face on camera</span>
+              <select id="acFace">
+                <option value="yes"${p.face === 'yes' ? ' selected' : ''}>Yes</option>
+                <option value="no"${p.face === 'no' ? ' selected' : ''}>No</option>
+              </select></label>
+            <button id="acSave" class="btn primary">Re-analyse</button>
+          </div>
+        </div>`;
+
+      const diagnosis = d.known ? `
+        <div class="section">
+          <h2>Account diagnosis</h2>
+          <p class="muted">Your ${G.comma(d.actual)} average reach against ${G.comma(p.followers)} followers — what it says, and what to do about it.</p>
+          <div class="grid g2">
+            ${G.card('The read', `
+              <div class="split" style="margin-bottom:12px">
+                <span class="pill ${d.band.tone}">${G.esc(d.band.label)}</span>
+                <span class="pill">${d.ratio.toFixed(1)}× followers</span>
+                <span class="pill ${d.nonFollowerShare >= 0.6 ? 'ok' : 'warn'}">${G.pct(d.nonFollowerShare, 0)} non-follower</span>
+                <span class="pill ${d.vsPeers >= 1 ? 'ok' : 'hot'}">${d.vsPeers >= 1 ? '+' : ''}${Math.round((d.vsPeers - 1) * 100)}% vs peers</span>
+              </div>
+              <p><b>${G.esc(d.band.what)}</b> ${G.esc(d.band.why)}</p>
+              <div class="callout ${d.band.tone === 'hot' ? 'hot' : d.band.tone === 'warn' ? 'warn' : 'ok'}">
+                <b>Do this next.</b> ${G.esc(d.band.fix)}</div>`)}
+            ${G.card('Where your reach comes from', `
+              ${G.table(['Source', '#Per reel', '#Share'], [
+          ['Strangers <span class="muted">— the only source that grows you</span>', G.comma(d.cold), G.pct(d.nonFollowerShare, 0)],
+          ['Your own followers', G.comma(Math.min(d.actual, Math.round(p.followers * E.WARM_SHARE))), G.pct(1 - d.nonFollowerShare, 0)],
+          ['<b>Total</b>', '<b>' + G.comma(d.actual) + '</b>', '<b>100%</b>']
+        ])}
+              <p class="muted" style="margin-top:12px">A comparable ${G.esc(n.short)} account at ${G.comma(p.followers)} followers
+              averages about ${G.comma(d.expected)} per reel. You are at ${G.comma(d.actual)} —
+              ${d.vsPeers >= 1.15 ? 'clearly ahead of the benchmark.'
+          : d.vsPeers >= 0.85 ? 'right on the benchmark.'
+            : 'behind the benchmark, which is the gap worth closing first.'}</p>
+              <p class="muted" style="margin-top:8px">Every projection in this app is scaled by that gap
+              (×${d.factor.toFixed(2)}), so the plan is built on your account, not an average one.</p>`)}
+          </div>
+          ${inputs}
+        </div>`
+        : `<div class="section">
+          <h2>Account diagnosis</h2>
+          <div class="callout warn"><b>No reach data yet.</b> ${G.esc(d.note)}</div>
+          ${inputs}
+        </div>`;
+
       return `
         <div class="page-head">
           <div class="eyebrow">Step 1 · CEO thinking</div>
@@ -2729,6 +2894,7 @@ window.IGOS = window.IGOS || {};
           <p class="lead">Decisions the rest of the company executes against. Change the inputs and every department re-plans.</p>
         </div>
         <div class="kpis">${kpis}</div>
+        ${diagnosis}
         ${thesis}
         <div class="section"><h2>Target audience</h2>
           <p class="muted">You cannot write a hook for "everyone". This is the person every post is aimed at.</p>${aud}</div>
@@ -2740,6 +2906,24 @@ window.IGOS = window.IGOS || {};
         <div class="section"><h2>Are we on track?</h2>${verdict}</div>
         <div class="section"><h2>CEO decisions this quarter</h2>${G.card('Standing orders', G.ol(decisions))}</div>
         <div class="section"><h2>Risk register</h2>${G.card('What kills this business', risks)}</div>`;
+    },
+
+    mount: function () {
+      const btn = G.$('#acSave');
+      if (!btn) return;
+      btn.onclick = function () {
+        const p = G.store.profile;
+        p.followers = Math.max(0, Number(G.$('#acFollowers').value) || 0);
+        p.avgReach = Math.max(0, Number(G.$('#acReach').value) || 0);
+        p.hours = G.clamp(Number(G.$('#acHours').value) || p.hours, 1, 80);
+        p.face = G.$('#acFace').value;
+        G.save();
+        G.render();
+        const d = G.engine.diagnose(p);
+        G.toast(d.known
+          ? 'Re-analysed — ' + d.band.label.toLowerCase() + ', ' + d.ratio.toFixed(1) + '× your followers'
+          : 'Updated — add your average reel reach to calibrate the plan');
+      };
     }
   };
 })(window.IGOS);
@@ -4464,13 +4648,29 @@ window.IGOS = window.IGOS || {};
     dots();
   }
 
+  /* Live read on the account while they are still typing — the wizard should
+     already be telling them something true about their page, not just collecting. */
   function tierPreview() {
     const f = Number(G.$('#followers').value) || 0;
+    const reach = Number(G.$('#avgReach').value) || 0;
     const t = E.tier(f);
     const next = E.nextTier(f);
-    G.$('#tierPreview').innerHTML =
-      `<b>${G.esc(t.label)}</b> — ${G.esc(t.focus)}` +
-      (next ? `<div class="muted" style="margin-top:6px">${G.comma(next.min - f)} followers to ${G.esc(next.label)}.</div>` : '');
+    const d = E.diagnose({ followers: f, avgReach: reach, market: G.$('#market') ? G.$('#market').value : 'IN', nicheKey: wz.niche, customNiche: '' });
+
+    let html = `<b>${G.esc(t.label)}</b> — ${G.esc(t.focus)}`;
+    html += next ? `<div class="muted" style="margin-top:6px">${G.comma(next.min - f)} followers to ${G.esc(next.label)}.</div>` : '';
+
+    if (d.known && f > 0) {
+      html += `<div style="margin-top:11px;padding-top:11px;border-top:1px solid var(--line)">
+        <span class="pill ${d.band.tone}">${G.esc(d.band.label)}</span>
+        <span class="pill">${d.ratio.toFixed(1)}× your followers</span>
+        <span class="pill">${G.pct(d.nonFollowerShare, 0)} strangers</span>
+        <div class="muted" style="margin-top:8px">${G.esc(d.band.what)} ${G.esc(d.band.why)}</div></div>`;
+    } else if (f > 0) {
+      html += `<div class="muted" style="margin-top:8px">An account your size in this niche typically reaches
+        <b>${G.comma(d.expected)}</b> per reel. Add your real number above to calibrate the plan to your account.</div>`;
+    }
+    G.$('#tierPreview').innerHTML = html;
   }
 
   function validateStep() {
@@ -4489,12 +4689,12 @@ window.IGOS = window.IGOS || {};
       customNiche: G.$('#customNiche').value.trim(),
       handle: G.$('#handle').value.trim(),
       followers: Math.max(0, Number(G.$('#followers').value) || 0),
+      avgReach: Math.max(0, Number(G.$('#avgReach').value) || 0),
       currentRev: toBase(G.$('#currentRev').value),
       goal: wz.goal,
       followerTarget: Math.max(0, Number(G.$('#followerTarget').value) || 0),
       revTarget: toBase(G.$('#revTarget').value),
       hours: G.clamp(Number(G.$('#hours').value) || 10, 1, 80),
-      budget: toBase(G.$('#budget').value),
       face: G.$('#face').value,
       market: G.$('#market').value,
       currency: cur,
@@ -4513,13 +4713,14 @@ window.IGOS = window.IGOS || {};
     buildNicheGrid();
     showStep(1);
     G.$('#followers').oninput = tierPreview;
+    G.$('#avgReach').oninput = tierPreview;
     tierPreview();
     G.$('#currency').onchange = function () {
       const sym = this.value === 'USD' ? '$' : '₹';
       G.$$('.cur-sym').forEach((s) => { s.textContent = sym; });
       /* re-scale the placeholder targets so the defaults stay sensible */
       const scale = this.value === 'USD' ? 1 / G.RATE : G.RATE;
-      ['#revTarget', '#budget', '#currentRev'].forEach((id) => {
+      ['#revTarget', '#currentRev'].forEach((id) => {
         const el = G.$(id);
         const v = Number(el.value) || 0;
         if (v) el.value = Math.max(0, Math.round(v * scale / 10) * 10);
