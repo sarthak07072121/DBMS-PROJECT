@@ -440,6 +440,8 @@
     G.$$('.nav-item').forEach((b) => { b.onclick = function () { G.go(b.dataset.view); }; });
     G.$('#btnExport').onclick = exportPlan;
     G.$('#btnInputs').onclick = openDrawer;
+    G.$('#btnInstall').onclick = G.install;
+    G.showInstall();
     G.$('#btnTheme').onclick = cycleTheme;
     applyTheme();
     document.addEventListener('keydown', function (e) {

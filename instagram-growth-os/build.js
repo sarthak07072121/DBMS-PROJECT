@@ -128,6 +128,58 @@ fs.writeFileSync(path.join(pub, 'icon.svg'),
 
 fs.writeFileSync(path.join(pub, 'robots.txt'), 'User-agent: *\nAllow: /\n');
 
+/* Service worker. The cache name carries a build stamp, so publishing a new
+   build retires the old cache instead of serving stale HTML forever. */
+const stamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+fs.writeFileSync(path.join(pub, 'sw.js'), `/* Growth OS service worker — build ${stamp} */
+const CACHE = 'growthos-${stamp}';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg',
+               './icon-180.png', './icon-512.png', './og.png'];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+
+  /* The page itself: network first, so a redeploy reaches people on their next
+     visit; cache is the offline fallback. */
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put('./index.html', copy));
+          return res;
+        })
+        .catch(() => caches.match('./index.html').then((r) => r || caches.match('./')))
+    );
+    return;
+  }
+
+  /* Everything else — icons, fonts: cache first, fill in behind. */
+  e.respondWith(
+    caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+      if (res && (res.ok || res.type === 'opaque')) {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+      }
+      return res;
+    }).catch(() => hit))
+  );
+});
+`);
+
 /* Netlify / Cloudflare Pages read this. The page is one big self-contained file
    that changes every deploy, so it revalidates while the assets cache. */
 fs.writeFileSync(path.join(pub, '_headers'),
@@ -148,4 +200,4 @@ fs.writeFileSync(path.join(pub, '.nojekyll'), '');
 const kb = (p) => (fs.statSync(p).size / 1024).toFixed(1) + ' KB';
 console.log('dist/growth-os.html  ' + kb(path.join(root, 'dist/growth-os.html')) + '  (artifact fragment)');
 console.log('public/index.html    ' + kb(path.join(pub, 'index.html')) + '  (standalone site)');
-console.log('public/              + manifest, icons, og.png, robots.txt, _headers, .nojekyll');
+console.log('public/              + sw.js, manifest, icons, og.png, robots.txt, _headers, .nojekyll');
